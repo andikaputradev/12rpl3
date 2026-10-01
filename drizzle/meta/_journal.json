@@ -1,0 +1,104 @@
+{
+  "version": "7",
+  "dialect": "postgresql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "7",
+      "when": 1785674159487,
+      "tag": "0000_right_darkhawk",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1785674159488,
+      "tag": "0001_rls_and_auth_trigger",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1786089178018,
+      "tag": "0002_beranda_profil_schema",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1786089178019,
+      "tag": "0003_beranda_rls_and_rpc",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1786202374240,
+      "tag": "0004_direktori_galeri_schema",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1786202374241,
+      "tag": "0005_direktori_galeri_rls",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1788012366305,
+      "tag": "0006_fase3_akademik_schema",
+      "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1788012366306,
+      "tag": "0007_fase3_akademik_rls",
+      "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1788012366307,
+      "tag": "0008_kas_digital_rls",
+      "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1788606030782,
+      "tag": "0009_fase4_prestasi_portofolio_blog_schema",
+      "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1788606030783,
+      "tag": "0010_fase4_prestasi_portofolio_blog_rls",
+      "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "7",
+      "when": 1790396573282,
+      "tag": "0011_fase5_interaksi_kelulusan_schema",
+      "breakpoints": true
+    },
+    {
+      "idx": 12,
+      "version": "7",
+      "when": 1790396573283,
+      "tag": "0012_fase5_interaksi_kelulusan_rls",
+      "breakpoints": true
+    },
+    {
+      "idx": 13,
+      "version": "7",
+      "when": 1790396573284,
+      "tag": "0013_fix_profiles_rls_recursion",
+      "breakpoints": true
+    }
+  ]
+}

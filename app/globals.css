@@ -1,0 +1,219 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+:root {
+  --background: oklch(98.20% 0.0041 91.45);
+  --surface: oklch(100.00% 0 0);
+  --foreground: oklch(21.20% 0.0378 275.87);
+  --muted: oklch(49.61% 0.0375 273.52);
+  --accent: oklch(77.88% 0.1461 67.56);
+  --accent-foreground: oklch(21.20% 0.0378 275.87);
+  --accent-text: oklch(55.45% 0.1267 58.54);
+  --border: oklch(91.90% 0.0112 89.73);
+  --success: oklch(77.29% 0.1535 163.22 / 0.85);
+  --destructive: oklch(71.06% 0.1661 22.22 / 0.85);
+  --success-text: oklch(45% 0.11 163.22);
+  --destructive-text: oklch(52% 0.19 22.22);
+  --ring: oklch(77.88% 0.1461 67.56);
+  --radius: 0.625rem;
+  --hero-overlay: oklch(98.20% 0.0041 91.45 / 0.85);
+
+  /* Fase 3 — dot indikator kategori event kalender akademik. 4 dari 7
+     kategori memakai ALIAS var() ke token -text yang sudah ada
+     (destructive/success/accent) karena maknanya selaras secara konseptual
+     dan sudah presisi-diverifikasi kontrasnya; "lainnya" alias ke --muted.
+     Hanya 3 hue baru (event_sekolah/prakerin/kelulusan) yang butuh nilai
+     OKLCH baru, diverifikasi via culori: kontras 6.3-7.4:1 terhadap
+     --surface pada kedua mode, jauh di atas ambang 3:1 komponen non-teks. */
+  --category-ujian: var(--destructive-text);
+  --category-libur: var(--success-text);
+  --category-deadline-tugas: var(--accent-text);
+  --category-event-sekolah: oklch(48% 0.17 300);
+  --category-prakerin: oklch(45% 0.16 235);
+  --category-kelulusan: oklch(50% 0.19 350);
+  --category-lainnya: var(--muted);
+}
+
+.dark {
+  --background: oklch(16.73% 0.0257 272.63);
+  --surface: oklch(21.04% 0.0362 273.38);
+  --foreground: oklch(97.00% 0.0029 264.54);
+  --muted: oklch(66.28% 0.038 272.99);
+  --accent: oklch(77.88% 0.1461 67.56);
+  --accent-foreground: oklch(21.20% 0.0378 275.87);
+  --accent-text: oklch(77.88% 0.1461 67.56);
+  --border: oklch(28.40% 0.0447 274.23);
+  --success: oklch(77.29% 0.1535 163.22 / 0.85);
+  --destructive: oklch(71.06% 0.1661 22.22 / 0.85);
+  --success-text: oklch(77.29% 0.1535 163.22);
+  --destructive-text: oklch(71.06% 0.1661 22.22);
+  --ring: oklch(77.88% 0.1461 67.56);
+  --hero-overlay: oklch(16.73% 0.0257 272.63 / 0.6);
+
+  --category-ujian: var(--destructive-text);
+  --category-libur: var(--success-text);
+  --category-deadline-tugas: var(--accent-text);
+  --category-event-sekolah: oklch(74% 0.15 300);
+  --category-prakerin: oklch(72% 0.13 235);
+  --category-kelulusan: oklch(75% 0.16 350);
+  --category-lainnya: var(--muted);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-surface: var(--surface);
+  --color-foreground: var(--foreground);
+  --color-muted: var(--muted);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent-text: var(--accent-text);
+  --color-border: var(--border);
+  --color-input: var(--border);
+  --color-ring: var(--ring);
+  --color-success: var(--success);
+  --color-success-text: var(--success-text);
+  --color-destructive: var(--destructive);
+  --color-destructive-text: var(--destructive-text);
+
+  --font-display: var(--font-space-grotesk), ui-sans-serif, system-ui, sans-serif;
+  --font-body: var(--font-archivo), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-jetbrains-mono), ui-monospace, "Cascadia Code", monospace;
+
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+
+  --animate-blink: blink 1.1s step-end infinite;
+  --animate-scan: scan 2.4s linear infinite;
+}
+
+@keyframes blink {
+  0%,
+  49% {
+    opacity: 1;
+  }
+  50%,
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes scan {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-background text-foreground font-body antialiased;
+  }
+
+  ::selection {
+    @apply bg-accent/25 text-foreground;
+  }
+
+  [data-eyebrow] {
+    @apply font-mono text-xs uppercase tracking-[0.14em] text-muted;
+  }
+}
+
+@layer utilities {
+  .container-portal {
+    @apply mx-auto w-full max-w-6xl px-5 sm:px-8;
+  }
+
+  /* Fase 4 — gaya render Markdown kustom (bukan @tailwindcss/typography,
+     tidak terpasang di proyek ini) memakai token desain Fase 0 sendiri agar
+     konten artikel tetap terasa satu sistem dengan seluruh portal. */
+  .prose-portal {
+    @apply max-w-none text-foreground leading-relaxed;
+  }
+  .prose-portal :where(h1, h2, h3, h4) {
+    @apply mt-8 mb-3 font-display font-medium tracking-tight first:mt-0;
+  }
+  .prose-portal h1 {
+    @apply text-2xl sm:text-3xl;
+  }
+  .prose-portal h2 {
+    @apply text-xl sm:text-2xl;
+  }
+  .prose-portal h3 {
+    @apply text-lg sm:text-xl;
+  }
+  .prose-portal p {
+    @apply my-4;
+  }
+  .prose-portal :where(ul, ol) {
+    @apply my-4 ml-6 flex flex-col gap-1.5;
+  }
+  .prose-portal ul {
+    @apply list-disc;
+  }
+  .prose-portal ol {
+    @apply list-decimal;
+  }
+  .prose-portal a {
+    @apply text-accent-text underline underline-offset-2 hover:no-underline;
+  }
+  .prose-portal blockquote {
+    @apply my-4 border-accent/40 border-l-2 pl-4 text-muted italic;
+  }
+  .prose-portal code {
+    @apply rounded bg-surface px-1.5 py-0.5 font-mono text-[0.875em];
+  }
+  .prose-portal pre {
+    @apply my-4 overflow-x-auto rounded-lg border border-border bg-surface p-4;
+  }
+  .prose-portal pre code {
+    @apply bg-transparent p-0;
+  }
+  .prose-portal img {
+    @apply my-5 rounded-lg border border-border;
+  }
+  .prose-portal hr {
+    @apply my-8 border-border;
+  }
+  .prose-portal table {
+    @apply my-4 w-full border-collapse text-sm;
+  }
+  .prose-portal :where(th, td) {
+    @apply border border-border px-3 py-2 text-left;
+  }
+  .prose-portal th {
+    @apply bg-surface font-medium;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    /* biome-ignore lint/complexity/noImportantStyles: override aksesibilitas wajib menang atas seluruh durasi animasi komponen, sesuai WCAG 2.3.3. */
+    animation-duration: 0.01ms !important;
+    /* biome-ignore lint/complexity/noImportantStyles: idem — override aksesibilitas reduced-motion. */
+    animation-iteration-count: 1 !important;
+    /* biome-ignore lint/complexity/noImportantStyles: idem — override aksesibilitas reduced-motion. */
+    transition-duration: 0.01ms !important;
+    /* biome-ignore lint/complexity/noImportantStyles: idem — override aksesibilitas reduced-motion. */
+    scroll-behavior: auto !important;
+  }
+}
