@@ -36,6 +36,7 @@ import {
   pesanKesan,
   profiles,
 } from "@/lib/db/schema";
+import { createServerSupabaseClient } from "@/lib/supabase/server";
 
 export const metadata: Metadata = {
   title: "Dashboard Admin",
@@ -45,6 +46,17 @@ export const metadata: Metadata = {
 export const dynamic = "force-dynamic";
 
 export default async function DashboardOverviewPage() {
+  const supabase = await createServerSupabaseClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  const { data: currentProfile } = await supabase
+    .from("profiles")
+    .select("role, jabatan, full_name")
+    .eq("id", user?.id ?? "")
+    .maybeSingle<{ role: string; jabatan?: string | null; full_name?: string }>();
+
   const [
     studentCountRes,
     staffCountRes,
@@ -92,16 +104,63 @@ export default async function DashboardOverviewPage() {
   const currentClassProfile = classProfileRes[0] ?? null;
   const currentKas = kasSettingsRes[0] ?? null;
 
+  const userRole = currentProfile?.role ?? "siswa";
+  const jabatan = (currentProfile?.jabatan ?? "").toLowerCase();
+
+  const isSuperAdmin = userRole === "super_admin";
+  const isWaliKelas = userRole === "wali_kelas";
+  const isPengurus = userRole === "pengurus";
+
+  const isBendahara = isPengurus && jabatan.includes("bendahara");
+  const isSekretaris = isPengurus && jabatan.includes("sekretaris");
+  const isKetuaOrWakil = isPengurus && (jabatan.includes("ketua") || jabatan.includes("wakil"));
+
+  // Akses per modul
+  const canAccessUsers = isSuperAdmin;
+  const canAccessAuditLog = isSuperAdmin;
+  const canAccessNilai = isSuperAdmin || isWaliKelas;
+  const canAccessProfil = isSuperAdmin || isWaliKelas;
+  const canAccessAlumni = isSuperAdmin || isWaliKelas;
+
+  const canAccessAbsensi = isSuperAdmin || isWaliKelas || isKetuaOrWakil || isSekretaris;
+  const canAccessJadwal = isSuperAdmin || isWaliKelas || isKetuaOrWakil || isSekretaris;
+  const canAccessTugas = isSuperAdmin || isWaliKelas || isKetuaOrWakil || isSekretaris;
+  const canAccessPengumuman = true;
+  const canAccessKas = isSuperAdmin || isWaliKelas || isKetuaOrWakil || isBendahara;
+
+  const canAccessModerasi = isSuperAdmin || isWaliKelas || isKetuaOrWakil;
+  const canAccessBlog = isSuperAdmin || isWaliKelas || isKetuaOrWakil;
+  const canAccessInteraksi = isSuperAdmin || isWaliKelas || isKetuaOrWakil;
+  const canAccessKelulusan = isSuperAdmin || isWaliKelas || isKetuaOrWakil;
+  const canAccessPrestasi = isSuperAdmin || isWaliKelas || isKetuaOrWakil;
+  const canAccessPortofolio = isSuperAdmin || isWaliKelas || isKetuaOrWakil;
+
   return (
     <div className="container-portal flex flex-col gap-10 py-10">
-      <header className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
+      <header className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
         <div>
-          <p data-eyebrow>Panel Kontrol</p>
+          <div className="flex items-center gap-2">
+            <p data-eyebrow>Panel Kontrol</p>
+            <Badge
+              variant="outline"
+              className="text-xs font-medium border-accent/40 text-accent-text"
+            >
+              {currentProfile?.jabatan ||
+                (isSuperAdmin
+                  ? "Super Admin"
+                  : isWaliKelas
+                    ? "Wali Kelas"
+                    : isPengurus
+                      ? "Pengurus"
+                      : "Siswa")}
+            </Badge>
+          </div>
           <h1 className="mt-1 font-display text-2xl font-semibold tracking-tight sm:text-3xl">
-            Ikhtisar Portal {siteConfig.className}
+            Selamat Datang, {currentProfile?.full_name ?? "Pengguna"}
           </h1>
           <p className="mt-1 text-sm text-muted">
-            Kelola data kelas, moderasi kiriman, akademik, dan konten portal publik.
+            Panel manajemen portal digital {siteConfig.className}. Menu dan hak akses disesuaikan
+            dengan peran Anda.
           </p>
         </div>
 
@@ -115,8 +174,8 @@ export default async function DashboardOverviewPage() {
         </div>
       </header>
 
-      {/* Alert Moderasi jika ada kiriman menunggu */}
-      {totalPendingModeration > 0 && (
+      {/* Alert Moderasi jika ada kiriman menunggu dan role memiliki hak moderasi */}
+      {canAccessModerasi && totalPendingModeration > 0 && (
         <div className="rounded-lg border border-accent/40 bg-accent/10 p-4.5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div className="flex items-center gap-3">
             <div className="rounded-full bg-accent/20 p-2 text-accent-text">
@@ -160,7 +219,7 @@ export default async function DashboardOverviewPage() {
           Statistik Sistem
         </h2>
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
-          <Card className="border-border/80">
+          <Card className="border-border">
             <CardHeader className="pb-2">
               <CardDescription className="flex items-center gap-1.5 text-xs">
                 <Users className="size-3.5 text-muted" />
@@ -169,11 +228,11 @@ export default async function DashboardOverviewPage() {
               <CardTitle className="font-mono text-2xl font-bold">{totalStudents}</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-xs text-muted">Akun siswa aktif</p>
+              <p className="text-xs text-muted">Total siswa kelas aktif</p>
             </CardContent>
           </Card>
 
-          <Card className="border-border/80">
+          <Card className="border-border">
             <CardHeader className="pb-2">
               <CardDescription className="flex items-center gap-1.5 text-xs">
                 <UserCheck className="size-3.5 text-muted" />
@@ -186,7 +245,7 @@ export default async function DashboardOverviewPage() {
             </CardContent>
           </Card>
 
-          <Card className="border-border/80">
+          <Card className="border-border">
             <CardHeader className="pb-2">
               <CardDescription className="flex items-center gap-1.5 text-xs">
                 <Clock className="size-3.5 text-muted" />
@@ -201,7 +260,7 @@ export default async function DashboardOverviewPage() {
             </CardContent>
           </Card>
 
-          <Card className="border-border/80">
+          <Card className="border-border">
             <CardHeader className="pb-2">
               <CardDescription className="flex items-center gap-1.5 text-xs">
                 <CalendarDays className="size-3.5 text-muted" />
@@ -219,353 +278,392 @@ export default async function DashboardOverviewPage() {
       {/* Modul Akses Cepat */}
       <section className="flex flex-col gap-8">
         <div>
-          <h2 className="font-display text-lg font-semibold tracking-tight">Administrasi Kelas</h2>
+          <h2 className="font-display text-lg font-semibold tracking-tight">
+            Administrasi & Operasional
+          </h2>
           <p className="text-xs text-muted mt-0.5">
-            Konfigurasi profil umum, kepegawaian, dan informasi dasar kelas.
+            Pengaturan umum, agenda harian, komunikasi siaran, dan tata kelola kas.
           </p>
           <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            <Link
-              href="/dashboard/profil"
-              className="group rounded-lg border border-border bg-surface p-4 transition-all hover:border-accent hover:shadow-xs"
-            >
-              <div className="flex items-start justify-between">
-                <div className="rounded-md bg-accent/10 p-2 text-accent-text group-hover:bg-accent group-hover:text-accent-foreground transition-colors">
-                  <Sparkles className="size-4.5" />
+            {canAccessProfil && (
+              <Link
+                href="/dashboard/profil"
+                className="group rounded-lg border border-border bg-surface p-4 transition-all hover:border-accent hover:shadow-xs"
+              >
+                <div className="flex items-start justify-between">
+                  <div className="rounded-md bg-accent/10 p-2 text-accent-text group-hover:bg-accent group-hover:text-accent-foreground transition-colors">
+                    <Sparkles className="size-4.5" />
+                  </div>
+                  {currentClassProfile ? (
+                    <Badge
+                      variant="outline"
+                      className="text-[10px] text-success-text border-success/40"
+                    >
+                      Terkonfigurasi
+                    </Badge>
+                  ) : (
+                    <Badge variant="outline" className="text-[10px] text-muted">
+                      Belum Diisi
+                    </Badge>
+                  )}
                 </div>
-                {currentClassProfile ? (
-                  <Badge
-                    variant="outline"
-                    className="text-[10px] text-success-text border-success/40"
-                  >
-                    Terkonfigurasi
-                  </Badge>
-                ) : (
-                  <Badge variant="outline" className="text-[10px] text-muted">
-                    Belum Diisi
-                  </Badge>
-                )}
-              </div>
-              <h3 className="mt-3 font-display text-sm font-semibold text-foreground group-hover:text-accent-text transition-colors">
-                Profil Kelas & Visi Misi
-              </h3>
-              <p className="mt-1 text-xs text-muted line-clamp-2">
-                Kelola sejarah, visi, misi, motto, dan foto kelas yang tampil di Beranda dan halaman
-                Profil.
-              </p>
-            </Link>
+                <h3 className="mt-3 font-display text-sm font-semibold text-foreground group-hover:text-accent-text transition-colors">
+                  Profil Kelas & Visi Misi
+                </h3>
+                <p className="mt-1 text-xs text-muted line-clamp-2">
+                  Kelola narasi sejarah, visi, misi, motto, dan foto kelas.
+                </p>
+              </Link>
+            )}
 
-            <Link
-              href="/dashboard/pengguna"
-              className="group rounded-lg border border-border bg-surface p-4 transition-all hover:border-accent hover:shadow-xs"
-            >
-              <div className="flex items-start justify-between">
-                <div className="rounded-md bg-accent/10 p-2 text-accent-text group-hover:bg-accent group-hover:text-accent-foreground transition-colors">
-                  <UserCog className="size-4.5" />
+            {canAccessUsers && (
+              <Link
+                href="/dashboard/pengguna"
+                className="group rounded-lg border border-border bg-surface p-4 transition-all hover:border-accent hover:shadow-xs"
+              >
+                <div className="flex items-start justify-between">
+                  <div className="rounded-md bg-accent/10 p-2 text-accent-text group-hover:bg-accent group-hover:text-accent-foreground transition-colors">
+                    <UserCog className="size-4.5" />
+                  </div>
+                  <span className="font-mono text-xs text-muted">
+                    {totalStudents + totalStaff} akun
+                  </span>
                 </div>
-                <span className="font-mono text-xs text-muted">
-                  {totalStudents + totalStaff} akun
-                </span>
-              </div>
-              <h3 className="mt-3 font-display text-sm font-semibold text-foreground group-hover:text-accent-text transition-colors">
-                Manajemen Pengguna
-              </h3>
-              <p className="mt-1 text-xs text-muted line-clamp-2">
-                Daftar akun, pengaturan peran staf/siswa, nomor induk siswa (NIS), dan nomor absen.
-              </p>
-            </Link>
+                <h3 className="mt-3 font-display text-sm font-semibold text-foreground group-hover:text-accent-text transition-colors">
+                  Manajemen Pengguna (CRUD)
+                </h3>
+                <p className="mt-1 text-xs text-muted line-clamp-2">
+                  Tambah pengguna baru, kelola peran, NIS, nomor absen, dan hapus akun.
+                </p>
+              </Link>
+            )}
 
-            <Link
-              href="/dashboard/jadwal"
-              className="group rounded-lg border border-border bg-surface p-4 transition-all hover:border-accent hover:shadow-xs"
-            >
-              <div className="flex items-start justify-between">
-                <div className="rounded-md bg-accent/10 p-2 text-accent-text group-hover:bg-accent group-hover:text-accent-foreground transition-colors">
-                  <CalendarDays className="size-4.5" />
+            {canAccessJadwal && (
+              <Link
+                href="/dashboard/jadwal"
+                className="group rounded-lg border border-border bg-surface p-4 transition-all hover:border-accent hover:shadow-xs"
+              >
+                <div className="flex items-start justify-between">
+                  <div className="rounded-md bg-accent/10 p-2 text-accent-text group-hover:bg-accent group-hover:text-accent-foreground transition-colors">
+                    <CalendarDays className="size-4.5" />
+                  </div>
                 </div>
-              </div>
-              <h3 className="mt-3 font-display text-sm font-semibold text-foreground group-hover:text-accent-text transition-colors">
-                Jadwal & Agenda
-              </h3>
-              <p className="mt-1 text-xs text-muted line-clamp-2">
-                Jadwal pelajaran mingguan, penugasan piket kebersihan, dan kalender kegiatan
-                akademik.
-              </p>
-            </Link>
+                <h3 className="mt-3 font-display text-sm font-semibold text-foreground group-hover:text-accent-text transition-colors">
+                  Jadwal & Agenda
+                </h3>
+                <p className="mt-1 text-xs text-muted line-clamp-2">
+                  Jadwal pelajaran mingguan, penugasan piket kebersihan, dan kalender kegiatan
+                  kelas.
+                </p>
+              </Link>
+            )}
 
-            <Link
-              href="/dashboard/pengumuman"
-              className="group rounded-lg border border-border bg-surface p-4 transition-all hover:border-accent hover:shadow-xs"
-            >
-              <div className="flex items-start justify-between">
-                <div className="rounded-md bg-accent/10 p-2 text-accent-text group-hover:bg-accent group-hover:text-accent-foreground transition-colors">
-                  <Bell className="size-4.5" />
+            {canAccessPengumuman && (
+              <Link
+                href="/dashboard/pengumuman"
+                className="group rounded-lg border border-border bg-surface p-4 transition-all hover:border-accent hover:shadow-xs"
+              >
+                <div className="flex items-start justify-between">
+                  <div className="rounded-md bg-accent/10 p-2 text-accent-text group-hover:bg-accent group-hover:text-accent-foreground transition-colors">
+                    <Bell className="size-4.5" />
+                  </div>
                 </div>
-              </div>
-              <h3 className="mt-3 font-display text-sm font-semibold text-foreground group-hover:text-accent-text transition-colors">
-                Pengumuman Kelas
-              </h3>
-              <p className="mt-1 text-xs text-muted line-clamp-2">
-                Publikasikan siaran informasi resmi untuk siswa kelas dengan opsi sematkan (pinned).
-              </p>
-            </Link>
+                <h3 className="mt-3 font-display text-sm font-semibold text-foreground group-hover:text-accent-text transition-colors">
+                  Pengumuman Kelas
+                </h3>
+                <p className="mt-1 text-xs text-muted line-clamp-2">
+                  Publikasikan informasi resmi untuk seluruh siswa dengan opsi sematkan penting.
+                </p>
+              </Link>
+            )}
 
-            <Link
-              href="/dashboard/kas"
-              className="group rounded-lg border border-border bg-surface p-4 transition-all hover:border-accent hover:shadow-xs"
-            >
-              <div className="flex items-start justify-between">
-                <div className="rounded-md bg-accent/10 p-2 text-accent-text group-hover:bg-accent group-hover:text-accent-foreground transition-colors">
-                  <QrCode className="size-4.5" />
+            {canAccessKas && (
+              <Link
+                href="/dashboard/kas"
+                className="group rounded-lg border border-border bg-surface p-4 transition-all hover:border-accent hover:shadow-xs"
+              >
+                <div className="flex items-start justify-between">
+                  <div className="rounded-md bg-accent/10 p-2 text-accent-text group-hover:bg-accent group-hover:text-accent-foreground transition-colors">
+                    <QrCode className="size-4.5" />
+                  </div>
+                  {currentKas?.qrisImageUrl || currentKas?.danaNumber ? (
+                    <Badge
+                      variant="outline"
+                      className="text-[10px] text-success-text border-success/40"
+                    >
+                      Aktif
+                    </Badge>
+                  ) : (
+                    <Badge variant="outline" className="text-[10px] text-muted">
+                      Belum Ada
+                    </Badge>
+                  )}
                 </div>
-                {currentKas?.qrisImageUrl || currentKas?.danaNumber ? (
-                  <Badge
-                    variant="outline"
-                    className="text-[10px] text-success-text border-success/40"
-                  >
-                    Aktif
-                  </Badge>
-                ) : (
-                  <Badge variant="outline" className="text-[10px] text-muted">
-                    Belum Ada
-                  </Badge>
-                )}
-              </div>
-              <h3 className="mt-3 font-display text-sm font-semibold text-foreground group-hover:text-accent-text transition-colors">
-                Kas Digital
-              </h3>
-              <p className="mt-1 text-xs text-muted line-clamp-2">
-                Unggah kode QRIS pembayaran kas kelas dan nomor e-wallet tujuan transfer siswa.
-              </p>
-            </Link>
+                <h3 className="mt-3 font-display text-sm font-semibold text-foreground group-hover:text-accent-text transition-colors">
+                  Kas Digital
+                </h3>
+                <p className="mt-1 text-xs text-muted line-clamp-2">
+                  Kelola kode QRIS pembayaran kas kelas dan nomor e-wallet tujuan transfer siswa.
+                </p>
+              </Link>
+            )}
           </div>
         </div>
 
-        <div>
-          <h2 className="font-display text-lg font-semibold tracking-tight">
-            Akademik & Penilaian
-          </h2>
-          <p className="text-xs text-muted mt-0.5">
-            Pengelolaan rekapitulasi nilai, presensi harian, dan bank tugas.
-          </p>
-          <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            <Link
-              href="/dashboard/nilai"
-              className="group rounded-lg border border-border bg-surface p-4 transition-all hover:border-accent hover:shadow-xs"
-            >
-              <div className="rounded-md bg-accent/10 p-2 text-accent-text group-hover:bg-accent group-hover:text-accent-foreground transition-colors w-fit">
-                <GraduationCap className="size-4.5" />
-              </div>
-              <h3 className="mt-3 font-display text-sm font-semibold text-foreground group-hover:text-accent-text transition-colors">
-                Entry Nilai Massal
-              </h3>
-              <p className="mt-1 text-xs text-muted line-clamp-2">
-                Input nilai per mata pelajaran, jenis asesmen (tugas, UTS, UAS, praktik), dan
-                semester.
-              </p>
-            </Link>
+        {(canAccessNilai || canAccessAbsensi || canAccessTugas || canAccessAuditLog) && (
+          <div>
+            <h2 className="font-display text-lg font-semibold tracking-tight">
+              Akademik & Penilaian
+            </h2>
+            <p className="text-xs text-muted mt-0.5">
+              Rekapitulasi nilai mata pelajaran, presensi harian, dan bank tugas kelas.
+            </p>
+            <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+              {canAccessNilai && (
+                <Link
+                  href="/dashboard/nilai"
+                  className="group rounded-lg border border-border bg-surface p-4 transition-all hover:border-accent hover:shadow-xs"
+                >
+                  <div className="rounded-md bg-accent/10 p-2 text-accent-text group-hover:bg-accent group-hover:text-accent-foreground transition-colors w-fit">
+                    <GraduationCap className="size-4.5" />
+                  </div>
+                  <h3 className="mt-3 font-display text-sm font-semibold text-foreground group-hover:text-accent-text transition-colors">
+                    Entry Nilai Massal
+                  </h3>
+                  <p className="mt-1 text-xs text-muted line-clamp-2">
+                    Input nilai per mata pelajaran, jenis asesmen (tugas, UTS, UAS, praktik), dan
+                    semester.
+                  </p>
+                </Link>
+              )}
 
-            <Link
-              href="/dashboard/absensi"
-              className="group rounded-lg border border-border bg-surface p-4 transition-all hover:border-accent hover:shadow-xs"
-            >
-              <div className="rounded-md bg-accent/10 p-2 text-accent-text group-hover:bg-accent group-hover:text-accent-foreground transition-colors w-fit">
-                <UserCheck className="size-4.5" />
-              </div>
-              <h3 className="mt-3 font-display text-sm font-semibold text-foreground group-hover:text-accent-text transition-colors">
-                Entry Absensi Massal
-              </h3>
-              <p className="mt-1 text-xs text-muted line-clamp-2">
-                Catat presensi harian siswa (Hadir, Sakit, Izin, Alpa) dengan sekali simpan.
-              </p>
-            </Link>
+              {canAccessAbsensi && (
+                <Link
+                  href="/dashboard/absensi"
+                  className="group rounded-lg border border-border bg-surface p-4 transition-all hover:border-accent hover:shadow-xs"
+                >
+                  <div className="rounded-md bg-accent/10 p-2 text-accent-text group-hover:bg-accent group-hover:text-accent-foreground transition-colors w-fit">
+                    <UserCheck className="size-4.5" />
+                  </div>
+                  <h3 className="mt-3 font-display text-sm font-semibold text-foreground group-hover:text-accent-text transition-colors">
+                    Entry Absensi Massal
+                  </h3>
+                  <p className="mt-1 text-xs text-muted line-clamp-2">
+                    Catat presensi harian siswa (Hadir, Sakit, Izin, Alpa) dengan sekali simpan.
+                  </p>
+                </Link>
+              )}
 
-            <Link
-              href="/dashboard/tugas"
-              className="group rounded-lg border border-border bg-surface p-4 transition-all hover:border-accent hover:shadow-xs"
-            >
-              <div className="rounded-md bg-accent/10 p-2 text-accent-text group-hover:bg-accent group-hover:text-accent-foreground transition-colors w-fit">
-                <Layers className="size-4.5" />
-              </div>
-              <h3 className="mt-3 font-display text-sm font-semibold text-foreground group-hover:text-accent-text transition-colors">
-                Bank Tugas
-              </h3>
-              <p className="mt-1 text-xs text-muted line-clamp-2">
-                Buat tugas baru, atur tenggat waktu, dan pantau status pengumpulan siswa.
-              </p>
-            </Link>
+              {canAccessTugas && (
+                <Link
+                  href="/dashboard/tugas"
+                  className="group rounded-lg border border-border bg-surface p-4 transition-all hover:border-accent hover:shadow-xs"
+                >
+                  <div className="rounded-md bg-accent/10 p-2 text-accent-text group-hover:bg-accent group-hover:text-accent-foreground transition-colors w-fit">
+                    <Layers className="size-4.5" />
+                  </div>
+                  <h3 className="mt-3 font-display text-sm font-semibold text-foreground group-hover:text-accent-text transition-colors">
+                    Bank Tugas
+                  </h3>
+                  <p className="mt-1 text-xs text-muted line-clamp-2">
+                    Buat tugas baru, atur tenggat waktu, dan pantau status pengumpulan siswa.
+                  </p>
+                </Link>
+              )}
 
-            <Link
-              href="/dashboard/audit-log"
-              className="group rounded-lg border border-border bg-surface p-4 transition-all hover:border-accent hover:shadow-xs"
-            >
-              <div className="rounded-md bg-accent/10 p-2 text-accent-text group-hover:bg-accent group-hover:text-accent-foreground transition-colors w-fit">
-                <History className="size-4.5" />
-              </div>
-              <h3 className="mt-3 font-display text-sm font-semibold text-foreground group-hover:text-accent-text transition-colors">
-                Audit Log Nilai/Absensi
-              </h3>
-              <p className="mt-1 text-xs text-muted line-clamp-2">
-                Riwayat perubahan data sensitif nilai dan absensi per entri oleh staf (khusus Super
-                Admin).
-              </p>
-            </Link>
+              {canAccessAuditLog && (
+                <Link
+                  href="/dashboard/audit-log"
+                  className="group rounded-lg border border-border bg-surface p-4 transition-all hover:border-accent hover:shadow-xs"
+                >
+                  <div className="rounded-md bg-accent/10 p-2 text-accent-text group-hover:bg-accent group-hover:text-accent-foreground transition-colors w-fit">
+                    <History className="size-4.5" />
+                  </div>
+                  <h3 className="mt-3 font-display text-sm font-semibold text-foreground group-hover:text-accent-text transition-colors">
+                    Audit Log Nilai/Absensi
+                  </h3>
+                  <p className="mt-1 text-xs text-muted line-clamp-2">
+                    Riwayat perubahan data sensitif nilai dan absensi per entri (khusus Super
+                    Admin).
+                  </p>
+                </Link>
+              )}
+            </div>
           </div>
-        </div>
+        )}
 
-        <div>
-          <h2 className="font-display text-lg font-semibold tracking-tight">
-            Konten, Portofolio & Publikasi
-          </h2>
-          <p className="text-xs text-muted mt-0.5">
-            Moderasi karya, artikel blog, dan rekaman kegiatan kelas.
-          </p>
-          <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            <Link
-              href="/dashboard/moderasi"
-              className="group rounded-lg border border-border bg-surface p-4 transition-all hover:border-accent hover:shadow-xs"
-            >
-              <div className="flex items-start justify-between">
-                <div className="rounded-md bg-accent/10 p-2 text-accent-text group-hover:bg-accent group-hover:text-accent-foreground transition-colors">
-                  <ImageIcon className="size-4.5" />
-                </div>
-                {pendingGallery > 0 && (
-                  <Badge variant="destructive" className="text-[10px]">
-                    {pendingGallery} pending
-                  </Badge>
-                )}
-              </div>
-              <h3 className="mt-3 font-display text-sm font-semibold text-foreground group-hover:text-accent-text transition-colors">
-                Moderasi Galeri & Album
-              </h3>
-              <p className="mt-1 text-xs text-muted line-clamp-2">
-                Setujui kiriman foto/video siswa dan kelola album kegiatan kelas.
-              </p>
-            </Link>
+        {(canAccessModerasi || canAccessBlog || canAccessPrestasi || canAccessPortofolio) && (
+          <div>
+            <h2 className="font-display text-lg font-semibold tracking-tight">
+              Konten, Portofolio & Publikasi
+            </h2>
+            <p className="text-xs text-muted mt-0.5">
+              Moderasi foto, artikel blog, dan rekaman portofolio karya siswa.
+            </p>
+            <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+              {canAccessModerasi && (
+                <Link
+                  href="/dashboard/moderasi"
+                  className="group rounded-lg border border-border bg-surface p-4 transition-all hover:border-accent hover:shadow-xs"
+                >
+                  <div className="flex items-start justify-between">
+                    <div className="rounded-md bg-accent/10 p-2 text-accent-text group-hover:bg-accent group-hover:text-accent-foreground transition-colors">
+                      <ImageIcon className="size-4.5" />
+                    </div>
+                    {pendingGallery > 0 && (
+                      <Badge variant="destructive" className="text-[10px]">
+                        {pendingGallery} pending
+                      </Badge>
+                    )}
+                  </div>
+                  <h3 className="mt-3 font-display text-sm font-semibold text-foreground group-hover:text-accent-text transition-colors">
+                    Moderasi Galeri & Album
+                  </h3>
+                  <p className="mt-1 text-xs text-muted line-clamp-2">
+                    Setujui kiriman foto/video siswa dan kelola album kegiatan kelas.
+                  </p>
+                </Link>
+              )}
 
-            <Link
-              href="/dashboard/blog"
-              className="group rounded-lg border border-border bg-surface p-4 transition-all hover:border-accent hover:shadow-xs"
-            >
-              <div className="flex items-start justify-between">
-                <div className="rounded-md bg-accent/10 p-2 text-accent-text group-hover:bg-accent group-hover:text-accent-foreground transition-colors">
-                  <BookOpen className="size-4.5" />
-                </div>
-                {pendingBlog > 0 && (
-                  <Badge variant="destructive" className="text-[10px]">
-                    {pendingBlog} pending
-                  </Badge>
-                )}
-              </div>
-              <h3 className="mt-3 font-display text-sm font-semibold text-foreground group-hover:text-accent-text transition-colors">
-                Blog Kelas & Kategori
-              </h3>
-              <p className="mt-1 text-xs text-muted line-clamp-2">
-                Tulis artikel resmi, moderasi draf kiriman siswa, dan atur kategori tulisan.
-              </p>
-            </Link>
+              {canAccessBlog && (
+                <Link
+                  href="/dashboard/blog"
+                  className="group rounded-lg border border-border bg-surface p-4 transition-all hover:border-accent hover:shadow-xs"
+                >
+                  <div className="flex items-start justify-between">
+                    <div className="rounded-md bg-accent/10 p-2 text-accent-text group-hover:bg-accent group-hover:text-accent-foreground transition-colors">
+                      <BookOpen className="size-4.5" />
+                    </div>
+                    {pendingBlog > 0 && (
+                      <Badge variant="destructive" className="text-[10px]">
+                        {pendingBlog} pending
+                      </Badge>
+                    )}
+                  </div>
+                  <h3 className="mt-3 font-display text-sm font-semibold text-foreground group-hover:text-accent-text transition-colors">
+                    Blog Kelas & Kategori
+                  </h3>
+                  <p className="mt-1 text-xs text-muted line-clamp-2">
+                    Tulis artikel resmi, moderasi draf kiriman siswa, dan atur kategori tulisan.
+                  </p>
+                </Link>
+              )}
 
-            <Link
-              href="/dashboard/prestasi"
-              className="group rounded-lg border border-border bg-surface p-4 transition-all hover:border-accent hover:shadow-xs"
-            >
-              <div className="rounded-md bg-accent/10 p-2 text-accent-text group-hover:bg-accent group-hover:text-accent-foreground transition-colors w-fit">
-                <Award className="size-4.5" />
-              </div>
-              <h3 className="mt-3 font-display text-sm font-semibold text-foreground group-hover:text-accent-text transition-colors">
-                Prestasi Siswa
-              </h3>
-              <p className="mt-1 text-xs text-muted line-clamp-2">
-                Pencatatan penghargaan dan medali kompetisi tingkat sekolah hingga internasional.
-              </p>
-            </Link>
+              {canAccessPrestasi && (
+                <Link
+                  href="/dashboard/prestasi"
+                  className="group rounded-lg border border-border bg-surface p-4 transition-all hover:border-accent hover:shadow-xs"
+                >
+                  <div className="rounded-md bg-accent/10 p-2 text-accent-text group-hover:bg-accent group-hover:text-accent-foreground transition-colors w-fit">
+                    <Award className="size-4.5" />
+                  </div>
+                  <h3 className="mt-3 font-display text-sm font-semibold text-foreground group-hover:text-accent-text transition-colors">
+                    Prestasi Siswa
+                  </h3>
+                  <p className="mt-1 text-xs text-muted line-clamp-2">
+                    Pencatatan penghargaan dan medali kompetisi tingkat sekolah hingga
+                    internasional.
+                  </p>
+                </Link>
+              )}
 
-            <Link
-              href="/dashboard/portofolio"
-              className="group rounded-lg border border-border bg-surface p-4 transition-all hover:border-accent hover:shadow-xs"
-            >
-              <div className="rounded-md bg-accent/10 p-2 text-accent-text group-hover:bg-accent group-hover:text-accent-foreground transition-colors w-fit">
-                <Layers className="size-4.5" />
-              </div>
-              <h3 className="mt-3 font-display text-sm font-semibold text-foreground group-hover:text-accent-text transition-colors">
-                Portofolio Proyek
-              </h3>
-              <p className="mt-1 text-xs text-muted line-clamp-2">
-                Tinjau dan tampilkan proyek perangkat lunak unggulan karya siswa.
-              </p>
-            </Link>
+              {canAccessPortofolio && (
+                <Link
+                  href="/dashboard/portofolio"
+                  className="group rounded-lg border border-border bg-surface p-4 transition-all hover:border-accent hover:shadow-xs"
+                >
+                  <div className="rounded-md bg-accent/10 p-2 text-accent-text group-hover:bg-accent group-hover:text-accent-foreground transition-colors w-fit">
+                    <Layers className="size-4.5" />
+                  </div>
+                  <h3 className="mt-3 font-display text-sm font-semibold text-foreground group-hover:text-accent-text transition-colors">
+                    Portofolio Proyek
+                  </h3>
+                  <p className="mt-1 text-xs text-muted line-clamp-2">
+                    Tinjau dan tampilkan proyek perangkat lunak unggulan karya siswa.
+                  </p>
+                </Link>
+              )}
+            </div>
           </div>
-        </div>
+        )}
 
-        <div>
-          <h2 className="font-display text-lg font-semibold tracking-tight">
-            Interaksi & Corner Kelulusan
-          </h2>
-          <p className="text-xs text-muted mt-0.5">
-            Partisipasi publik, aspirasi, polling kelas, dan buku kenangan.
-          </p>
-          <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            <Link
-              href="/dashboard/interaksi"
-              className="group rounded-lg border border-border bg-surface p-4 transition-all hover:border-accent hover:shadow-xs"
-            >
-              <div className="flex items-start justify-between">
-                <div className="rounded-md bg-accent/10 p-2 text-accent-text group-hover:bg-accent group-hover:text-accent-foreground transition-colors">
-                  <MessageSquare className="size-4.5" />
-                </div>
-                {pendingGuestbook + pendingAspirations > 0 && (
-                  <Badge variant="destructive" className="text-[10px]">
-                    {pendingGuestbook + pendingAspirations} pending
-                  </Badge>
-                )}
-              </div>
-              <h3 className="mt-3 font-display text-sm font-semibold text-foreground group-hover:text-accent-text transition-colors">
-                Buku Tamu, Aspirasi & Polling
-              </h3>
-              <p className="mt-1 text-xs text-muted line-clamp-2">
-                Moderasi komentar pengunjung, aspirasi kelas, dan pembuatan polling suara siswa.
-              </p>
-            </Link>
+        {(canAccessInteraksi || canAccessKelulusan || canAccessAlumni) && (
+          <div>
+            <h2 className="font-display text-lg font-semibold tracking-tight">
+              Interaksi, Komunitas & Wisuda
+            </h2>
+            <p className="text-xs text-muted mt-0.5">
+              Partisipasi publik, aspirasi, polling kelas, dan buku kenangan kelulusan.
+            </p>
+            <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {canAccessInteraksi && (
+                <Link
+                  href="/dashboard/interaksi"
+                  className="group rounded-lg border border-border bg-surface p-4 transition-all hover:border-accent hover:shadow-xs"
+                >
+                  <div className="flex items-start justify-between">
+                    <div className="rounded-md bg-accent/10 p-2 text-accent-text group-hover:bg-accent group-hover:text-accent-foreground transition-colors">
+                      <MessageSquare className="size-4.5" />
+                    </div>
+                    {pendingGuestbook + pendingAspirations > 0 && (
+                      <Badge variant="destructive" className="text-[10px]">
+                        {pendingGuestbook + pendingAspirations} pending
+                      </Badge>
+                    )}
+                  </div>
+                  <h3 className="mt-3 font-display text-sm font-semibold text-foreground group-hover:text-accent-text transition-colors">
+                    Buku Tamu, Aspirasi & Polling
+                  </h3>
+                  <p className="mt-1 text-xs text-muted line-clamp-2">
+                    Moderasi komentar pengunjung, aspirasi kelas, dan pembuatan polling suara siswa.
+                  </p>
+                </Link>
+              )}
 
-            <Link
-              href="/dashboard/kelulusan"
-              className="group rounded-lg border border-border bg-surface p-4 transition-all hover:border-accent hover:shadow-xs"
-            >
-              <div className="flex items-start justify-between">
-                <div className="rounded-md bg-accent/10 p-2 text-accent-text group-hover:bg-accent group-hover:text-accent-foreground transition-colors">
-                  <GraduationCap className="size-4.5" />
-                </div>
-                {pendingPesanKesan > 0 && (
-                  <Badge variant="destructive" className="text-[10px]">
-                    {pendingPesanKesan} pending
-                  </Badge>
-                )}
-              </div>
-              <h3 className="mt-3 font-display text-sm font-semibold text-foreground group-hover:text-accent-text transition-colors">
-                Corner Kelulusan & Wisuda
-              </h3>
-              <p className="mt-1 text-xs text-muted line-clamp-2">
-                Pengaturan narasi wisuda, video kilas balik, dan moderasi pesan-kesan kelulusan
-                antar siswa.
-              </p>
-            </Link>
+              {canAccessKelulusan && (
+                <Link
+                  href="/dashboard/kelulusan"
+                  className="group rounded-lg border border-border bg-surface p-4 transition-all hover:border-accent hover:shadow-xs"
+                >
+                  <div className="flex items-start justify-between">
+                    <div className="rounded-md bg-accent/10 p-2 text-accent-text group-hover:bg-accent group-hover:text-accent-foreground transition-colors">
+                      <GraduationCap className="size-4.5" />
+                    </div>
+                    {pendingPesanKesan > 0 && (
+                      <Badge variant="destructive" className="text-[10px]">
+                        {pendingPesanKesan} pending
+                      </Badge>
+                    )}
+                  </div>
+                  <h3 className="mt-3 font-display text-sm font-semibold text-foreground group-hover:text-accent-text transition-colors">
+                    Corner Kelulusan & Wisuda
+                  </h3>
+                  <p className="mt-1 text-xs text-muted line-clamp-2">
+                    Pengaturan narasi wisuda, video kilas balik, dan moderasi pesan-kesan kelulusan.
+                  </p>
+                </Link>
+              )}
 
-            <Link
-              href="/dashboard/alumni"
-              className="group rounded-lg border border-border bg-surface p-4 transition-all hover:border-accent hover:shadow-xs"
-            >
-              <div className="rounded-md bg-accent/10 p-2 text-accent-text group-hover:bg-accent group-hover:text-accent-foreground transition-colors w-fit">
-                <UserCheck className="size-4.5" />
-              </div>
-              <h3 className="mt-3 font-display text-sm font-semibold text-foreground group-hover:text-accent-text transition-colors">
-                Testimoni Alumni
-              </h3>
-              <p className="mt-1 text-xs text-muted line-clamp-2">
-                Kelola pesan, kutipan inspiratif, dan profil alumni yang telah berkiprah di
-                industri.
-              </p>
-            </Link>
+              {canAccessAlumni && (
+                <Link
+                  href="/dashboard/alumni"
+                  className="group rounded-lg border border-border bg-surface p-4 transition-all hover:border-accent hover:shadow-xs"
+                >
+                  <div className="rounded-md bg-accent/10 p-2 text-accent-text group-hover:bg-accent group-hover:text-accent-foreground transition-colors w-fit">
+                    <UserCheck className="size-4.5" />
+                  </div>
+                  <h3 className="mt-3 font-display text-sm font-semibold text-foreground group-hover:text-accent-text transition-colors">
+                    Testimoni Alumni
+                  </h3>
+                  <p className="mt-1 text-xs text-muted line-clamp-2">
+                    Kelola pesan, kutipan inspiratif, dan profil alumni yang telah berkiprah di
+                    industri.
+                  </p>
+                </Link>
+              )}
+            </div>
           </div>
-        </div>
+        )}
       </section>
     </div>
   );

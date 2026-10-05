@@ -20,7 +20,7 @@ import {
  * bukan siswa dan tidak seharusnya "mengumpulkan" tugas).
  */
 export async function getAllAssignments(): Promise<Assignment[]> {
-  await requireStaffRole(["super_admin", "wali_kelas"]);
+  await requireStaffRole(["super_admin", "wali_kelas", "pengurus"]);
   return db.select().from(assignments).orderBy(desc(assignments.dueDate));
 }
 
@@ -81,7 +81,7 @@ export interface AttendanceEntryRow {
  * bukan diam-diam ditulis "hadir" sebelum staf benar-benar menyimpan.
  */
 export async function getAttendanceEntrySheet(date: string): Promise<AttendanceEntryRow[]> {
-  await requireStaffRole(["super_admin", "wali_kelas"]);
+  await requireStaffRole(["super_admin", "wali_kelas", "pengurus"]);
 
   const [students, existing] = await Promise.all([
     db

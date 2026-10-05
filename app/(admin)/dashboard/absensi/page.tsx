@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { BulkAttendanceEntryTable } from "@/components/admin/bulk-attendance-entry-table";
 
 export const metadata: Metadata = {
-  title: "Entry Absensi — Dashboard",
+  title: "Entry Absensi | Dashboard",
   robots: { index: false, follow: false },
 };
 
@@ -17,7 +17,7 @@ export default function AdminAbsensiPage() {
           Entry Absensi Massal
         </h1>
         <p className="mt-2 max-w-2xl text-muted text-sm">
-          Pilih tanggal — seluruh siswa default "Hadir", tinggal ubah baris yang tidak hadir lalu
+          Pilih tanggal: seluruh siswa default "Hadir", tinggal ubah baris yang tidak hadir lalu
           simpan sekali.
         </p>
       </header>

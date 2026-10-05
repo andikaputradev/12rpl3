@@ -5,8 +5,52 @@ import { usePathname } from "next/navigation";
 import { adminModules } from "@/lib/config/site";
 import { cn } from "@/lib/utils";
 
-export function AdminNav() {
+interface AdminNavProps {
+  userRole?: string | null;
+  jabatan?: string | null;
+}
+
+export function AdminNav({ userRole = "super_admin", jabatan }: AdminNavProps) {
   const pathname = usePathname();
+
+  const jLower = (jabatan ?? "").toLowerCase();
+
+  const visibleModules = adminModules.filter((item) => {
+    if (userRole === "super_admin") return true;
+
+    if (userRole === "wali_kelas") {
+      // Wali Kelas can access all academic & class modules except system user role management & system audit log
+      if (item.href === "/dashboard/pengguna" || item.href === "/dashboard/audit-log") {
+        return false;
+      }
+      return true;
+    }
+
+    if (userRole === "pengurus") {
+      if (jLower.includes("bendahara")) {
+        return ["/dashboard", "/dashboard/kas", "/dashboard/pengumuman"].includes(item.href);
+      }
+      if (jLower.includes("sekretaris")) {
+        return [
+          "/dashboard",
+          "/dashboard/absensi",
+          "/dashboard/jadwal",
+          "/dashboard/tugas",
+          "/dashboard/pengumuman",
+        ].includes(item.href);
+      }
+      // Ketua Kelas / Wakil Ketua / other pengurus
+      const restrictedForKetua = [
+        "/dashboard/pengguna",
+        "/dashboard/audit-log",
+        "/dashboard/nilai",
+        "/dashboard/profil",
+      ];
+      return !restrictedForKetua.includes(item.href);
+    }
+
+    return item.href === "/dashboard";
+  });
 
   return (
     <div className="border-b border-border bg-surface/90 backdrop-blur-sm sticky top-16 z-30">
@@ -14,7 +58,7 @@ export function AdminNav() {
         className="container-portal flex gap-1.5 overflow-x-auto py-2.5 scrollbar-none"
         aria-label="Navigasi dashboard"
       >
-        {adminModules.map((item) => {
+        {visibleModules.map((item) => {
           const isActive =
             item.href === "/dashboard" ? pathname === "/dashboard" : pathname.startsWith(item.href);
 

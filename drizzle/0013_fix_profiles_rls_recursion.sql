@@ -51,25 +51,26 @@
 -- vs fungsi STABLE yang di-cache per statement) dan sebaiknya diseragamkan
 -- saat Fase 6 (audit keamanan dan tuning performa).
 
-drop policy "profiles_select_own_or_public_or_staff" on "public"."profiles";
+drop policy if exists "profiles_select_own_or_public_or_staff" on "public"."profiles";
 create policy "profiles_select_own_or_public_or_staff" on "public"."profiles" for select to authenticated using (
   (select auth.uid()) = id
   or is_public = true
-  or public.is_staff((select auth.uid()), array['super_admin', 'wali_kelas', 'pengurus'])
+  or is_staff()
 );
 --> statement-breakpoint
 
-drop policy "profiles_update_own_or_staff" on "public"."profiles";
+drop policy if exists "profiles_update_own_or_staff" on "public"."profiles";
 create policy "profiles_update_own_or_staff" on "public"."profiles" for update to authenticated using (
   (select auth.uid()) = id
-  or public.is_staff((select auth.uid()), array['super_admin', 'wali_kelas'])
+  or is_academic_staff()
 ) with check (
   (select auth.uid()) = id
-  or public.is_staff((select auth.uid()), array['super_admin', 'wali_kelas'])
+  or is_academic_staff()
 );
 --> statement-breakpoint
 
-drop policy "audit_log_select_staff_only" on "public"."audit_log";
-create policy "audit_log_select_staff_only" on "public"."audit_log" for select to authenticated using (
-  public.is_staff((select auth.uid()), array['super_admin', 'wali_kelas', 'pengurus'])
+drop policy if exists "audit_log_select_staff_only" on "public"."audit_log";
+drop policy if exists "audit_log_select_super_admin_only" on "public"."audit_log";
+create policy "audit_log_select_super_admin_only" on "public"."audit_log" for select to authenticated using (
+  is_super_admin()
 );

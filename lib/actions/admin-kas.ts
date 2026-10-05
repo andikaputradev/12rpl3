@@ -38,7 +38,7 @@ export async function updateKasSettings(
 ): Promise<ActionState> {
   let auth: Awaited<ReturnType<typeof requireStaffRole>>;
   try {
-    auth = await requireStaffRole(["super_admin", "wali_kelas"]);
+    auth = await requireStaffRole(["super_admin", "wali_kelas", "pengurus"]);
   } catch {
     return { error: "Anda tidak berwenang mengubah pengaturan kas digital." };
   }

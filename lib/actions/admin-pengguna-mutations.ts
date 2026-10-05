@@ -103,3 +103,133 @@ export async function updateUserAcademicInfo(
   revalidatePath("/direktori");
   return { success: true };
 }
+
+export async function createNewUser(data: {
+  fullName: string;
+  email: string;
+  password?: string;
+  role: "super_admin" | "wali_kelas" | "pengurus" | "siswa";
+  jabatan?: string | null;
+  nis?: string | null;
+  absenNumber?: number | null;
+  gender?: "L" | "P" | null;
+}): Promise<ActionState & { userId?: string }> {
+  let auth: Awaited<ReturnType<typeof requireStaffRole>>;
+  try {
+    auth = await requireStaffRole(["super_admin"]);
+  } catch {
+    return { error: "Hanya Super Admin yang berwenang menambah akun pengguna." };
+  }
+
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  if (!supabaseUrl || !serviceRoleKey) {
+    return { error: "Konfigurasi server otentikasi tidak lengkap." };
+  }
+
+  const { createClient } = await import("@supabase/supabase-js");
+  const adminClient = createClient(supabaseUrl, serviceRoleKey);
+  const password = data.password && data.password.length >= 8 ? data.password : "Password123#";
+
+  const { data: authData, error: authError } = await adminClient.auth.admin.createUser({
+    email: data.email.trim(),
+    password,
+    email_confirm: true,
+    user_metadata: { full_name: data.fullName.trim() },
+  });
+
+  if (authError || !authData.user) {
+    return { error: authError?.message ?? "Gagal membuat akun otentikasi." };
+  }
+
+  const userId = authData.user.id;
+  const { slugify } = await import("@/lib/utils");
+  const slug = slugify(data.fullName.trim());
+  const defaultAvatar =
+    "https://png.pngtree.com/png-vector/20250818/ourmid/pngtree-whatsapp-default-profile-photo-vector-png-image_17034397.webp";
+
+  await db
+    .insert(profiles)
+    .values({
+      id: userId,
+      fullName: data.fullName.trim(),
+      nis: data.nis?.trim() || null,
+      absenNumber: data.absenNumber ?? null,
+      role: data.role,
+      jabatan: data.jabatan?.trim() || null,
+      gender: data.gender ?? null,
+      slug,
+      avatarUrl: defaultAvatar,
+      isPublic: true,
+      displayOrder: data.absenNumber ?? 50,
+    })
+    .onConflictDoUpdate({
+      target: profiles.id,
+      set: {
+        fullName: data.fullName.trim(),
+        nis: data.nis?.trim() || null,
+        absenNumber: data.absenNumber ?? null,
+        role: data.role,
+        jabatan: data.jabatan?.trim() || null,
+        gender: data.gender ?? null,
+        slug,
+        avatarUrl: defaultAvatar,
+        isPublic: true,
+        displayOrder: data.absenNumber ?? 50,
+      },
+    });
+
+  await db.insert(auditLog).values({
+    actorId: auth.userId,
+    action: "CREATE_USER",
+    tableName: "profiles",
+    recordId: userId,
+    before: null,
+    after: { ...data, id: userId },
+  });
+
+  revalidatePath("/dashboard/pengguna");
+  revalidatePath("/direktori");
+  return { success: true, userId };
+}
+
+export async function deleteUser(userId: string): Promise<ActionState> {
+  let auth: Awaited<ReturnType<typeof requireStaffRole>>;
+  try {
+    auth = await requireStaffRole(["super_admin"]);
+  } catch {
+    return { error: "Hanya Super Admin yang berwenang menghapus pengguna." };
+  }
+
+  if (auth.userId === userId) {
+    return { error: "Anda tidak dapat menghapus akun Anda sendiri." };
+  }
+
+  const [existing] = await db.select().from(profiles).where(eq(profiles.id, userId)).limit(1);
+  if (!existing) {
+    return { error: "Pengguna tidak ditemukan." };
+  }
+
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  if (supabaseUrl && serviceRoleKey) {
+    const { createClient } = await import("@supabase/supabase-js");
+    const adminClient = createClient(supabaseUrl, serviceRoleKey);
+    await adminClient.auth.admin.deleteUser(userId);
+  }
+
+  await db.delete(profiles).where(eq(profiles.id, userId));
+
+  await db.insert(auditLog).values({
+    actorId: auth.userId,
+    action: "DELETE_USER",
+    tableName: "profiles",
+    recordId: userId,
+    before: existing,
+    after: null,
+  });
+
+  revalidatePath("/dashboard/pengguna");
+  revalidatePath("/direktori");
+  return { success: true };
+}

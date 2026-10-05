@@ -4,7 +4,6 @@ import { ArrowRight, Images } from "lucide-react";
 import { motion } from "motion/react";
 import Image from "next/image";
 import Link from "next/link";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { siteConfig } from "@/lib/config/site";
 import type { AcademicEvent, ClassProfile } from "@/lib/db/schema";
@@ -41,10 +40,6 @@ export function Hero({ classProfile, featuredEvent }: HeroProps) {
         className="object-cover"
       />
       <div className="absolute inset-0 bg-background/85 dark:bg-background/60" aria-hidden="true" />
-      <div
-        className="pointer-events-none absolute inset-x-0 top-1/3 h-64 bg-[radial-gradient(ellipse_at_center,var(--color-accent)_0%,transparent_70%)] opacity-[0.07]"
-        aria-hidden="true"
-      />
 
       <motion.div
         variants={container}
@@ -74,9 +69,6 @@ export function Hero({ classProfile, featuredEvent }: HeroProps) {
             <Link href="/galeri" className="inline-flex items-center gap-2">
               <Images className="size-4" />
               Jelajahi Galeri
-              <Badge variant="outline" className="ml-1">
-                Segera Hadir
-              </Badge>
             </Link>
           </Button>
         </motion.div>

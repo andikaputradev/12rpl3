@@ -25,16 +25,10 @@ CREATE POLICY "class_profile_update_staff"
 ON "public"."class_profile" FOR UPDATE
 TO authenticated
 USING (
-  EXISTS (
-    SELECT 1 FROM "public"."profiles" p
-    WHERE p.id = (select auth.uid()) AND p.role IN ('super_admin', 'wali_kelas')
-  )
+  is_academic_staff()
 )
 WITH CHECK (
-  EXISTS (
-    SELECT 1 FROM "public"."profiles" p
-    WHERE p.id = (select auth.uid()) AND p.role IN ('super_admin', 'wali_kelas')
-  )
+  is_academic_staff()
 );
 --> statement-breakpoint
 
@@ -43,10 +37,7 @@ ON "public"."beranda_highlights" FOR SELECT
 TO anon, authenticated
 USING (
   is_active = true
-  OR EXISTS (
-    SELECT 1 FROM "public"."profiles" p
-    WHERE p.id = (select auth.uid()) AND p.role IN ('super_admin', 'wali_kelas', 'pengurus')
-  )
+  OR is_staff()
 );
 --> statement-breakpoint
 
@@ -54,10 +45,7 @@ CREATE POLICY "highlights_insert_staff"
 ON "public"."beranda_highlights" FOR INSERT
 TO authenticated
 WITH CHECK (
-  EXISTS (
-    SELECT 1 FROM "public"."profiles" p
-    WHERE p.id = (select auth.uid()) AND p.role IN ('super_admin', 'wali_kelas', 'pengurus')
-  )
+  is_staff()
 );
 --> statement-breakpoint
 
@@ -65,16 +53,10 @@ CREATE POLICY "highlights_update_staff"
 ON "public"."beranda_highlights" FOR UPDATE
 TO authenticated
 USING (
-  EXISTS (
-    SELECT 1 FROM "public"."profiles" p
-    WHERE p.id = (select auth.uid()) AND p.role IN ('super_admin', 'wali_kelas', 'pengurus')
-  )
+  is_staff()
 )
 WITH CHECK (
-  EXISTS (
-    SELECT 1 FROM "public"."profiles" p
-    WHERE p.id = (select auth.uid()) AND p.role IN ('super_admin', 'wali_kelas', 'pengurus')
-  )
+  is_staff()
 );
 --> statement-breakpoint
 
@@ -82,10 +64,7 @@ CREATE POLICY "highlights_delete_staff"
 ON "public"."beranda_highlights" FOR DELETE
 TO authenticated
 USING (
-  EXISTS (
-    SELECT 1 FROM "public"."profiles" p
-    WHERE p.id = (select auth.uid()) AND p.role IN ('super_admin', 'wali_kelas', 'pengurus')
-  )
+  is_staff()
 );
 --> statement-breakpoint
 
@@ -99,10 +78,7 @@ CREATE POLICY "events_insert_staff"
 ON "public"."academic_events" FOR INSERT
 TO authenticated
 WITH CHECK (
-  EXISTS (
-    SELECT 1 FROM "public"."profiles" p
-    WHERE p.id = (select auth.uid()) AND p.role IN ('super_admin', 'wali_kelas')
-  )
+  is_academic_staff()
 );
 --> statement-breakpoint
 
@@ -110,16 +86,10 @@ CREATE POLICY "events_update_staff"
 ON "public"."academic_events" FOR UPDATE
 TO authenticated
 USING (
-  EXISTS (
-    SELECT 1 FROM "public"."profiles" p
-    WHERE p.id = (select auth.uid()) AND p.role IN ('super_admin', 'wali_kelas')
-  )
+  is_academic_staff()
 )
 WITH CHECK (
-  EXISTS (
-    SELECT 1 FROM "public"."profiles" p
-    WHERE p.id = (select auth.uid()) AND p.role IN ('super_admin', 'wali_kelas')
-  )
+  is_academic_staff()
 );
 --> statement-breakpoint
 
@@ -127,10 +97,7 @@ CREATE POLICY "events_delete_staff"
 ON "public"."academic_events" FOR DELETE
 TO authenticated
 USING (
-  EXISTS (
-    SELECT 1 FROM "public"."profiles" p
-    WHERE p.id = (select auth.uid()) AND p.role IN ('super_admin', 'wali_kelas')
-  )
+  is_academic_staff()
 );
 --> statement-breakpoint
 

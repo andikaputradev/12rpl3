@@ -1,6 +1,7 @@
 import "server-only";
 import { Ratelimit } from "@upstash/ratelimit";
 import { Redis } from "@upstash/redis";
+import { RATE_LIMITS } from "@/lib/config/rate-limits";
 import { getUpstashEnv } from "@/lib/env";
 
 let redisClient: Redis | null = null;
@@ -21,8 +22,8 @@ function getAuthLimiter(): Ratelimit {
   if (!authLimiter) {
     authLimiter = new Ratelimit({
       redis: getRedisClient(),
-      limiter: Ratelimit.slidingWindow(5, "5 m"),
-      prefix: "ratelimit:auth",
+      limiter: Ratelimit.slidingWindow(RATE_LIMITS.auth.maxRequests, RATE_LIMITS.auth.window),
+      prefix: RATE_LIMITS.auth.prefix,
       analytics: true,
     });
   }
@@ -34,8 +35,11 @@ function getPublicWriteLimiter(): Ratelimit {
   if (!publicWriteLimiter) {
     publicWriteLimiter = new Ratelimit({
       redis: getRedisClient(),
-      limiter: Ratelimit.slidingWindow(10, "10 m"),
-      prefix: "ratelimit:write",
+      limiter: Ratelimit.slidingWindow(
+        RATE_LIMITS.publicWrite.maxRequests,
+        RATE_LIMITS.publicWrite.window,
+      ),
+      prefix: RATE_LIMITS.publicWrite.prefix,
       analytics: true,
     });
   }
@@ -47,8 +51,11 @@ function getGalleryUploadLimiter(): Ratelimit {
   if (!galleryUploadLimiter) {
     galleryUploadLimiter = new Ratelimit({
       redis: getRedisClient(),
-      limiter: Ratelimit.slidingWindow(10, "24 h"),
-      prefix: "ratelimit:gallery-upload",
+      limiter: Ratelimit.slidingWindow(
+        RATE_LIMITS.galleryUpload.maxRequests,
+        RATE_LIMITS.galleryUpload.window,
+      ),
+      prefix: RATE_LIMITS.galleryUpload.prefix,
       analytics: true,
     });
   }
@@ -60,8 +67,11 @@ function getAssignmentSubmissionLimiter(): Ratelimit {
   if (!assignmentSubmissionLimiter) {
     assignmentSubmissionLimiter = new Ratelimit({
       redis: getRedisClient(),
-      limiter: Ratelimit.slidingWindow(20, "24 h"),
-      prefix: "ratelimit:assignment-submit",
+      limiter: Ratelimit.slidingWindow(
+        RATE_LIMITS.assignmentSubmission.maxRequests,
+        RATE_LIMITS.assignmentSubmission.window,
+      ),
+      prefix: RATE_LIMITS.assignmentSubmission.prefix,
       analytics: true,
     });
   }
@@ -73,8 +83,11 @@ function getPortfolioSubmissionLimiter(): Ratelimit {
   if (!portfolioSubmissionLimiter) {
     portfolioSubmissionLimiter = new Ratelimit({
       redis: getRedisClient(),
-      limiter: Ratelimit.slidingWindow(5, "24 h"),
-      prefix: "ratelimit:portfolio-submit",
+      limiter: Ratelimit.slidingWindow(
+        RATE_LIMITS.portfolioSubmission.maxRequests,
+        RATE_LIMITS.portfolioSubmission.window,
+      ),
+      prefix: RATE_LIMITS.portfolioSubmission.prefix,
       analytics: true,
     });
   }
@@ -86,8 +99,11 @@ function getBlogPostLimiter(): Ratelimit {
   if (!blogPostLimiter) {
     blogPostLimiter = new Ratelimit({
       redis: getRedisClient(),
-      limiter: Ratelimit.slidingWindow(10, "24 h"),
-      prefix: "ratelimit:blog-post",
+      limiter: Ratelimit.slidingWindow(
+        RATE_LIMITS.blogPost.maxRequests,
+        RATE_LIMITS.blogPost.window,
+      ),
+      prefix: RATE_LIMITS.blogPost.prefix,
       analytics: true,
     });
   }
@@ -99,8 +115,11 @@ function getCommentLimiter(): Ratelimit {
   if (!commentLimiter) {
     commentLimiter = new Ratelimit({
       redis: getRedisClient(),
-      limiter: Ratelimit.slidingWindow(20, "10 m"),
-      prefix: "ratelimit:blog-comment",
+      limiter: Ratelimit.slidingWindow(
+        RATE_LIMITS.blogComment.maxRequests,
+        RATE_LIMITS.blogComment.window,
+      ),
+      prefix: RATE_LIMITS.blogComment.prefix,
       analytics: true,
     });
   }
@@ -112,12 +131,47 @@ function getGuestbookIpLimiter(): Ratelimit {
   if (!guestbookIpLimiter) {
     guestbookIpLimiter = new Ratelimit({
       redis: getRedisClient(),
-      limiter: Ratelimit.slidingWindow(5, "1 h"),
-      prefix: "ratelimit:guestbook",
+      limiter: Ratelimit.slidingWindow(
+        RATE_LIMITS.guestbookSubmission.maxRequests,
+        RATE_LIMITS.guestbookSubmission.window,
+      ),
+      prefix: RATE_LIMITS.guestbookSubmission.prefix,
       analytics: true,
     });
   }
   return guestbookIpLimiter;
+}
+
+let aspirationLimiter: Ratelimit | null = null;
+function getAspirationLimiter(): Ratelimit {
+  if (!aspirationLimiter) {
+    aspirationLimiter = new Ratelimit({
+      redis: getRedisClient(),
+      limiter: Ratelimit.slidingWindow(
+        RATE_LIMITS.aspirationSubmission.maxRequests,
+        RATE_LIMITS.aspirationSubmission.window,
+      ),
+      prefix: RATE_LIMITS.aspirationSubmission.prefix,
+      analytics: true,
+    });
+  }
+  return aspirationLimiter;
+}
+
+let pesanKesanLimiter: Ratelimit | null = null;
+function getPesanKesanLimiter(): Ratelimit {
+  if (!pesanKesanLimiter) {
+    pesanKesanLimiter = new Ratelimit({
+      redis: getRedisClient(),
+      limiter: Ratelimit.slidingWindow(
+        RATE_LIMITS.pesanKesanSubmission.maxRequests,
+        RATE_LIMITS.pesanKesanSubmission.window,
+      ),
+      prefix: RATE_LIMITS.pesanKesanSubmission.prefix,
+      analytics: true,
+    });
+  }
+  return pesanKesanLimiter;
 }
 
 export type RateLimitOutcome = { limited: boolean; remaining?: number };
@@ -151,35 +205,42 @@ export function limitGalleryUpload(identifier: string) {
   return limitWith(getGalleryUploadLimiter, identifier);
 }
 
-/** Identifier: userId siswa, BUKAN alamat IP — brief Bagian 9 secara eksplisit menetapkan batas "per siswa", bukan per jaringan. */
+/** Identifier: userId siswa, BUKAN alamat IP. */
 export function limitAssignmentSubmission(studentId: string) {
   return limitWith(getAssignmentSubmissionLimiter, studentId);
 }
 
-/** Fase 4 — mencegah spam antrean moderasi portofolio, per siswa. */
+/** Fase 4: Mencegah spam antrean moderasi portofolio, per siswa. */
 export function limitPortfolioSubmission(studentId: string) {
   return limitWith(getPortfolioSubmissionLimiter, studentId);
 }
 
-/** Fase 4 — mencegah spam draf/pengajuan artikel blog, per penulis. */
+/** Fase 4: Mencegah spam draf/pengajuan artikel blog, per penulis. */
 export function limitBlogPost(authorId: string) {
   return limitWith(getBlogPostLimiter, authorId);
 }
 
-/** Fase 4 — mencegah spam komentar, jendela pendek per pengguna. */
+/** Fase 4: Mencegah spam komentar, jendela pendek per pengguna. */
 export function limitComment(userId: string) {
   return limitWith(getCommentLimiter, userId);
 }
 
 /**
- * Fase 5: Bagian 9 prompt: maksimum lima kiriman per IP per jam. SATU-
- * SATUNYA rate limiter ber-identifier alamat IP di seluruh proyek (seluruh
- * limiter lain di atas ber-identifier userId) karena buku tamu adalah satu-
- * satunya fitur tanpa akun; identifier userId tidak tersedia untuk pengunjung
- * anonim.
+ * Fase 5: Maksimum lima kiriman per IP per jam.
+ * Satu-satunya rate limiter ber-identifier alamat IP di seluruh proyek interaksi.
  */
 export function limitGuestbookSubmission(ipAddress: string) {
   return limitWith(getGuestbookIpLimiter, ipAddress);
+}
+
+/** Fase 5: Batas aspirasi per siswa per 24 jam. */
+export function limitAspirationSubmission(studentId: string) {
+  return limitWith(getAspirationLimiter, studentId);
+}
+
+/** Fase 5: Batas pesan-kesan per siswa per 24 jam. */
+export function limitPesanKesanSubmission(studentId: string) {
+  return limitWith(getPesanKesanLimiter, studentId);
 }
 
 export function getClientIp(headers: Headers): string {

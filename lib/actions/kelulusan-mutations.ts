@@ -5,6 +5,7 @@ import { revalidatePath } from "next/cache";
 import { AuthorizationError, requireAuthenticatedUser } from "@/lib/actions/guard";
 import { db } from "@/lib/db";
 import { auditLog, pesanKesan, profiles } from "@/lib/db/schema";
+import { limitPesanKesanSubmission } from "@/lib/rate-limit";
 import { sanitizeUserText } from "@/lib/utils";
 import { resolveAnonymousContentStatus } from "@/lib/utils/moderation";
 import { pesanKesanSchema } from "@/lib/validations/kelulusan";
@@ -43,6 +44,11 @@ export async function submitPesanKesan(
   } catch (error) {
     if (error instanceof AuthorizationError) return { error: error.message };
     throw error;
+  }
+
+  const { limited } = await limitPesanKesanSubmission(auth.userId);
+  if (limited) {
+    return { error: "Batas pengiriman pesan-kesan harian tercapai. Coba lagi dalam 24 jam." };
   }
 
   const parsed = pesanKesanSchema.safeParse({

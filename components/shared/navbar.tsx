@@ -67,19 +67,103 @@ export function Navbar({ isAuthenticated, userRole }: NavbarProps) {
           <span>{siteConfig.siteName}</span>
         </Link>
 
-        <nav className="hidden items-center gap-1 lg:flex" aria-label="Navigasi utama">
-          {navModules.slice(0, 6).map((item) => (
-            <Link
-              key={item.href}
-              href={item.href}
-              className={cn(
-                "cursor-pointer rounded-md px-3 py-2 text-sm text-muted transition-colors hover:bg-surface hover:text-foreground",
-                pathname === item.href && "bg-surface text-foreground",
-              )}
-            >
-              {item.label}
-            </Link>
-          ))}
+        <nav className="hidden items-center gap-1 xl:gap-1.5 lg:flex" aria-label="Navigasi utama">
+          <Link
+            href="/profil"
+            className={cn(
+              "cursor-pointer rounded-md px-2.5 py-1.5 text-sm text-muted transition-colors hover:bg-surface hover:text-foreground",
+              pathname === "/profil" && "bg-surface font-medium text-foreground",
+            )}
+          >
+            Profil
+          </Link>
+          <Link
+            href="/direktori"
+            className={cn(
+              "cursor-pointer rounded-md px-2.5 py-1.5 text-sm text-muted transition-colors hover:bg-surface hover:text-foreground",
+              pathname.startsWith("/direktori") && "bg-surface font-medium text-foreground",
+            )}
+          >
+            Direktori
+          </Link>
+          <Link
+            href="/jadwal"
+            className={cn(
+              "cursor-pointer rounded-md px-2.5 py-1.5 text-sm text-muted transition-colors hover:bg-surface hover:text-foreground",
+              pathname.startsWith("/jadwal") && "bg-surface font-medium text-foreground",
+            )}
+          >
+            Jadwal
+          </Link>
+          <Link
+            href="/galeri"
+            className={cn(
+              "cursor-pointer rounded-md px-2.5 py-1.5 text-sm text-muted transition-colors hover:bg-surface hover:text-foreground",
+              pathname.startsWith("/galeri") && "bg-surface font-medium text-foreground",
+            )}
+          >
+            Galeri
+          </Link>
+          <Link
+            href="/prestasi"
+            className={cn(
+              "cursor-pointer rounded-md px-2.5 py-1.5 text-sm text-muted transition-colors hover:bg-surface hover:text-foreground",
+              pathname.startsWith("/prestasi") && "bg-surface font-medium text-foreground",
+            )}
+          >
+            Prestasi
+          </Link>
+          <Link
+            href="/blog"
+            className={cn(
+              "cursor-pointer rounded-md px-2.5 py-1.5 text-sm text-muted transition-colors hover:bg-surface hover:text-foreground",
+              pathname.startsWith("/blog") && "bg-surface font-medium text-foreground",
+            )}
+          >
+            Blog
+          </Link>
+
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <button
+                type="button"
+                className={cn(
+                  "flex items-center gap-1 cursor-pointer rounded-md px-2.5 py-1.5 text-sm text-muted transition-colors hover:bg-surface hover:text-foreground",
+                  pathname.startsWith("/interaksi") && "bg-surface font-medium text-foreground",
+                )}
+              >
+                <span>Interaksi</span>
+                <ChevronDown className="size-3.5 opacity-70" />
+              </button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="start" className="w-48">
+              <DropdownMenuItem asChild>
+                <Link href="/interaksi/buku-tamu" className="cursor-pointer">
+                  Buku Tamu
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <Link href="/interaksi/aspirasi" className="cursor-pointer">
+                  Papan Aspirasi
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <Link href="/interaksi/polling" className="cursor-pointer">
+                  Polling Kelas
+                </Link>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+
+          <Link
+            href="/kelulusan"
+            className={cn(
+              "cursor-pointer rounded-md px-2.5 py-1.5 text-sm text-muted transition-colors hover:bg-surface hover:text-foreground",
+              pathname.startsWith("/kelulusan") && "bg-surface font-medium text-foreground",
+            )}
+          >
+            Kelulusan
+          </Link>
         </nav>
 
         <div className="flex items-center gap-2">

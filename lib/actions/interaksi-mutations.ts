@@ -14,7 +14,7 @@ import {
   polls,
   pollVotes,
 } from "@/lib/db/schema";
-import { getClientIp, limitGuestbookSubmission } from "@/lib/rate-limit";
+import { getClientIp, limitAspirationSubmission, limitGuestbookSubmission } from "@/lib/rate-limit";
 import { verifyTurnstileToken } from "@/lib/turnstile/verify";
 import { sanitizeUserText } from "@/lib/utils";
 import { resolveAnonymousContentStatus } from "@/lib/utils/moderation";
@@ -133,6 +133,11 @@ export async function submitAspiration(
   } catch (error) {
     if (error instanceof AuthorizationError) return { error: error.message };
     throw error;
+  }
+
+  const { limited } = await limitAspirationSubmission(auth.userId);
+  if (limited) {
+    return { error: "Batas pengiriman aspirasi harian tercapai. Coba lagi dalam 24 jam." };
   }
 
   const parsed = aspirationSchema.safeParse({

@@ -105,7 +105,7 @@ alter table "guestbook_entries" enable row level security;
 alter table "guestbook_entries" force row level security;
 create policy "guestbook_select_approved_or_staff" on "guestbook_entries" for select to anon, authenticated using (
   status = 'approved'
-  or public.is_staff((select auth.uid()), array['super_admin', 'wali_kelas', 'pengurus'])
+  or is_staff()
 );
 -- SATU-SATUNYA policy insert "to anon, authenticated" di seluruh proyek:
 -- lihat Asumsi Kunci #2 prompt Fase 5 dan Bagian 9 (tiga lapis pertahanan
@@ -119,7 +119,7 @@ create policy "guestbook_insert_anyone" on "guestbook_entries" for insert to ano
   and char_length(btrim(message)) between 5 and 500
 );
 create policy "guestbook_mutate_staff" on "guestbook_entries" for update to authenticated using (
-  public.is_staff((select auth.uid()), array['super_admin', 'wali_kelas', 'pengurus'])
+  is_staff()
 );
 revoke select on "guestbook_entries" from anon, authenticated;
 grant select ("id", "context", "name", "message", "status", "created_at") on "guestbook_entries" to anon, authenticated;
@@ -131,7 +131,7 @@ alter table "aspirations" force row level security;
 create policy "aspirations_select_approved_or_own_or_staff" on "aspirations" for select to authenticated using (
   status = 'approved'
   or author_id = (select auth.uid())
-  or public.is_staff((select auth.uid()), array['super_admin', 'wali_kelas', 'pengurus'])
+  or is_staff()
 );
 create policy "aspirations_insert_authenticated" on "aspirations" for insert to authenticated with check (
   (select auth.uid()) = author_id
@@ -140,7 +140,7 @@ create policy "aspirations_insert_authenticated" on "aspirations" for insert to 
   and char_length(btrim(content)) between 10 and 1000
 );
 create policy "aspirations_mutate_staff" on "aspirations" for update to authenticated using (
-  public.is_staff((select auth.uid()), array['super_admin', 'wali_kelas', 'pengurus'])
+  is_staff()
 );
 revoke select on "aspirations" from anon, authenticated;
 grant select ("id", "content", "is_anonymous", "status", "created_at") on "aspirations" to authenticated;
@@ -150,7 +150,7 @@ alter table "polls" enable row level security;
 alter table "polls" force row level security;
 create policy "polls_select_public" on "polls" for select to anon, authenticated using (true);
 create policy "polls_mutate_staff" on "polls" for all to authenticated using (
-  public.is_staff((select auth.uid()), array['super_admin', 'wali_kelas', 'pengurus'])
+  is_staff()
 );
 --> statement-breakpoint
 
@@ -160,7 +160,7 @@ create policy "poll_options_select_public" on "poll_options" for select to anon,
 -- Celah ditutup (lihat catatan penyesuaian #5 di atas): prompt hanya
 -- menyertakan policy select untuk tabel ini.
 create policy "poll_options_mutate_staff" on "poll_options" for all to authenticated using (
-  public.is_staff((select auth.uid()), array['super_admin', 'wali_kelas', 'pengurus'])
+  is_staff()
 );
 --> statement-breakpoint
 
@@ -171,7 +171,7 @@ alter table "poll_votes" enable row level security;
 alter table "poll_votes" force row level security;
 create policy "votes_select_own_or_staff" on "poll_votes" for select to authenticated using (
   voter_id = (select auth.uid())
-  or public.is_staff((select auth.uid()), array['super_admin', 'wali_kelas', 'pengurus'])
+  or is_staff()
 );
 create policy "votes_insert_own" on "poll_votes" for insert to authenticated with check (
   (select auth.uid()) = voter_id
@@ -257,7 +257,7 @@ create policy "pesan_kesan_select_visible" on "pesan_kesan" for select to anon, 
   status = 'approved'
   or to_student_id = (select auth.uid())
   or from_student_id = (select auth.uid())
-  or public.is_staff((select auth.uid()), array['super_admin', 'wali_kelas', 'pengurus'])
+  or is_staff()
 );
 create policy "pesan_kesan_insert_own" on "pesan_kesan" for insert to authenticated with check (
   (select auth.uid()) = from_student_id
@@ -267,7 +267,7 @@ create policy "pesan_kesan_insert_own" on "pesan_kesan" for insert to authentica
   and char_length(btrim(message)) between 10 and 1000
 );
 create policy "pesan_kesan_mutate_staff" on "pesan_kesan" for update to authenticated using (
-  public.is_staff((select auth.uid()), array['super_admin', 'wali_kelas', 'pengurus'])
+  is_staff()
 );
 revoke select on "pesan_kesan" from anon, authenticated;
 grant select ("id", "to_student_id", "message", "is_anonymous", "status", "created_at") on "pesan_kesan" to anon, authenticated;
@@ -280,7 +280,7 @@ create policy "kelulusan_content_select_public" on "kelulusan_content" for selec
 -- penyesuaian #6 di atas, disamakan dengan class_profile_update_staff (0003),
 -- bukan dengan pola moderasi konten tiga-role di atas.
 create policy "kelulusan_content_update_staff" on "kelulusan_content" for update to authenticated using (
-  public.is_staff((select auth.uid()), array['super_admin', 'wali_kelas'])
+  is_academic_staff()
 );
 
 insert into "kelulusan_content" (id) values (1)

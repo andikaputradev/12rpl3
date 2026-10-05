@@ -46,7 +46,11 @@ export function OrgStructureCard({ profile, fallbackLabel, tier }: OrgStructureC
         ) : null}
         <AvatarFallback>{getInitials(profile.fullName)}</AvatarFallback>
       </Avatar>
-      <p className={cn("font-medium", tier === 1 ? "text-base" : "text-sm")}>{profile.fullName}</p>
+      <p
+        className={cn("font-medium break-words leading-snug", tier === 1 ? "text-base" : "text-sm")}
+      >
+        {profile.fullName}
+      </p>
       <p className="font-mono text-[10px] uppercase tracking-[0.08em] text-muted">
         {profile.jabatan ?? fallbackLabel}
       </p>

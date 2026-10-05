@@ -55,6 +55,10 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "randomuser.me",
       },
+      {
+        protocol: "https",
+        hostname: "png.pngtree.com",
+      },
     ],
     formats: ["image/avif", "image/webp"],
   },

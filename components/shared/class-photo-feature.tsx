@@ -26,10 +26,12 @@ export function ClassPhotoFeature({ url }: { url: string | null }) {
           />
         </div>
       ) : (
-        <div className="relative flex aspect-[16/9] w-full flex-col items-center justify-center gap-3 bg-[repeating-linear-gradient(135deg,var(--color-surface)_0px,var(--color-surface)_12px,var(--color-background)_12px,var(--color-background)_24px)] px-6 text-center">
-          <Camera className="size-7 text-muted" aria-hidden="true" />
+        <div className="relative flex aspect-[16/9] w-full flex-col items-center justify-center gap-3 bg-surface/50 px-6 text-center">
+          <div className="flex size-12 items-center justify-center rounded-full bg-border/40 text-muted">
+            <Camera className="size-6" aria-hidden="true" />
+          </div>
           <p className="max-w-xs text-sm text-muted">
-            Foto kelas utama belum diunggah. Wali Kelas/Pengurus dapat menambahkannya lewat
+            Foto kelas utama belum diunggah. Wali Kelas atau Pengurus dapat menambahkannya lewat
             dashboard admin.
           </p>
         </div>

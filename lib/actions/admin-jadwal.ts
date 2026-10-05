@@ -104,7 +104,7 @@ export async function upsertPiketAssignment(
 ): Promise<ActionState> {
   let auth: Awaited<ReturnType<typeof requireStaffRole>>;
   try {
-    auth = await requireStaffRole(["super_admin", "wali_kelas"]);
+    auth = await requireStaffRole(["super_admin", "wali_kelas", "pengurus"]);
   } catch {
     return { error: "Anda tidak berwenang mengubah jadwal piket." };
   }
@@ -166,9 +166,9 @@ export async function createAcademicEvent(
 ): Promise<ActionState> {
   let auth: Awaited<ReturnType<typeof requireStaffRole>>;
   try {
-    auth = await requireStaffRole(["super_admin", "wali_kelas"]);
+    auth = await requireStaffRole(["super_admin", "wali_kelas", "pengurus"]);
   } catch {
-    return { error: "Anda tidak berwenang menambah agenda akademik." };
+    return { error: "Anda tidak berwenang menambah agenda kegiatan." };
   }
 
   const parsed = academicEventSchema.safeParse({

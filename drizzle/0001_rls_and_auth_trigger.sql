@@ -5,6 +5,42 @@ ALTER TABLE "public"."profiles"
   FOREIGN KEY ("id") REFERENCES "auth"."users"("id") ON DELETE CASCADE;
 --> statement-breakpoint
 
+-- Fungsi Otorisasi Tunggal (Fase 6 Refactor Konsolidasi):
+-- SECURITY DEFINER memutus evaluasi RLS melingkar pada tabel profiles.
+-- STABLE agar dapat di-cache per statement oleh perencana kueri Postgres.
+CREATE OR REPLACE FUNCTION "public".auth_role() RETURNS text
+LANGUAGE sql SECURITY DEFINER STABLE
+SET search_path = public
+AS $$ SELECT role::text FROM profiles WHERE id = auth.uid() $$;
+--> statement-breakpoint
+
+CREATE OR REPLACE FUNCTION "public".is_staff() RETURNS boolean
+LANGUAGE sql SECURITY DEFINER STABLE
+SET search_path = public
+AS $$ SELECT auth_role() IN ('super_admin', 'wali_kelas', 'pengurus') $$;
+--> statement-breakpoint
+
+CREATE OR REPLACE FUNCTION "public".is_academic_staff() RETURNS boolean
+LANGUAGE sql SECURITY DEFINER STABLE
+SET search_path = public
+AS $$ SELECT auth_role() IN ('super_admin', 'wali_kelas') $$;
+--> statement-breakpoint
+
+CREATE OR REPLACE FUNCTION "public".is_super_admin() RETURNS boolean
+LANGUAGE sql SECURITY DEFINER STABLE
+SET search_path = public
+AS $$ SELECT auth_role() = 'super_admin' $$;
+--> statement-breakpoint
+
+GRANT EXECUTE ON FUNCTION "public".auth_role() TO anon, authenticated;
+--> statement-breakpoint
+GRANT EXECUTE ON FUNCTION "public".is_staff() TO anon, authenticated;
+--> statement-breakpoint
+GRANT EXECUTE ON FUNCTION "public".is_academic_staff() TO anon, authenticated;
+--> statement-breakpoint
+GRANT EXECUTE ON FUNCTION "public".is_super_admin() TO anon, authenticated;
+--> statement-breakpoint
+
 -- Default deny: RLS aktif di seluruh tabel sejak awal.
 ALTER TABLE "public"."profiles" ENABLE ROW LEVEL SECURITY;
 --> statement-breakpoint
@@ -21,11 +57,7 @@ TO authenticated
 USING (
   (select auth.uid()) = id
   OR is_public = true
-  OR EXISTS (
-    SELECT 1 FROM "public"."profiles" p
-    WHERE p.id = (select auth.uid())
-      AND p.role IN ('super_admin', 'wali_kelas', 'pengurus')
-  )
+  OR is_staff()
 );
 --> statement-breakpoint
 
@@ -34,31 +66,19 @@ ON "public"."profiles" FOR UPDATE
 TO authenticated
 USING (
   (select auth.uid()) = id
-  OR EXISTS (
-    SELECT 1 FROM "public"."profiles" p
-    WHERE p.id = (select auth.uid())
-      AND p.role IN ('super_admin', 'wali_kelas')
-  )
+  OR is_academic_staff()
 )
 WITH CHECK (
   (select auth.uid()) = id
-  OR EXISTS (
-    SELECT 1 FROM "public"."profiles" p
-    WHERE p.id = (select auth.uid())
-      AND p.role IN ('super_admin', 'wali_kelas')
-  )
+  OR is_academic_staff()
 );
 --> statement-breakpoint
 
-CREATE POLICY "audit_log_select_staff_only"
+CREATE POLICY "audit_log_select_super_admin_only"
 ON "public"."audit_log" FOR SELECT
 TO authenticated
 USING (
-  EXISTS (
-    SELECT 1 FROM "public"."profiles" p
-    WHERE p.id = (select auth.uid())
-      AND p.role IN ('super_admin', 'wali_kelas', 'pengurus')
-  )
+  is_super_admin()
 );
 --> statement-breakpoint
 

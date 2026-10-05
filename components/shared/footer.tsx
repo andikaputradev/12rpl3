@@ -12,7 +12,7 @@ export function Footer() {
           <p className="font-display text-base font-semibold">{siteConfig.siteName}</p>
           <p className="max-w-xs text-sm text-muted">{siteConfig.tagline}</p>
           <p data-eyebrow>
-            {siteConfig.schoolName} — {siteConfig.jurusan}
+            {siteConfig.schoolName} • {siteConfig.jurusan}
           </p>
         </div>
 
@@ -53,7 +53,16 @@ export function Footer() {
         <p>
           © {year} {siteConfig.className}, {siteConfig.schoolName}.
         </p>
-        <p className="font-mono uppercase tracking-[0.1em]">Dibangun oleh siswa RPL</p>
+        <div className="flex items-center gap-4">
+          <Link
+            href="/kebijakan-privasi"
+            className="hover:text-foreground underline-offset-4 hover:underline"
+          >
+            Kebijakan Privasi
+          </Link>
+          <span>•</span>
+          <p className="font-mono uppercase tracking-[0.1em]">Dibangun oleh siswa RPL</p>
+        </div>
       </div>
     </footer>
   );

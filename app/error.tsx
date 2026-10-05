@@ -3,6 +3,7 @@
 import { AlertTriangle } from "lucide-react";
 import { useEffect } from "react";
 import { Button } from "@/components/ui/button";
+import { captureException } from "@/lib/monitoring/sentry";
 
 export default function ErrorBoundary({
   error,
@@ -12,9 +13,8 @@ export default function ErrorBoundary({
   reset: () => void;
 }) {
   useEffect(() => {
-    // Detail lengkap hanya di log server/observability; pesan ke pengguna
-    // tetap generik agar tidak membocorkan informasi internal.
-    console.error("[app-error]", error.digest ?? error.message);
+    // Detail lengkap disaring (scrubbed) sebelum dikirim ke observability/Sentry
+    captureException(error);
   }, [error]);
 
   return (

@@ -17,10 +17,7 @@ CREATE POLICY "albums_insert_staff"
 ON "public"."gallery_albums" FOR INSERT
 TO authenticated
 WITH CHECK (
-  EXISTS (
-    SELECT 1 FROM "public"."profiles" p
-    WHERE p.id = (select auth.uid()) AND p.role IN ('super_admin', 'wali_kelas', 'pengurus')
-  )
+  is_staff()
 );
 --> statement-breakpoint
 
@@ -28,16 +25,10 @@ CREATE POLICY "albums_update_staff"
 ON "public"."gallery_albums" FOR UPDATE
 TO authenticated
 USING (
-  EXISTS (
-    SELECT 1 FROM "public"."profiles" p
-    WHERE p.id = (select auth.uid()) AND p.role IN ('super_admin', 'wali_kelas', 'pengurus')
-  )
+  is_staff()
 )
 WITH CHECK (
-  EXISTS (
-    SELECT 1 FROM "public"."profiles" p
-    WHERE p.id = (select auth.uid()) AND p.role IN ('super_admin', 'wali_kelas', 'pengurus')
-  )
+  is_staff()
 );
 --> statement-breakpoint
 
@@ -45,10 +36,7 @@ CREATE POLICY "albums_delete_staff"
 ON "public"."gallery_albums" FOR DELETE
 TO authenticated
 USING (
-  EXISTS (
-    SELECT 1 FROM "public"."profiles" p
-    WHERE p.id = (select auth.uid()) AND p.role IN ('super_admin', 'wali_kelas', 'pengurus')
-  )
+  is_staff()
 );
 --> statement-breakpoint
 
@@ -58,10 +46,7 @@ TO authenticated
 USING (
   status = 'approved'
   OR uploaded_by = (select auth.uid())
-  OR EXISTS (
-    SELECT 1 FROM "public"."profiles" p
-    WHERE p.id = (select auth.uid()) AND p.role IN ('super_admin', 'wali_kelas', 'pengurus')
-  )
+  OR is_staff()
 );
 --> statement-breakpoint
 
@@ -88,16 +73,10 @@ CREATE POLICY "items_update_staff_only"
 ON "public"."gallery_items" FOR UPDATE
 TO authenticated
 USING (
-  EXISTS (
-    SELECT 1 FROM "public"."profiles" p
-    WHERE p.id = (select auth.uid()) AND p.role IN ('super_admin', 'wali_kelas', 'pengurus')
-  )
+  is_staff()
 )
 WITH CHECK (
-  EXISTS (
-    SELECT 1 FROM "public"."profiles" p
-    WHERE p.id = (select auth.uid()) AND p.role IN ('super_admin', 'wali_kelas', 'pengurus')
-  )
+  is_staff()
 );
 --> statement-breakpoint
 
@@ -105,8 +84,5 @@ CREATE POLICY "items_delete_staff_only"
 ON "public"."gallery_items" FOR DELETE
 TO authenticated
 USING (
-  EXISTS (
-    SELECT 1 FROM "public"."profiles" p
-    WHERE p.id = (select auth.uid()) AND p.role IN ('super_admin', 'wali_kelas', 'pengurus')
-  )
+  is_staff()
 );

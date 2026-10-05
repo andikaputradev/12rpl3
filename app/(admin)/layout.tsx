@@ -20,9 +20,9 @@ export default async function AdminLayout({ children }: { children: React.ReactN
 
   const { data: profile } = await supabase
     .from("profiles")
-    .select("role")
+    .select("role, jabatan, full_name")
     .eq("id", user.id)
-    .single<{ role: string }>();
+    .single<{ role: string; jabatan?: string | null; full_name?: string }>();
 
   // Pengguna sudah terautentikasi tapi role tidak berwenang: 403 semantik
   // (bukan redirect diam-diam), sesuai DoD Fase 1.
@@ -33,7 +33,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   return (
     <div className="flex min-h-screen flex-col">
       <Navbar isAuthenticated userRole={profile.role} />
-      <AdminNav />
+      <AdminNav userRole={profile.role} jabatan={profile.jabatan ?? null} />
       <main className="flex-1">{children}</main>
       <Footer />
     </div>

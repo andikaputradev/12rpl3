@@ -724,9 +724,224 @@ async function testDefaultDeny() {
   );
 }
 
+async function testUnifiedAuthFunctions() {
+  for (const [roleName, uid, expectedRole, expectedStaff, expectedAcademic, expectedSuper] of [
+    ["super_admin", ids.staff, "super_admin", true, true, true],
+    ["wali_kelas", ids.wali, "wali_kelas", true, true, false],
+    ["pengurus", ids.pengurus, "pengurus", true, false, false],
+    ["siswa", ids.s1, "siswa", false, false, false],
+    ["anon", null, null, false, false, false],
+  ]) {
+    const roleRes = await attempt(() =>
+      as(roleName === "anon" ? "anon" : "authenticated", uid, () =>
+        db.query("select auth_role(), is_staff(), is_academic_staff(), is_super_admin()"),
+      ),
+    );
+    expectOk(`auth helper: peran ${roleName} terevaluasi akurat`, roleRes, (r) => {
+      const row = r.rows[0];
+      return (
+        row.auth_role === expectedRole &&
+        Boolean(row.is_staff) === expectedStaff &&
+        Boolean(row.is_academic_staff) === expectedAcademic &&
+        Boolean(row.is_super_admin) === expectedSuper
+      );
+    });
+  }
+}
+
+async function testAuditLog() {
+  await db.exec(`
+    insert into audit_log (id, actor_id, action, table_name) values
+      ('30000000-0000-0000-0000-000000000001', '${ids.staff}', 'UPDATE', 'settings');
+  `);
+
+  const staffRead = await attempt(() =>
+    as("authenticated", ids.staff, () => db.query("select id from audit_log")),
+  );
+  expectOk("audit_log: super_admin dapat membaca audit log", staffRead, (r) => r.rows.length === 1);
+
+  const waliRead = await attempt(() =>
+    as("authenticated", ids.wali, () => db.query("select id from audit_log")),
+  );
+  expectOk(
+    "audit_log: wali_kelas TIDAK dapat membaca audit log (0 baris)",
+    waliRead,
+    (r) => r.rows.length === 0,
+  );
+
+  const pengurusRead = await attempt(() =>
+    as("authenticated", ids.pengurus, () => db.query("select id from audit_log")),
+  );
+  expectOk(
+    "audit_log: pengurus TIDAK dapat membaca audit log (0 baris)",
+    pengurusRead,
+    (r) => r.rows.length === 0,
+  );
+
+  const siswaRead = await attempt(() =>
+    as("authenticated", ids.s1, () => db.query("select id from audit_log")),
+  );
+  expectOk(
+    "audit_log: siswa TIDAK dapat membaca audit log (0 baris)",
+    siswaRead,
+    (r) => r.rows.length === 0,
+  );
+
+  const anonRead = await attempt(() =>
+    as("anon", null, () => db.query("select id from audit_log")),
+  );
+  record(
+    "audit_log: anon tidak dapat membaca audit log",
+    !anonRead.ok || anonRead.value.rows.length === 0,
+  );
+
+  expectDenied(
+    "audit_log: client authenticated TIDAK boleh insert baris audit langsung",
+    await attempt(() =>
+      as("authenticated", ids.staff, () =>
+        db.query("insert into audit_log (action, table_name) values ('HACK', 'test')"),
+      ),
+    ),
+    RLS,
+  );
+}
+
+async function testBlogCategories() {
+  const anonSelect = await attempt(() =>
+    as("anon", null, () => db.query("select count(*) from blog_categories")),
+  );
+  expectOk("blog_categories: anon boleh membaca kategori blog", anonSelect);
+
+  const staffInsert = await attempt(() =>
+    as("authenticated", ids.staff, () =>
+      db.query(
+        "insert into blog_categories (name, slug) values ('Kategori Baru', 'kategori-baru')",
+      ),
+    ),
+  );
+  expectOk("blog_categories: staf boleh membuat kategori blog", staffInsert);
+
+  expectDenied(
+    "blog_categories: siswa TIDAK boleh membuat kategori blog",
+    await attempt(() =>
+      as("authenticated", ids.s1, () =>
+        db.query(
+          "insert into blog_categories (name, slug) values ('Kategori Siswa', 'kategori-siswa')",
+        ),
+      ),
+    ),
+    RLS,
+  );
+
+  expectDenied(
+    "blog_categories: anon TIDAK boleh membuat kategori blog",
+    await attempt(() =>
+      as("anon", null, () =>
+        db.query(
+          "insert into blog_categories (name, slug) values ('Kategori Anon', 'kategori-anon')",
+        ),
+      ),
+    ),
+    RLS,
+  );
+}
+
+async function testPortfolioContributors() {
+  await db.exec(`
+    insert into portfolio_projects (id, title, description, status, submitted_by) values
+      ('40000000-0000-0000-0000-000000000001', 'Proyek Disetujui', 'Deskripsi', 'approved', '${ids.s1}'),
+      ('40000000-0000-0000-0000-000000000002', 'Proyek Pending S1', 'Deskripsi', 'pending_review', '${ids.s1}');
+    insert into portfolio_contributors (id, project_id, student_id) values
+      ('50000000-0000-0000-0000-000000000001', '40000000-0000-0000-0000-000000000001', '${ids.s2}'),
+      ('50000000-0000-0000-0000-000000000002', '40000000-0000-0000-0000-000000000002', '${ids.s2}');
+  `);
+
+  const anonReadApproved = await attempt(() =>
+    as("anon", null, () =>
+      db.query(
+        "select id from portfolio_contributors where project_id = '40000000-0000-0000-0000-000000000001'",
+      ),
+    ),
+  );
+  expectOk(
+    "portfolio_contributors: anon dapat melihat kontributor proyek approved",
+    anonReadApproved,
+    (r) => r.rows.length === 1,
+  );
+
+  const anonReadPending = await attempt(() =>
+    as("anon", null, () =>
+      db.query(
+        "select id from portfolio_contributors where project_id = '40000000-0000-0000-0000-000000000002'",
+      ),
+    ),
+  );
+  expectOk(
+    "portfolio_contributors: anon TIDAK melihat kontributor proyek pending",
+    anonReadPending,
+    (r) => r.rows.length === 0,
+  );
+
+  const ownerReadPending = await attempt(() =>
+    as("authenticated", ids.s1, () =>
+      db.query(
+        "select id from portfolio_contributors where project_id = '40000000-0000-0000-0000-000000000002'",
+      ),
+    ),
+  );
+  expectOk(
+    "portfolio_contributors: pengunggah melihat kontributor proyek miliknya",
+    ownerReadPending,
+    (r) => r.rows.length === 1,
+  );
+
+  const otherReadPending = await attempt(() =>
+    as("authenticated", ids.s3, () =>
+      db.query(
+        "select id from portfolio_contributors where project_id = '40000000-0000-0000-0000-000000000002'",
+      ),
+    ),
+  );
+  expectOk(
+    "portfolio_contributors: siswa lain TIDAK melihat kontributor proyek pending orang lain",
+    otherReadPending,
+    (r) => r.rows.length === 0,
+  );
+
+  const staffInsert = await attempt(() =>
+    as("authenticated", ids.staff, () =>
+      db.query(
+        "insert into portfolio_contributors (project_id, student_id) values ('40000000-0000-0000-0000-000000000001', $1)",
+        [ids.s3],
+      ),
+    ),
+  );
+  expectOk("portfolio_contributors: staf dapat menambah kontributor", staffInsert);
+}
+
+async function testAllTablesHaveRLS() {
+  const query = await db.query(`
+    select tablename from pg_tables
+    where schemaname = 'public'
+      and rowsecurity = false;
+  `);
+  record(
+    "kueri verifikasi RLS seluruh tabel publik menghasilkan nol baris tanpa RLS",
+    query.rows.length === 0,
+    query.rows.length === 0
+      ? "0 baris tanpa RLS"
+      : `tabel tanpa RLS: ${query.rows.map((r) => r.tablename).join(", ")}`,
+  );
+}
+
 await runMigrations();
 await seed();
 await testDefaultDeny();
+await testUnifiedAuthFunctions();
+await testAuditLog();
+await testBlogCategories();
+await testPortfolioContributors();
+await testAllTablesHaveRLS();
 await testGuestbook();
 await testAspirations();
 await testPesanKesan();

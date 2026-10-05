@@ -1,16 +1,54 @@
+import { GraduationCap } from "lucide-react";
 import type { Metadata } from "next";
+import Link from "next/link";
 import { BulkGradeEntryTable } from "@/components/admin/bulk-grade-entry-table";
 import { SubjectManagerDialog } from "@/components/admin/subject-manager-dialog";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
 import { getSubjects } from "@/lib/actions/jadwal";
+import { createServerSupabaseClient } from "@/lib/supabase/server";
 
 export const metadata: Metadata = {
-  title: "Entry Nilai — Dashboard",
+  title: "Entry Nilai | Dashboard",
   robots: { index: false, follow: false },
 };
 
 export const dynamic = "force-dynamic";
 
 export default async function AdminNilaiPage() {
+  const supabase = await createServerSupabaseClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("role")
+    .eq("id", user?.id ?? "")
+    .maybeSingle<{ role: string }>();
+
+  if (!profile || (profile.role !== "super_admin" && profile.role !== "wali_kelas")) {
+    return (
+      <div className="container-portal py-16 flex justify-center">
+        <Card className="max-w-md w-full border-border p-6 text-center">
+          <CardContent className="flex flex-col items-center gap-3 pt-4">
+            <div className="rounded-full bg-accent/15 p-3 text-accent-text">
+              <GraduationCap className="size-8" />
+            </div>
+            <h2 className="font-display text-lg font-semibold">Akses Terbatas: Wali Kelas</h2>
+            <p className="text-sm text-muted">
+              Modul entry nilai akademik hanya diperuntukkan bagi Wali Kelas dan Administrator
+              Sistem.
+            </p>
+            <Button asChild variant="outline" className="mt-4">
+              <Link href="/dashboard">Kembali ke Dashboard</Link>
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
   const subjects = await getSubjects();
 
   return (

@@ -10,7 +10,6 @@ import {
   getWaliKelas,
 } from "@/lib/actions/beranda";
 import { siteConfig } from "@/lib/config/site";
-import type { Profile } from "@/lib/db/schema";
 
 export async function generateMetadata(): Promise<Metadata> {
   const classProfile = await getClassProfile();
@@ -23,19 +22,6 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-function findByJabatan(
-  pengurus: Profile[],
-  patterns: string[],
-  exclude: string[] = [],
-): Profile | undefined {
-  return pengurus.find((p) => {
-    const jabatan = (p.jabatan ?? "").toLowerCase();
-    const matches = patterns.some((pattern) => jabatan.includes(pattern));
-    const excluded = exclude.some((pattern) => jabatan.includes(pattern));
-    return matches && !excluded;
-  });
-}
-
 export default async function ProfilKelasPage() {
   const [classProfile, waliKelas, pengurus, stats] = await Promise.all([
     getClassProfile(),
@@ -44,14 +30,39 @@ export default async function ProfilKelasPage() {
     getStudentStats(),
   ]);
 
-  const ketua = findByJabatan(pengurus, ["ketua"], ["wakil"]);
-  const wakilKetua = findByJabatan(pengurus, ["wakil ketua", "wakil"]);
-  const sekretaris = findByJabatan(pengurus, ["sekretaris"]);
-  const bendahara = findByJabatan(pengurus, ["bendahara"]);
-  const tierOneIds = new Set(
-    [ketua, wakilKetua, sekretaris, bendahara].filter(Boolean).map((p) => p?.id),
+  const ketua =
+    pengurus.find(
+      (p) =>
+        (p.jabatan ?? "").toLowerCase().includes("ketua") &&
+        !(p.jabatan ?? "").toLowerCase().includes("wakil"),
+    ) ?? pengurus.find((p) => p.fullName.toLowerCase().includes("wahyu andika"));
+
+  const wakilKetua =
+    pengurus.find((p) => (p.jabatan ?? "").toLowerCase().includes("wakil")) ??
+    pengurus.find((p) => p.fullName.toLowerCase().includes("zaeni"));
+
+  const sekretaris1 =
+    pengurus.find((p) => (p.jabatan ?? "").toLowerCase().includes("sekretaris 1")) ??
+    pengurus.find((p) => p.fullName.toLowerCase().includes("samrotul"));
+
+  const sekretaris2 =
+    pengurus.find((p) => (p.jabatan ?? "").toLowerCase().includes("sekretaris 2")) ??
+    pengurus.find((p) => p.fullName.toLowerCase().includes("qori"));
+
+  const bendahara1 =
+    pengurus.find((p) => (p.jabatan ?? "").toLowerCase().includes("bendahara 1")) ??
+    pengurus.find((p) => p.fullName.toLowerCase().includes("sifa auliya"));
+
+  const bendahara2 =
+    pengurus.find((p) => (p.jabatan ?? "").toLowerCase().includes("bendahara 2")) ??
+    pengurus.find((p) => p.fullName.toLowerCase().includes("royana"));
+
+  const coreOfficerIds = new Set(
+    [ketua, wakilKetua, sekretaris1, sekretaris2, bendahara1, bendahara2]
+      .filter(Boolean)
+      .map((p) => p?.id),
   );
-  const seksiSeksi = pengurus.filter((p) => !tierOneIds.has(p.id));
+  const seksiSeksi = pengurus.filter((p) => !coreOfficerIds.has(p.id));
 
   return (
     <div className="container-portal py-20">
@@ -83,7 +94,7 @@ export default async function ProfilKelasPage() {
             </div>
           ) : null}
 
-          {classProfile.misi?.length ? (
+          {classProfile?.misi?.length ? (
             <div>
               <h2 className="font-display text-xl font-medium tracking-tight">Misi</h2>
               <ol className="mt-4 flex flex-col gap-2.5 text-muted">
@@ -101,35 +112,95 @@ export default async function ProfilKelasPage() {
         </section>
       ) : null}
 
-      {waliKelas ? (
-        <section className="mt-16 max-w-xs">
-          <h2 className="sr-only">Wali Kelas</h2>
-          <WaliKelasCard waliKelas={waliKelas} />
-        </section>
-      ) : null}
+      <section className="mt-20">
+        <header className="max-w-xl">
+          <p data-eyebrow>Kepengurusan</p>
+          <h2 className="mt-2 font-display text-2xl font-medium tracking-tight sm:text-3xl">
+            Struktur Organisasi Kelas
+          </h2>
+          <p className="mt-2 text-sm text-muted">
+            Bagan kepemimpinan, perwalian, dan tata kelola kelas {siteConfig.className}.
+          </p>
+        </header>
 
-      <section className="mt-16">
-        <h2 className="font-display text-xl font-medium tracking-tight">Struktur Organisasi</h2>
+        <div className="mt-12 flex flex-col items-center">
+          {/* Pembina / Wali Kelas */}
+          {waliKelas ? (
+            <div className="flex flex-col items-center w-full">
+              <div className="w-full max-w-xs">
+                <WaliKelasCard waliKelas={waliKelas} />
+              </div>
+              <div className="my-3 h-8 w-px bg-border" aria-hidden="true" />
+            </div>
+          ) : null}
 
-        <div className="mt-8 flex flex-col items-center gap-6">
-          <div className="w-full max-w-[220px]">
-            <OrgStructureCard profile={ketua ?? null} fallbackLabel="Ketua Kelas" tier={1} />
+          {/* Ketua & Wakil Ketua */}
+          <div className="flex flex-col items-center w-full">
+            <div className="grid w-full max-w-lg grid-cols-1 gap-4 sm:grid-cols-2">
+              <OrgStructureCard profile={ketua ?? null} fallbackLabel="Ketua Kelas" tier={1} />
+              <OrgStructureCard profile={wakilKetua ?? null} fallbackLabel="Wakil Ketua" tier={2} />
+            </div>
+            <div className="my-3 h-8 w-px bg-border" aria-hidden="true" />
           </div>
 
-          <div className="w-full max-w-[200px]">
-            <OrgStructureCard profile={wakilKetua ?? null} fallbackLabel="Wakil Ketua" tier={2} />
+          {/* Sekretariat & Kebendaharaan */}
+          <div className="grid w-full max-w-3xl grid-cols-1 gap-6 sm:grid-cols-2">
+            {/* Sekretariat */}
+            <div className="flex flex-col gap-3 rounded-xl border border-border/80 bg-surface/30 p-4">
+              <div className="border-b border-border/60 pb-2 text-center">
+                <span className="font-mono text-xs font-semibold uppercase tracking-wider text-muted">
+                  Sekretariat
+                </span>
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <OrgStructureCard
+                  profile={sekretaris1 ?? null}
+                  fallbackLabel="Sekretaris 1"
+                  tier={3}
+                />
+                <OrgStructureCard
+                  profile={sekretaris2 ?? null}
+                  fallbackLabel="Sekretaris 2"
+                  tier={3}
+                />
+              </div>
+            </div>
+
+            {/* Kebendaharaan */}
+            <div className="flex flex-col gap-3 rounded-xl border border-border/80 bg-surface/30 p-4">
+              <div className="border-b border-border/60 pb-2 text-center">
+                <span className="font-mono text-xs font-semibold uppercase tracking-wider text-muted">
+                  Kebendaharaan
+                </span>
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <OrgStructureCard
+                  profile={bendahara1 ?? null}
+                  fallbackLabel="Bendahara 1"
+                  tier={3}
+                />
+                <OrgStructureCard
+                  profile={bendahara2 ?? null}
+                  fallbackLabel="Bendahara 2"
+                  tier={3}
+                />
+              </div>
+            </div>
           </div>
 
-          <div className="grid w-full max-w-md grid-cols-2 gap-4">
-            <OrgStructureCard profile={sekretaris ?? null} fallbackLabel="Sekretaris" tier={3} />
-            <OrgStructureCard profile={bendahara ?? null} fallbackLabel="Bendahara" tier={3} />
-          </div>
-
+          {/* Seksi Lainnya (bila ada) */}
           {seksiSeksi.length > 0 ? (
-            <div className="grid w-full grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
-              {seksiSeksi.map((p) => (
-                <OrgStructureCard key={p.id} profile={p} fallbackLabel="Seksi" tier={3} />
-              ))}
+            <div className="mt-10 w-full max-w-4xl">
+              <div className="mb-4 text-center">
+                <span className="font-mono text-xs uppercase tracking-wider text-muted">
+                  Seksi Bidang & Divisi
+                </span>
+              </div>
+              <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
+                {seksiSeksi.map((p) => (
+                  <OrgStructureCard key={p.id} profile={p} fallbackLabel="Seksi" tier={3} />
+                ))}
+              </div>
             </div>
           ) : null}
         </div>

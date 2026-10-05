@@ -18,8 +18,5 @@ alter table "kas_settings" force row level security;
 create policy "kas_settings_select_authenticated" on "kas_settings" for select to authenticated using (true);
 
 create policy "kas_settings_mutate_staff" on "kas_settings" for all to authenticated using (
-  exists (
-    select 1 from profiles p
-    where p.id = (select auth.uid()) and p.role in ('super_admin', 'wali_kelas')
-  )
+  is_academic_staff()
 );

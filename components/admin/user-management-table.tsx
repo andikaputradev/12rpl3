@@ -1,6 +1,6 @@
 "use client";
 
-import { Edit2, Filter, Search } from "lucide-react";
+import { Edit2, Filter, Plus, Search, Trash2 } from "lucide-react";
 import { useState, useTransition } from "react";
 import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
@@ -31,7 +31,12 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { updateUserAcademicInfo, updateUserRole } from "@/lib/actions/admin-pengguna-mutations";
+import {
+  createNewUser,
+  deleteUser,
+  updateUserAcademicInfo,
+  updateUserRole,
+} from "@/lib/actions/admin-pengguna-mutations";
 import type { Profile } from "@/lib/db/schema";
 
 interface UserManagementTableProps {
@@ -67,6 +72,8 @@ export function UserManagementTable({
   const [search, setSearch] = useState("");
   const [roleFilter, setRoleFilter] = useState<string>("all");
   const [editingUser, setEditingUser] = useState<Profile | null>(null);
+  const [deletingUser, setDeletingUser] = useState<Profile | null>(null);
+  const [isAddOpen, setIsAddOpen] = useState(false);
   const [isPending, startTransition] = useTransition();
 
   // Form states for editing
@@ -78,6 +85,18 @@ export function UserManagementTable({
   const [formAbsen, setFormAbsen] = useState<string>("");
   const [formJabatan, setFormJabatan] = useState("");
   const [formGender, setFormGender] = useState<"L" | "P" | "">("");
+
+  // Form states for creating new user
+  const [newName, setNewName] = useState("");
+  const [newEmail, setNewEmail] = useState("");
+  const [newPassword, setNewPassword] = useState("Password123#");
+  const [newRole, setNewRole] = useState<"super_admin" | "wali_kelas" | "pengurus" | "siswa">(
+    "siswa",
+  );
+  const [newJabatan, setNewJabatan] = useState("");
+  const [newNis, setNewNis] = useState("");
+  const [newAbsen, setNewAbsen] = useState("");
+  const [newGender, setNewGender] = useState<"L" | "P" | "">("");
 
   const filteredUsers = users.filter((u) => {
     const matchesSearch =
@@ -132,9 +151,58 @@ export function UserManagementTable({
     });
   }
 
+  function handleCreateUser() {
+    if (!newName.trim() || !newEmail.trim()) {
+      toast.error("Nama lengkap dan email wajib diisi.");
+      return;
+    }
+
+    startTransition(async () => {
+      const res = await createNewUser({
+        fullName: newName.trim(),
+        email: newEmail.trim(),
+        password: newPassword || "Password123#",
+        role: newRole,
+        jabatan: newJabatan.trim() || null,
+        nis: newNis.trim() || null,
+        absenNumber: newAbsen ? Number(newAbsen) : null,
+        gender: newGender === "L" || newGender === "P" ? newGender : null,
+      });
+
+      if (res.error) {
+        toast.error(res.error);
+        return;
+      }
+
+      toast.success("Pengguna baru berhasil ditambahkan.");
+      setIsAddOpen(false);
+      setNewName("");
+      setNewEmail("");
+      setNewJabatan("");
+      setNewNis("");
+      setNewAbsen("");
+      setNewGender("");
+    });
+  }
+
+  function handleDeleteUser() {
+    if (!deletingUser) return;
+
+    startTransition(async () => {
+      const res = await deleteUser(deletingUser.id);
+      if (res.error) {
+        toast.error(res.error);
+        return;
+      }
+
+      toast.success(`Pengguna ${deletingUser.fullName} berhasil dihapus.`);
+      setDeletingUser(null);
+    });
+  }
+
   return (
     <div className="flex flex-col gap-6">
-      {/* Filter and Search Bar */}
+      {/* Filter, Search, and Action Bar */}
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div className="relative w-full max-w-sm">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted" />
@@ -146,20 +214,29 @@ export function UserManagementTable({
           />
         </div>
 
-        <div className="flex items-center gap-2">
-          <Filter className="size-4 text-muted shrink-0" />
-          <Select value={roleFilter} onValueChange={setRoleFilter}>
-            <SelectTrigger className="w-40">
-              <SelectValue placeholder="Semua Peran" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">Semua Peran</SelectItem>
-              <SelectItem value="super_admin">Super Admin</SelectItem>
-              <SelectItem value="wali_kelas">Wali Kelas</SelectItem>
-              <SelectItem value="pengurus">Pengurus</SelectItem>
-              <SelectItem value="siswa">Siswa</SelectItem>
-            </SelectContent>
-          </Select>
+        <div className="flex flex-wrap items-center gap-2">
+          <div className="flex items-center gap-1.5">
+            <Filter className="size-4 text-muted shrink-0" />
+            <Select value={roleFilter} onValueChange={setRoleFilter}>
+              <SelectTrigger className="w-36">
+                <SelectValue placeholder="Semua Peran" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">Semua Peran</SelectItem>
+                <SelectItem value="super_admin">Super Admin</SelectItem>
+                <SelectItem value="wali_kelas">Wali Kelas</SelectItem>
+                <SelectItem value="pengurus">Pengurus</SelectItem>
+                <SelectItem value="siswa">Siswa</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          {currentUserRole === "super_admin" && (
+            <Button onClick={() => setIsAddOpen(true)} size="sm" className="gap-1.5 font-medium">
+              <Plus className="size-4" />
+              <span>Tambah Pengguna</span>
+            </Button>
+          )}
         </div>
       </div>
 
@@ -227,15 +304,28 @@ export function UserManagementTable({
                         {user.gender || "-"}
                       </TableCell>
                       <TableCell className="text-right">
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => handleOpenEdit(user)}
-                          className="h-8 gap-1.5 text-xs"
-                        >
-                          <Edit2 className="size-3.5" />
-                          <span>Edit</span>
-                        </Button>
+                        <div className="flex items-center justify-end gap-1">
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => handleOpenEdit(user)}
+                            className="h-8 gap-1.5 text-xs"
+                          >
+                            <Edit2 className="size-3.5" />
+                            <span>Edit</span>
+                          </Button>
+                          {currentUserRole === "super_admin" && user.id !== currentUserId && (
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => setDeletingUser(user)}
+                              className="h-8 px-2 text-xs text-destructive-text hover:bg-destructive/10"
+                              title="Hapus Pengguna"
+                            >
+                              <Trash2 className="size-3.5" />
+                            </Button>
+                          )}
+                        </div>
                       </TableCell>
                     </TableRow>
                   );
@@ -245,6 +335,133 @@ export function UserManagementTable({
           </Table>
         </div>
       </Card>
+
+      {/* Tambah Pengguna Baru Dialog */}
+      <Dialog open={isAddOpen} onOpenChange={(open) => !open && setIsAddOpen(false)}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Tambah Pengguna Baru</DialogTitle>
+            <DialogDescription>
+              Buat akun otentikasi baru beserta profil identitas siswa atau staf kelas.
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="flex flex-col gap-3.5 py-2">
+            <div className="flex flex-col gap-1.5">
+              <Label htmlFor="new-name">Nama Lengkap *</Label>
+              <Input
+                id="new-name"
+                placeholder="Contoh: Pratama Aditya"
+                value={newName}
+                onChange={(e) => setNewName(e.target.value)}
+              />
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div className="flex flex-col gap-1.5">
+                <Label htmlFor="new-email">Email Login *</Label>
+                <Input
+                  id="new-email"
+                  type="email"
+                  placeholder="nama@12rpl.com"
+                  value={newEmail}
+                  onChange={(e) => setNewEmail(e.target.value)}
+                />
+              </div>
+
+              <div className="flex flex-col gap-1.5">
+                <Label htmlFor="new-password">Kata Sandi Awal</Label>
+                <Input
+                  id="new-password"
+                  placeholder="Min. 8 karakter"
+                  value={newPassword}
+                  onChange={(e) => setNewPassword(e.target.value)}
+                />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-3">
+              <div className="flex flex-col gap-1.5">
+                <Label htmlFor="new-role">Peran (Role) *</Label>
+                <Select
+                  value={newRole}
+                  onValueChange={(val) =>
+                    setNewRole(val as "super_admin" | "wali_kelas" | "pengurus" | "siswa")
+                  }
+                >
+                  <SelectTrigger id="new-role">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="siswa">Siswa</SelectItem>
+                    <SelectItem value="pengurus">Pengurus Kelas</SelectItem>
+                    <SelectItem value="wali_kelas">Wali Kelas</SelectItem>
+                    <SelectItem value="super_admin">Super Admin</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="flex flex-col gap-1.5">
+                <Label htmlFor="new-gender">Jenis Kelamin</Label>
+                <Select
+                  value={newGender}
+                  onValueChange={(val) => setNewGender(val as "L" | "P" | "")}
+                >
+                  <SelectTrigger id="new-gender">
+                    <SelectValue placeholder="Pilih..." />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="L">Laki-laki (L)</SelectItem>
+                    <SelectItem value="P">Perempuan (P)</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-3 gap-3">
+              <div className="flex flex-col gap-1.5">
+                <Label htmlFor="new-nis">NIS</Label>
+                <Input
+                  id="new-nis"
+                  placeholder="242512..."
+                  value={newNis}
+                  onChange={(e) => setNewNis(e.target.value)}
+                />
+              </div>
+
+              <div className="flex flex-col gap-1.5">
+                <Label htmlFor="new-absen">No. Absen</Label>
+                <Input
+                  id="new-absen"
+                  type="number"
+                  placeholder="1-36"
+                  value={newAbsen}
+                  onChange={(e) => setNewAbsen(e.target.value)}
+                />
+              </div>
+
+              <div className="flex flex-col gap-1.5">
+                <Label htmlFor="new-jabatan">Jabatan</Label>
+                <Input
+                  id="new-jabatan"
+                  placeholder="Ketua dll"
+                  value={newJabatan}
+                  onChange={(e) => setNewJabatan(e.target.value)}
+                />
+              </div>
+            </div>
+          </div>
+
+          <DialogFooter className="mt-2">
+            <Button variant="outline" onClick={() => setIsAddOpen(false)} disabled={isPending}>
+              Batal
+            </Button>
+            <Button onClick={handleCreateUser} disabled={isPending}>
+              {isPending ? "Memproses..." : "Tambah Pengguna"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       {/* Edit User Dialog */}
       <Dialog open={Boolean(editingUser)} onOpenChange={(open) => !open && setEditingUser(null)}>
@@ -349,6 +566,29 @@ export function UserManagementTable({
             </Button>
             <Button onClick={handleSave} disabled={isPending}>
               {isPending ? "Menyimpan..." : "Simpan Perubahan"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Delete User Confirmation Dialog */}
+      <Dialog open={Boolean(deletingUser)} onOpenChange={(open) => !open && setDeletingUser(null)}>
+        <DialogContent className="sm:max-w-sm">
+          <DialogHeader>
+            <DialogTitle>Konfirmasi Hapus Pengguna</DialogTitle>
+            <DialogDescription>
+              Apakah Anda yakin ingin menghapus akun{" "}
+              <span className="font-semibold text-foreground">{deletingUser?.fullName}</span>?
+              Tindakan ini tidak dapat dibatalkan.
+            </DialogDescription>
+          </DialogHeader>
+
+          <DialogFooter className="mt-3 gap-2">
+            <Button variant="outline" onClick={() => setDeletingUser(null)} disabled={isPending}>
+              Batal
+            </Button>
+            <Button variant="destructive" onClick={handleDeleteUser} disabled={isPending}>
+              {isPending ? "Menghapus..." : "Hapus Pengguna"}
             </Button>
           </DialogFooter>
         </DialogContent>
