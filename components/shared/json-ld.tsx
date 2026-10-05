@@ -22,7 +22,7 @@ export function JsonLd({ nonce }: JsonLdProps) {
         name: siteConfig.schoolName,
         department: {
           "@type": "EducationalOrganization",
-          name: `Kelas ${siteConfig.className} — ${siteConfig.jurusan}`,
+          name: `Kelas ${siteConfig.className} - ${siteConfig.jurusan}`,
         },
       },
     ],
@@ -33,7 +33,7 @@ export function JsonLd({ nonce }: JsonLdProps) {
       type="application/ld+json"
       nonce={nonce || undefined}
       suppressHydrationWarning
-      // biome-ignore lint/security/noDangerouslySetInnerHtml: JSON-LD statis dari data internal (bukan input pengguna), bukan HTML — dirender dengan nonce agar lolos CSP script-src.
+      // biome-ignore lint/security/noDangerouslySetInnerHtml: JSON-LD statis dari data internal (bukan input pengguna), bukan HTML - dirender dengan nonce agar lolos CSP script-src.
       dangerouslySetInnerHTML={{ __html: JSON.stringify(data) }}
     />
   );

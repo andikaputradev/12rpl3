@@ -13,7 +13,7 @@ export function CopyableText({ value, label }: { value: string; label: string })
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     } catch {
-      // Clipboard API bisa gagal (browser lama/izin ditolak) — nomor tetap
+      // Clipboard API bisa gagal (browser lama/izin ditolak) - nomor tetap
       // terlihat di layar dan bisa disalin manual, jadi cukup diamkan.
     }
   }

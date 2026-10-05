@@ -1,9 +1,9 @@
 /**
- * SEED DATA — PENGEMBANGAN LOKAL SAJA.
+ * SEED DATA - PENGEMBANGAN LOKAL SAJA.
  *
  * Berkas ini TIDAK pernah dijalankan otomatis di produksi. Seluruh nama,
  * riwayat, dan foto di bawah adalah data contoh untuk keperluan development
- * (bukan riwayat faktual kelas sesungguhnya — itu wajib diisi oleh Wali
+ * (bukan riwayat faktual kelas sesungguhnya - itu wajib diisi oleh Wali
  * Kelas/Pengurus lewat form admin setelah deploy, sesuai Asumsi Kunci #4
  * Fase 1).
  *
@@ -33,7 +33,7 @@ const DEV_WAKIL_ID = randomUUID();
 const DEV_SEKRETARIS_ID = randomUUID();
 
 async function seed() {
-  console.warn("[seed] Menulis data pengembangan LOKAL — jangan jalankan terhadap produksi.");
+  console.warn("[seed] Menulis data pengembangan LOKAL - jangan jalankan terhadap produksi.");
 
   await db
     .insert(classProfile)

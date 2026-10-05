@@ -1,4 +1,4 @@
--- Fase 3 — RLS untuk seluruh tabel baru. Pola identik dengan
+-- Fase 3 - RLS untuk seluruh tabel baru. Pola identik dengan
 -- 0001/0003/0005: ENABLE + FORCE ROW LEVEL SECURITY, (select auth.uid())
 -- (bukan auth.uid() polos, agar Postgres mengevaluasinya sekali sebagai
 -- initplan alih-alih per baris), TO authenticated/anon eksplisit.
@@ -6,7 +6,7 @@
 -- subjects tidak disertakan pada blok SQL prompt asli, tapi tetap diberi RLS
 -- di sini mengikuti perintah eksplisit Bagian 0.2 brief: "pola default deny
 -- lalu allow eksplisit wajib diteruskan tanpa pengecualian di seluruh tabel
--- baru fase ini" — tanpa kecuali berarti tanpa kecuali.
+-- baru fase ini" - tanpa kecuali berarti tanpa kecuali.
 
 alter table "subjects" enable row level security;
 alter table "subjects" force row level security;
@@ -42,7 +42,7 @@ create policy "piket_assignments_mutate_staff" on "piket_assignments" for all to
 
 -- Nilai dan absensi: data akademik paling sensitif di seluruh proyek.
 -- HANYA pemilik data (student_id = diri sendiri) dan staf akademik (wali_kelas,
--- super_admin) — role `pengurus` SENGAJA tidak disertakan, sesuai Bagian 9 brief.
+-- super_admin) - role `pengurus` SENGAJA tidak disertakan, sesuai Bagian 9 brief.
 alter table "grades" enable row level security;
 alter table "grades" force row level security;
 create policy "grades_select_own_or_staff" on "grades" for select to authenticated using (
@@ -66,7 +66,7 @@ create policy "attendance_mutate_staff_only" on "attendance" for all to authenti
 --> statement-breakpoint
 
 -- Pengumuman dan tugas: seluruh peran terautentikasi boleh baca (termasuk
--- pengurus — brief tidak mengecualikannya di sini, berbeda dari nilai/
+-- pengurus - brief tidak mengecualikannya di sini, berbeda dari nilai/
 -- absensi), mutasi hanya staf akademik. Tidak untuk anon: bersifat internal kelas.
 
 alter table "announcements" enable row level security;
@@ -85,7 +85,7 @@ create policy "assignments_mutate_staff" on "assignments" for all to authenticat
 );
 --> statement-breakpoint
 
--- Kiriman tugas: siswa hanya melihat/meng-update miliknya sendiri —
+-- Kiriman tugas: siswa hanya melihat/meng-update miliknya sendiri -
 -- mencegah kecurangan lewat menyalin jawaban siswa lain.
 
 alter table "assignment_submissions" enable row level security;

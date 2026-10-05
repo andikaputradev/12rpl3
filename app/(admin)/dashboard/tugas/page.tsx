@@ -4,7 +4,7 @@ import { getAllAssignments } from "@/lib/actions/admin-akademik";
 import { getSubjects } from "@/lib/actions/jadwal";
 
 export const metadata: Metadata = {
-  title: "Tugas — Dashboard",
+  title: "Tugas - Dashboard",
   robots: { index: false, follow: false },
 };
 

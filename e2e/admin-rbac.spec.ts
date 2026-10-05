@@ -15,7 +15,7 @@ async function loginAs(page: Page, email: string, password: string) {
 test.describe("RBAC Dashboard Admin", () => {
   test.skip(
     !SISWA_EMAIL || !SISWA_PASSWORD,
-    "Butuh E2E_SISWA_EMAIL/E2E_SISWA_PASSWORD — akun uji role siswa pada environment Supabase nyata.",
+    "Butuh E2E_SISWA_EMAIL/E2E_SISWA_PASSWORD - akun uji role siswa pada environment Supabase nyata.",
   );
 
   test("role siswa mendapat 403 saat mengakses dashboard admin", async ({ page }) => {
@@ -31,7 +31,7 @@ test.describe("RBAC Dashboard Admin", () => {
 test.describe("Form Admin Profil Kelas", () => {
   test.skip(
     !STAFF_EMAIL || !STAFF_PASSWORD,
-    "Butuh E2E_STAFF_EMAIL/E2E_STAFF_PASSWORD — akun uji role wali_kelas/super_admin pada environment Supabase nyata.",
+    "Butuh E2E_STAFF_EMAIL/E2E_STAFF_PASSWORD - akun uji role wali_kelas/super_admin pada environment Supabase nyata.",
   );
 
   test("submit profil kelas berhasil dan menampilkan toast konfirmasi", async ({ page }) => {

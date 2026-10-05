@@ -55,7 +55,7 @@ describe("validateImageFile", () => {
     expect(result.error).toMatch(/Ukuran berkas/);
   });
 
-  it("menolak PDF — konteks gambar (profil/galeri) tidak pernah menerima dokumen", () => {
+  it("menolak PDF - konteks gambar (profil/galeri) tidak pernah menerima dokumen", () => {
     const result = validateImageFile(bufferFrom(PDF_BYTES));
     expect(result.valid).toBe(false);
     expect(result.error).toMatch(/tidak dikenali/);
@@ -88,7 +88,7 @@ describe("validateDocumentFile", () => {
   });
 
   it("menolak format lain di luar JPEG/PNG/WebP/PDF, mis. berkas .docx (ZIP)", () => {
-    // .docx sebenarnya arsip ZIP (magic bytes 0x50 0x4b 0x03 0x04) — sengaja
+    // .docx sebenarnya arsip ZIP (magic bytes 0x50 0x4b 0x03 0x04) - sengaja
     // TIDAK diterima karena resource_type "auto" Cloudinary + validasi ini
     // hanya menjamin 4 format yang secara eksplisit didukung UI unggah.
     const result = validateDocumentFile(bufferFrom([0x50, 0x4b, 0x03, 0x04]));

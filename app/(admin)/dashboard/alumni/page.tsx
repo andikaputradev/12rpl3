@@ -6,7 +6,7 @@ import { db } from "@/lib/db";
 import { alumniTestimonials } from "@/lib/db/schema";
 
 export const metadata: Metadata = {
-  title: "Alumni — Dashboard",
+  title: "Alumni - Dashboard",
   robots: { index: false, follow: false },
 };
 
@@ -32,7 +32,7 @@ export default async function AdminAlumniPage() {
           Kelola Testimoni Alumni
         </h1>
         <p className="mt-2 max-w-2xl text-muted text-sm">
-          Testimoni bersifat kelola-staf sepenuhnya — alumni tidak memiliki sesi aktif di sistem.
+          Testimoni bersifat kelola-staf sepenuhnya - alumni tidak memiliki sesi aktif di sistem.
         </p>
       </header>
 

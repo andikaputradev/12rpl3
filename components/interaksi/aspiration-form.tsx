@@ -1,6 +1,6 @@
 "use client";
 
-import { Loader2, Send } from "lucide-react";
+import { CheckCircle2, Loader2, Send } from "lucide-react";
 import { useActionState, useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
@@ -15,6 +15,7 @@ export function AspirationForm() {
   const [state, formAction, isPending] = useActionState(submitAspiration, initialState);
   const formRef = useRef<HTMLFormElement>(null);
   const [isAnonymous, setIsAnonymous] = useState(false);
+  const [successNotice, setSuccessNotice] = useState<string | null>(null);
 
   // isAnonymous sengaja TIDAK dimasukkan sebagai dependency: efek ini sendiri
   // memanggil setIsAnonymous(false) saat sukses, sehingga menambahkannya ke
@@ -23,11 +24,11 @@ export function AspirationForm() {
   // biome-ignore lint/correctness/useExhaustiveDependencies: lihat alasan di atas
   useEffect(() => {
     if (state.success) {
-      toast.success(
-        isAnonymous
-          ? "Aspirasi terkirim. Aspirasi anonim tampil setelah ditinjau."
-          : "Aspirasi terkirim dan langsung tampil di papan.",
-      );
+      const msg = isAnonymous
+        ? "Aspirasi terkirim. Aspirasi anonim akan tampil setelah ditinjau oleh staf."
+        : "Aspirasi terkirim dan langsung tampil di papan aspirasi kelas.";
+      setSuccessNotice(msg);
+      toast.success(msg);
       formRef.current?.reset();
       setIsAnonymous(false);
     } else if (state.error) {
@@ -37,6 +38,13 @@ export function AspirationForm() {
 
   return (
     <form ref={formRef} action={formAction} className="space-y-4">
+      {successNotice ? (
+        <div className="flex items-center gap-2.5 rounded-lg border border-emerald-500/30 bg-emerald-500/10 p-3.5 text-emerald-900 text-sm dark:text-emerald-200">
+          <CheckCircle2 className="size-5 shrink-0 text-emerald-600 dark:text-emerald-400" />
+          <span>{successNotice}</span>
+        </div>
+      ) : null}
+
       <div className="space-y-1.5">
         <Label htmlFor="aspiration-content">Aspirasi</Label>
         <Textarea

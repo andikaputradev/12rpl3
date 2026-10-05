@@ -2,7 +2,7 @@
 
 import { motion, useScroll, useTransform } from "motion/react";
 
-/** aria-hidden — dekoratif-informatif tambahan, tidak menggantikan navigasi fungsional apa pun (Bagian 11 brief). */
+/** aria-hidden - dekoratif-informatif tambahan, tidak menggantikan navigasi fungsional apa pun (Bagian 11 brief). */
 export function ReadingProgressBar() {
   const { scrollYProgress } = useScroll();
   const width = useTransform(scrollYProgress, [0, 1], ["0%", "100%"]);

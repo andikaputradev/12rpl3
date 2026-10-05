@@ -6,7 +6,7 @@ import { getPendingPosts, getRecentComments } from "@/lib/actions/admin-blog";
 import { getBlogCategories } from "@/lib/actions/blog";
 
 export const metadata: Metadata = {
-  title: "Blog — Dashboard",
+  title: "Blog - Dashboard",
   robots: { index: false, follow: false },
 };
 

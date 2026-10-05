@@ -44,6 +44,7 @@ export const adminModules = [
   { label: "Jadwal & Agenda", href: "/dashboard/jadwal" },
   { label: "Entry Nilai", href: "/dashboard/nilai" },
   { label: "Entry Absensi", href: "/dashboard/absensi" },
+  { label: "Cetak Laporan", href: "/dashboard/laporan" },
   { label: "Tugas", href: "/dashboard/tugas" },
   { label: "Pengumuman", href: "/dashboard/pengumuman" },
   { label: "Audit Log Nilai/Absensi", href: "/dashboard/audit-log" },

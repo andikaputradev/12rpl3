@@ -28,7 +28,12 @@ export function AdminNav({ userRole = "super_admin", jabatan }: AdminNavProps) {
 
     if (userRole === "pengurus") {
       if (jLower.includes("bendahara")) {
-        return ["/dashboard", "/dashboard/kas", "/dashboard/pengumuman"].includes(item.href);
+        return [
+          "/dashboard",
+          "/dashboard/kas",
+          "/dashboard/pengumuman",
+          "/dashboard/laporan",
+        ].includes(item.href);
       }
       if (jLower.includes("sekretaris")) {
         return [
@@ -37,6 +42,7 @@ export function AdminNav({ userRole = "super_admin", jabatan }: AdminNavProps) {
           "/dashboard/jadwal",
           "/dashboard/tugas",
           "/dashboard/pengumuman",
+          "/dashboard/laporan",
         ].includes(item.href);
       }
       // Ketua Kelas / Wakil Ketua / other pengurus

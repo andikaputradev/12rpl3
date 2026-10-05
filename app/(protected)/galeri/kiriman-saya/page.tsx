@@ -7,7 +7,7 @@ import { getMyUploads } from "@/lib/actions/galeri";
 import { cloudinaryOptimized } from "@/lib/utils";
 
 export const metadata: Metadata = {
-  title: "Kiriman Saya — Galeri",
+  title: "Kiriman Saya - Galeri",
   robots: { index: false, follow: false },
 };
 

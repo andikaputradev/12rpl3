@@ -26,7 +26,7 @@ describe("albumSchema", () => {
   });
 });
 
-describe("uploadItemSchema — discriminated union image/video", () => {
+describe("uploadItemSchema - discriminated union image/video", () => {
   it("menerima item gambar tanpa youtubeUrl", () => {
     const result = uploadItemSchema.safeParse({
       albumId: "550e8400-e29b-41d4-a716-446655440000",

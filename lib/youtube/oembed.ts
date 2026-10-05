@@ -43,7 +43,7 @@ interface YoutubeOEmbedResponse {
 
 /**
  * Memverifikasi video benar-benar ada dan publik lewat endpoint oEmbed resmi
- * YouTube — bukan hanya memvalidasi format URL. Selalu memanggil host
+ * YouTube - bukan hanya memvalidasi format URL. Selalu memanggil host
  * youtube.com yang tetap (parameter berasal dari pengguna hanya diteruskan
  * sebagai query value ke YouTube, bukan dipakai sebagai target fetch itu
  * sendiri), sehingga tidak membuka celah SSRF ke host sembarang.

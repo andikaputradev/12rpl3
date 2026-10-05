@@ -1,8 +1,8 @@
--- Fase 4 — RLS seluruh tabel baru. Pola identik 0001/0003/0005/0007/0008:
+-- Fase 4 - RLS seluruh tabel baru. Pola identik 0001/0003/0005/0007/0008:
 -- (select auth.uid()), TO anon/authenticated eksplisit, FORCE ROW LEVEL
 -- SECURITY. Berbeda dari Fase 3: staf di sini SELALU mencakup 'pengurus'
 -- (achievements/portfolio/blog bersifat konten-dimoderasi, sejenis galeri
--- Fase 2 — bukan data administratif sensitif seperti nilai/absensi Fase 3).
+-- Fase 2 - bukan data administratif sensitif seperti nilai/absensi Fase 3).
 --
 -- Tiga celah brief ditutup di sini (pola sama seperti subjects di Fase 3):
 -- blog_categories dan portfolio_contributors sama sekali tidak disebut di
@@ -41,7 +41,7 @@ create policy "portfolio_update_staff_only" on "portfolio_projects" for update t
 );
 --> statement-breakpoint
 
--- portfolio_contributors — visibilitas mengikuti proyek induknya
+-- portfolio_contributors - visibilitas mengikuti proyek induknya
 alter table "portfolio_contributors" enable row level security;
 alter table "portfolio_contributors" force row level security;
 create policy "portfolio_contributors_select" on "portfolio_contributors" for select to anon, authenticated using (

@@ -6,10 +6,12 @@ import {
   LayoutDashboard,
   LogOut,
   Menu,
+  Printer,
   ShieldCheck,
   User,
 } from "lucide-react";
 import { motion } from "motion/react";
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
@@ -58,12 +60,14 @@ export function Navbar({ isAuthenticated, userRole }: NavbarProps) {
           href="/"
           className="flex items-center gap-2 font-display text-sm font-semibold tracking-tight"
         >
-          <span
-            className="flex size-8 items-center justify-center rounded-md bg-accent font-mono text-xs text-accent-foreground"
-            aria-hidden="true"
-          >
-            RPL
-          </span>
+          <Image
+            src="/img/logo.png"
+            alt="Logo XII RPL 3"
+            width={32}
+            height={32}
+            className="size-8 rounded-md object-contain"
+            priority
+          />
           <span>{siteConfig.siteName}</span>
         </Link>
 
@@ -204,12 +208,23 @@ export function Navbar({ isAuthenticated, userRole }: NavbarProps) {
                   </>
                 )}
                 {isStaff && (
-                  <DropdownMenuItem asChild>
-                    <Link href="/dashboard" className="flex items-center gap-2 cursor-pointer">
-                      <LayoutDashboard className="size-4" />
-                      <span>Dashboard Admin</span>
-                    </Link>
-                  </DropdownMenuItem>
+                  <>
+                    <DropdownMenuItem asChild>
+                      <Link href="/dashboard" className="flex items-center gap-2 cursor-pointer">
+                        <LayoutDashboard className="size-4" />
+                        <span>Dashboard Admin</span>
+                      </Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                      <Link
+                        href="/dashboard/laporan"
+                        className="flex items-center gap-2 cursor-pointer"
+                      >
+                        <Printer className="size-4" />
+                        <span>Cetak Laporan</span>
+                      </Link>
+                    </DropdownMenuItem>
+                  </>
                 )}
                 <DropdownMenuItem asChild>
                   <Link href="/akademik/nilai" className="flex items-center gap-2 cursor-pointer">
@@ -272,12 +287,20 @@ export function Navbar({ isAuthenticated, userRole }: NavbarProps) {
                   {isAuthenticated ? (
                     <>
                       {isStaff && (
-                        <Button asChild variant="default" className="w-full justify-start">
-                          <Link href="/dashboard" onClick={() => setOpen(false)}>
-                            <LayoutDashboard className="size-4 mr-2" />
-                            Dashboard Admin
-                          </Link>
-                        </Button>
+                        <>
+                          <Button asChild variant="default" className="w-full justify-start">
+                            <Link href="/dashboard" onClick={() => setOpen(false)}>
+                              <LayoutDashboard className="size-4 mr-2" />
+                              Dashboard Admin
+                            </Link>
+                          </Button>
+                          <Button asChild variant="outline" className="w-full justify-start">
+                            <Link href="/dashboard/laporan" onClick={() => setOpen(false)}>
+                              <Printer className="size-4 mr-2" />
+                              Cetak Laporan
+                            </Link>
+                          </Button>
+                        </>
                       )}
                       <Button asChild variant="outline" className="w-full justify-start">
                         <Link href="/akademik/nilai" onClick={() => setOpen(false)}>

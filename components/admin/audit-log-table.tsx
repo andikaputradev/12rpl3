@@ -17,16 +17,16 @@ function summarizeChange(before: unknown, after: unknown, tableName: string): st
     const a = after as { score?: number } | null;
     if (b && a) return `${b.score} \u2192 ${a.score}`;
     if (a) return `Nilai baru: ${a.score}`;
-    return "—";
+    return "-";
   }
   if (tableName === "attendance") {
     const b = before as { status?: string } | null;
     const a = after as { status?: string } | null;
     if (b && a) return `${b.status} \u2192 ${a.status}`;
     if (a) return `Status baru: ${a.status}`;
-    return "—";
+    return "-";
   }
-  return "—";
+  return "-";
 }
 
 export function AuditLogTable({ entries }: { entries: AuditLogEntryView[] }) {
@@ -52,11 +52,11 @@ export function AuditLogTable({ entries }: { entries: AuditLogEntryView[] }) {
             <TableCell className="whitespace-nowrap font-mono text-muted text-xs">
               {format(entry.createdAt, "d MMM yyyy, HH:mm", { locale: idLocale })}
             </TableCell>
-            <TableCell>{entry.actorName ?? "—"}</TableCell>
+            <TableCell>{entry.actorName ?? "-"}</TableCell>
             <TableCell>
               <Badge variant="outline">{entry.tableName === "grades" ? "Nilai" : "Absensi"}</Badge>
             </TableCell>
-            <TableCell>{entry.studentName ?? "—"}</TableCell>
+            <TableCell>{entry.studentName ?? "-"}</TableCell>
             <TableCell className="text-muted text-xs uppercase">{entry.action}</TableCell>
             <TableCell className="font-mono text-xs">
               {summarizeChange(entry.before, entry.after, entry.tableName)}

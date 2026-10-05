@@ -2,14 +2,14 @@ import { render } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 import { MarkdownRenderer } from "@/components/shared/markdown-renderer";
 
-describe("MarkdownRenderer — sanitasi XSS", () => {
+describe("MarkdownRenderer - sanitasi XSS", () => {
   it("tidak mengeksekusi tag <script> yang disisipkan dalam sumber Markdown", () => {
     const { container } = render(
       <MarkdownRenderer content={"Halo <script>window.__xss = true;</script> dunia"} />,
     );
     expect(container.querySelector("script")).toBeNull();
     expect(container.innerHTML).not.toContain("<script");
-    // @ts-expect-error — properti global sengaja dibaca untuk membuktikan skrip TIDAK pernah jalan.
+    // @ts-expect-error - properti global sengaja dibaca untuk membuktikan skrip TIDAK pernah jalan.
     expect(window.__xss).toBeUndefined();
   });
 
@@ -18,7 +18,7 @@ describe("MarkdownRenderer — sanitasi XSS", () => {
       <MarkdownRenderer content={'<img src="x" onerror="window.__xss = true;">'} />,
     );
     expect(container.innerHTML).not.toContain("onerror");
-    // @ts-expect-error — idem, membuktikan handler tidak pernah terpasang.
+    // @ts-expect-error - idem, membuktikan handler tidak pernah terpasang.
     expect(window.__xss).toBeUndefined();
   });
 
@@ -28,7 +28,7 @@ describe("MarkdownRenderer — sanitasi XSS", () => {
     );
     const link = container.querySelector("a");
     // hast-util-sanitize menghapus TOTAL atribut href yang skemanya tidak
-    // diizinkan (bukan menyaringnya menjadi string aman) — getAttribute
+    // diizinkan (bukan menyaringnya menjadi string aman) - getAttribute
     // karenanya mengembalikan null. Teks tautan tetap dirender.
     const href = link?.getAttribute("href");
     expect(!href || !/^javascript:/i.test(href)).toBe(true);
@@ -63,7 +63,7 @@ describe("MarkdownRenderer — sanitasi XSS", () => {
     const { container } = render(<MarkdownRenderer content={markdown} />);
     expect(container.querySelector("table")).not.toBeNull();
     expect(container.querySelector("script")).toBeNull();
-    // @ts-expect-error — idem.
+    // @ts-expect-error - idem.
     expect(window.__xss).toBeUndefined();
   });
 });

@@ -1,3 +1,5 @@
+"use client";
+
 import { ImageIcon } from "lucide-react";
 import { motion } from "motion/react";
 import Image from "next/image";
@@ -45,7 +47,9 @@ export function AlbumCard({ album, index }: { album: AlbumWithCount; index: numb
             <p className="truncate font-medium">{album.title}</p>
             {album.eventDate ? (
               <p className="font-mono text-xs text-muted">
-                {new Intl.DateTimeFormat("id-ID", { dateStyle: "medium" }).format(album.eventDate)}
+                {new Intl.DateTimeFormat("id-ID", { dateStyle: "medium" }).format(
+                  new Date(album.eventDate),
+                )}
               </p>
             ) : null}
           </div>

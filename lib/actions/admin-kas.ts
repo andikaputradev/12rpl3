@@ -59,7 +59,7 @@ export async function updateKasSettings(
 
   if (qrisFile instanceof File && qrisFile.size > 0) {
     try {
-      // folder "kas" sudah menamai ruang penyimpanan — publicId cukup
+      // folder "kas" sudah menamai ruang penyimpanan - publicId cukup
       // "qris" tanpa mengulang nama folder, agar path final kas/qris (bukan
       // kas/kas/qris). overwrite otomatis aktif karena publicId statis,
       // sehingga mengganti gambar QRIS selalu menimpa yang lama, bukan

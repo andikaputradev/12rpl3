@@ -68,7 +68,7 @@ export async function proxy(request: NextRequest) {
 
   // Optimistic check di layer proxy: hanya memverifikasi autentikasi, cepat
   // menolak yang jelas-jelas belum login. Otorisasi berbasis role sengaja
-  // TIDAK diputuskan di sini — didelegasikan ke layout (`forbidden()`, respons
+  // TIDAK diputuskan di sini - didelegasikan ke layout (`forbidden()`, respons
   // 403 semantik) dan ke RLS Postgres (default deny) sebagai lapis
   // otoritatif, sesuai panduan resmi Next.js bahwa proxy bukan pengganti
   // penuh authorization management.

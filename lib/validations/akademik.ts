@@ -4,7 +4,7 @@ import { assessmentTypeEnum, attendanceStatusEnum } from "@/lib/db/schema";
 export const assessmentTypeValues = assessmentTypeEnum.enumValues;
 export const attendanceStatusValues = attendanceStatusEnum.enumValues;
 
-// Format eksplisit "Ganjil 2026/2027" / "Genap 2026/2027" — konsisten dengan
+// Format eksplisit "Ganjil 2026/2027" / "Genap 2026/2027" - konsisten dengan
 // contoh di komentar lib/db/schema.ts (grades.semester) dan tahunAjaran
 // classProfile Fase 1.
 const SEMESTER_PATTERN = /^(Ganjil|Genap) \d{4}\/\d{4}$/;
@@ -13,7 +13,7 @@ const DATE_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
 export const bulkGradeRowSchema = z.object({
   studentId: z.uuid(),
   // Sel kosong di UI (belum dinilai) TIDAK dikirim sebagai baris sama
-  // sekali — bukan dikirim sebagai score: null — sehingga skema ini boleh
+  // sekali - bukan dikirim sebagai score: null - sehingga skema ini boleh
   // mewajibkan score berupa angka, konsisten dengan CHECK constraint
   // database (0-100).
   score: z.coerce

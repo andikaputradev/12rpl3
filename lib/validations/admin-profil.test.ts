@@ -30,7 +30,7 @@ describe("classProfileSchema", () => {
   });
 });
 
-describe("highlightSchema — isActive boolean (regresi z.coerce.boolean)", () => {
+describe("highlightSchema - isActive boolean (regresi z.coerce.boolean)", () => {
   const base = {
     title: "Kunjungan Industri",
     description: "Deskripsi kegiatan kunjungan industri kelas.",
@@ -44,7 +44,7 @@ describe("highlightSchema — isActive boolean (regresi z.coerce.boolean)", () =
     if (result.success) expect(result.data.isActive).toBe(true);
   });
 
-  it("menerima isActive: false (boolean asli) — HARUS false, bukan ikut ter-coerce true", () => {
+  it("menerima isActive: false (boolean asli) - HARUS false, bukan ikut ter-coerce true", () => {
     const result = highlightSchema.safeParse({ ...base, isActive: false });
     expect(result.success).toBe(true);
     if (result.success) expect(result.data.isActive).toBe(false);

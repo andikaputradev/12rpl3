@@ -38,7 +38,7 @@ export const contentStatusEnum = pgEnum("content_status", [
   "archived",
 ]);
 
-// Fase 3 — dideklarasikan di sini (bukan di blok Fase 3 lebih bawah) mengikuti
+// Fase 3 - dideklarasikan di sini (bukan di blok Fase 3 lebih bawah) mengikuti
 // konvensi berkas ini: seluruh pgEnum dikelompokkan di atas terlepas dari fase
 // asalnya (lihat galleryCategoryEnum/galleryItemTypeEnum di atas, juga Fase 2).
 // eventCategoryEnum wajib berada di atas academicEvents (Fase 1) karena
@@ -88,10 +88,10 @@ export const profiles = pgTable(
     gender: genderEnum("gender"),
     displayOrder: integer("display_order"),
     // Hanya diisi/ditampilkan publik untuk role staf (wali_kelas/pengurus ke
-    // atas); kontak pribadi siswa tetap tidak pernah publik — ditegakkan di
+    // atas); kontak pribadi siswa tetap tidak pernah publik - ditegakkan di
     // level query Server Action, bukan hanya UI.
     publicContact: text("public_contact"),
-    // Fase 2 — direktori siswa. Slug dibuat dari nama (bukan NIS) agar NIS
+    // Fase 2 - direktori siswa. Slug dibuat dari nama (bukan NIS) agar NIS
     // tidak pernah terekspos di URL publik.
     slug: text("slug").unique(),
     citaCita: text("cita_cita"),
@@ -125,7 +125,7 @@ export const auditLog = pgTable(
     actorId: uuid("actor_id").references(() => profiles.id, { onDelete: "set null" }),
     action: text("action").notNull(),
     tableName: text("table_name").notNull(),
-    recordId: uuid("record_id"),
+    recordId: text("record_id"),
     before: jsonb("before"),
     after: jsonb("after"),
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
@@ -141,7 +141,7 @@ export type NewProfile = typeof profiles.$inferInsert;
 export type AuditLogEntry = typeof auditLog.$inferSelect;
 
 // ---------------------------------------------------------------------------
-// Fase 1 — Beranda & Profil Kelas (aditif terhadap skema Fase 0 di atas)
+// Fase 1 - Beranda & Profil Kelas (aditif terhadap skema Fase 0 di atas)
 // ---------------------------------------------------------------------------
 
 // Singleton (selalu satu baris, id = 1): profil naratif kelas yang diedit
@@ -188,7 +188,7 @@ export const academicEvents = pgTable(
     eventDate: timestamp("event_date", { withTimezone: true }).notNull(),
     description: text("description"),
     isFeaturedCountdown: boolean("is_featured_countdown").notNull().default(false),
-    // Fase 3 — kolom aditif (ALTER TABLE ADD COLUMN), tidak mengubah baris
+    // Fase 3 - kolom aditif (ALTER TABLE ADD COLUMN), tidak mengubah baris
     // Fase 1 yang sudah ada (default "lainnya" mengisi data lama secara aman).
     category: eventCategoryEnum("category").notNull().default("lainnya"),
     createdBy: uuid("created_by").references(() => profiles.id, { onDelete: "set null" }),
@@ -202,7 +202,7 @@ export const academicEvents = pgTable(
 );
 
 // Singleton. Mutasi HANYA lewat RPC security definer `increment_visitor_count`
-// (lihat drizzle/0003_beranda_rls_and_rpc.sql) — tidak ada policy insert/update
+// (lihat drizzle/0003_beranda_rls_and_rpc.sql) - tidak ada policy insert/update
 // untuk role anon/authenticated pada tabel ini sama sekali.
 export const visitorCount = pgTable("visitor_count", {
   id: integer("id").primaryKey().default(1),
@@ -218,7 +218,7 @@ export type AcademicEvent = typeof academicEvents.$inferSelect;
 export type NewAcademicEvent = typeof academicEvents.$inferInsert;
 
 // ---------------------------------------------------------------------------
-// Fase 2 — Direktori Siswa & Galeri (aditif terhadap skema Fase 0/1 di atas)
+// Fase 2 - Direktori Siswa & Galeri (aditif terhadap skema Fase 0/1 di atas)
 // ---------------------------------------------------------------------------
 
 export const galleryAlbums = pgTable(
@@ -253,7 +253,7 @@ export const galleryItems = pgTable(
     thumbnailUrl: text("thumbnail_url"),
     caption: text("caption"),
     // Subset dipakai dari contentStatusEnum bersama (Fase 0): pending_review,
-    // approved, rejected — enum tidak diduplikasi, hanya subset nilainya yang
+    // approved, rejected - enum tidak diduplikasi, hanya subset nilainya yang
     // relevan untuk moderasi galeri.
     status: contentStatusEnum("status").notNull().default("pending_review"),
     uploadedBy: uuid("uploaded_by")
@@ -276,13 +276,13 @@ export type NewGalleryAlbum = typeof galleryAlbums.$inferInsert;
 export type GalleryItem = typeof galleryItems.$inferSelect;
 export type NewGalleryItem = typeof galleryItems.$inferInsert;
 export type ContentStatusSubset = "pending_review" | "approved" | "rejected";
-// Fase 4 — blog_posts memakai rentang penuh contentStatusEnum (draft dan
+// Fase 4 - blog_posts memakai rentang penuh contentStatusEnum (draft dan
 // published turut dipakai, berbeda dari galeri/portofolio yang berhenti di
 // ContentStatusSubset di atas).
 export type ContentStatus = (typeof contentStatusEnum.enumValues)[number];
 
 // ---------------------------------------------------------------------------
-// Fase 3 — Jadwal, Agenda, dan Akademik (aditif terhadap skema Fase 0-2)
+// Fase 3 - Jadwal, Agenda, dan Akademik (aditif terhadap skema Fase 0-2)
 // ---------------------------------------------------------------------------
 
 export const subjects = pgTable("subjects", {
@@ -383,7 +383,7 @@ export const grades = pgTable(
 );
 
 // `date` memakai tipe DATE murni (bukan timestamptz seperti draf awal di
-// prompt) — attendance adalah konsep hari kalender, bukan titik waktu.
+// prompt) - attendance adalah konsep hari kalender, bukan titik waktu.
 // Dengan timestamptz, dua entri "hari yang sama" bisa punya nilai jam:menit
 // berbeda sehingga UNIQUE(studentId, date) tidak efektif mencegah duplikat;
 // DATE membuat constraint ini benar secara struktural, bukan bergantung pada
@@ -496,10 +496,10 @@ export type AttendanceStatus = (typeof attendanceStatusEnum.enumValues)[number];
 export type AssessmentType = (typeof assessmentTypeEnum.enumValues)[number];
 
 // ---------------------------------------------------------------------------
-// Kas Digital — fitur tambahan di luar cakupan prompt Fase 3, diminta secara
+// Kas Digital - fitur tambahan di luar cakupan prompt Fase 3, diminta secara
 // eksplisit untuk dieksekusi pada rilis yang sama. Murni tampilan QRIS statis
 // + nomor e-wallet DANA; TIDAK ADA integrasi payment gateway, tidak ada
-// pencatatan transaksi otomatis, tidak ada rekonsiliasi saldo — siswa
+// pencatatan transaksi otomatis, tidak ada rekonsiliasi saldo - siswa
 // men-scan/transfer manual di luar sistem, sesuai spesifikasi eksplisit.
 // Singleton (id = 1), pola identik dengan classProfile/visitorCount Fase 1.
 // ---------------------------------------------------------------------------
@@ -522,7 +522,7 @@ export type KasSettings = typeof kasSettings.$inferSelect;
 export type KasSettingsInsert = typeof kasSettings.$inferInsert;
 
 // ---------------------------------------------------------------------------
-// Fase 4 — Prestasi, Portofolio, dan Blog (aditif terhadap skema Fase 0-3)
+// Fase 4 - Prestasi, Portofolio, dan Blog (aditif terhadap skema Fase 0-3)
 // ---------------------------------------------------------------------------
 
 export const achievements = pgTable(
@@ -546,7 +546,7 @@ export const achievements = pgTable(
 );
 
 // Baris kosong pada suatu achievementId berarti prestasi tingkat kelas
-// (bukan individu) — lihat lib/actions/prestasi.ts.
+// (bukan individu) - lihat lib/actions/prestasi.ts.
 export const achievementParticipants = pgTable(
   "achievement_participants",
   {

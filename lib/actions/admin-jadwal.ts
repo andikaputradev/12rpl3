@@ -45,7 +45,7 @@ async function writeAudit(
 
 /**
  * Menyimpan seluruh tabel jadwal pelajaran sekaligus (replace-all dalam satu
- * transaksi), bukan upsert baris-per-baris — jadwal satu kelas berjumlah
+ * transaksi), bukan upsert baris-per-baris - jadwal satu kelas berjumlah
  * kecil (≤60 baris) dan diedit sebagai satu lembar utuh di dashboard, sama
  * seperti filosofi entry massal nilai/absensi di fase ini. Delete-then-insert
  * dalam transaksi yang sama juga menghindari pelanggaran sementara
@@ -156,8 +156,8 @@ export async function upsertPiketAssignment(
 }
 
 /**
- * Dipindah dari lib/actions/admin-profil.ts (Fase 1) ke sini pada Fase 3 —
- * bukan diduplikasi — sesuai penempatan eksplisit brief Bagian 4, dengan
+ * Dipindah dari lib/actions/admin-profil.ts (Fase 1) ke sini pada Fase 3 -
+ * bukan diduplikasi - sesuai penempatan eksplisit brief Bagian 4, dengan
  * field `category` ditambahkan aditif pada parsing dan payload insert.
  */
 export async function createAcademicEvent(

@@ -50,11 +50,11 @@ async function writeAudit(
 
 /**
  * Menyimpan seluruh baris entry nilai sekaligus (satu "Simpan Semua"),
- * TAPI tetap menulis SATU baris auditLog PER SISWA yang berubah — bukan
- * satu ringkasan batch — sesuai Bagian 9 brief secara harfiah. Efisien lewat
+ * TAPI tetap menulis SATU baris auditLog PER SISWA yang berubah - bukan
+ * satu ringkasan batch - sesuai Bagian 9 brief secara harfiah. Efisien lewat
  * satu bulk INSERT ... ON CONFLICT DO UPDATE (Postgres menerapkan EXCLUDED
  * per-baris secara otomatis, bukan tercampur antar baris) diikuti satu bulk
- * INSERT ke audit_log — bukan loop N query, tapi tetap menghasilkan N baris
+ * INSERT ke audit_log - bukan loop N query, tapi tetap menghasilkan N baris
  * audit yang independen dan bisa ditelusuri per siswa.
  */
 export async function bulkUpsertGrades(input: BulkUpsertGradesInput): Promise<ActionState> {

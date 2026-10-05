@@ -6,7 +6,7 @@ test.describe("Lightbox Galeri", () => {
 
     const firstAlbumLink = page.locator('a[href^="/galeri/"]').first();
     const hasAlbum = (await firstAlbumLink.count()) > 0;
-    test.skip(!hasAlbum, "Tidak ada album tersedia — jalankan `pnpm db:seed` terlebih dulu.");
+    test.skip(!hasAlbum, "Tidak ada album tersedia - jalankan `pnpm db:seed` terlebih dulu.");
 
     await firstAlbumLink.click();
     await page.waitForURL(/\/galeri\/[^/]+$/);
@@ -35,7 +35,7 @@ const PRIVATE_STUDENT_NAME = process.env.E2E_PRIVATE_STUDENT_NAME;
 test.describe("Privasi Direktori", () => {
   test.skip(
     !PRIVATE_STUDENT_NAME,
-    "Butuh E2E_PRIVATE_STUDENT_NAME — nama siswa uji dengan isPublic=false pada database nyata.",
+    "Butuh E2E_PRIVATE_STUDENT_NAME - nama siswa uji dengan isPublic=false pada database nyata.",
   );
 
   test("siswa dengan isPublic=false tidak muncul di grid direktori publik", async ({ page }) => {

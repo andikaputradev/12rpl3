@@ -91,7 +91,7 @@ export async function submitPortfolioProject(
     })
     .returning();
 
-  // Kontributor tambahan (di luar diri sendiri) — opsional, brief tidak
+  // Kontributor tambahan (di luar diri sendiri) - opsional, brief tidak
   // merinci mekanismenya secara eksplisit sehingga diisi di sini sebagai
   // bagian submit, bukan langkah moderasi terpisah.
   const uniqueContributors = [...new Set(parsed.data.contributorIds)].filter(

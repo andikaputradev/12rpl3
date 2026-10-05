@@ -3,7 +3,7 @@ import { AnnouncementManager } from "@/components/admin/announcement-manager";
 import { getAnnouncements } from "@/lib/actions/akademik";
 
 export const metadata: Metadata = {
-  title: "Pengumuman — Dashboard",
+  title: "Pengumuman - Dashboard",
   robots: { index: false, follow: false },
 };
 

@@ -25,7 +25,7 @@ export async function getPendingPosts() {
 /**
  * Tidak ada di kontrak Server Action brief Bagian 4 secara eksplisit, tapi
  * diperlukan untuk mewujudkan "daftar komentar dengan aksi sembunyikan" di
- * /dashboard/blog (Bagian 7) — tanpa ini staf tidak punya cara melihat
+ * /dashboard/blog (Bagian 7) - tanpa ini staf tidak punya cara melihat
  * komentar TERBARU lintas artikel untuk dimoderasi, hanya per-artikel.
  */
 export async function getRecentComments(limit = 30) {

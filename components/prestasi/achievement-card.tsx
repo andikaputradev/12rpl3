@@ -21,7 +21,7 @@ function LevelBadge({ level }: { level: AchievementLevel }) {
     <span className="inline-flex items-center gap-1 rounded-full border border-accent/30 bg-accent/10 px-2.5 py-1 font-mono text-[11px] text-accent-text uppercase tracking-[0.06em]">
       <span className="flex gap-0.5" aria-hidden="true">
         {Array.from({ length: config.tier }).map((_, i) => (
-          // biome-ignore lint/suspicious/noArrayIndexKey: daftar bintang dekoratif statis per tingkat — panjangnya tidak pernah berubah dalam satu render, tidak ada reorder/tambah/hapus.
+          // biome-ignore lint/suspicious/noArrayIndexKey: daftar bintang dekoratif statis per tingkat - panjangnya tidak pernah berubah dalam satu render, tidak ada reorder/tambah/hapus.
           <Star key={`star-${level}-${i}`} className="size-2.5 fill-current" />
         ))}
       </span>
@@ -36,7 +36,7 @@ export function AchievementCard({ achievement }: { achievement: AchievementWithP
     : achievement.participantNames.length === 0
       ? achievement.hiddenParticipantCount > 0
         ? "dan rekan lainnya"
-        : "—"
+        : "-"
       : achievement.hiddenParticipantCount > 0
         ? `${achievement.participantNames.join(", ")}, dan rekan lainnya`
         : achievement.participantNames.join(", ");

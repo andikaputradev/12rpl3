@@ -30,7 +30,7 @@ export async function createServerSupabaseClient() {
 /**
  * Klien service-role melewati RLS sepenuhnya. Hanya untuk operasi
  * server-only tepercaya (mis. provisioning akun oleh Super Admin di fase
- * mendatang) — tidak pernah diimpor dari kode yang bisa berjalan di client.
+ * mendatang) - tidak pernah diimpor dari kode yang bisa berjalan di client.
  */
 export function createServiceRoleClient() {
   const env = getSupabaseEnv();

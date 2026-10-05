@@ -3,7 +3,7 @@ import { PortfolioModerationQueue } from "@/components/admin/portfolio-moderatio
 import { getPendingPortfolio } from "@/lib/actions/admin-prestasi";
 
 export const metadata: Metadata = {
-  title: "Portofolio — Dashboard",
+  title: "Portofolio - Dashboard",
   robots: { index: false, follow: false },
 };
 

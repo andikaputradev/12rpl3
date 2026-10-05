@@ -8,7 +8,7 @@ import { auditLog, blogCategories, blogComments, blogPosts } from "@/lib/db/sche
 import { sanitizeUserText, slugify } from "@/lib/utils";
 import { blogCategorySchema } from "@/lib/validations/blog";
 // Skema alasan penolakan generik dipakai ulang dari validations/prestasi.ts
-// (tempat pertama kali didefinisikan untuk rejectPortfolio) — tidak ada
+// (tempat pertama kali didefinisikan untuk rejectPortfolio) - tidak ada
 // yang blog-spesifik di dalamnya, mendefinisikan ulang hanya akan membuat
 // dua skema identik bisa diam-diam menyimpang.
 import { moderationRejectionSchema } from "@/lib/validations/prestasi";
@@ -104,7 +104,7 @@ export async function rejectPost(id: string, reason: string): Promise<ActionStat
   return { success: true, timestamp: Date.now() };
 }
 
-/** Soft-delete lewat is_hidden — lihat deleteOwnComment di blog-mutations.ts untuk padanan hard-delete milik penulis sendiri. */
+/** Soft-delete lewat is_hidden - lihat deleteOwnComment di blog-mutations.ts untuk padanan hard-delete milik penulis sendiri. */
 export async function hideComment(id: string): Promise<ActionState> {
   let auth: Awaited<ReturnType<typeof requireStaffRole>>;
   try {
@@ -183,7 +183,7 @@ export async function deleteBlogCategory(id: string): Promise<ActionState> {
   const [before] = await db.select().from(blogCategories).where(eq(blogCategories.id, id)).limit(1);
   if (!before) return { error: "Kategori tidak ditemukan." };
 
-  // categoryId di blog_posts bereferensi onDelete: "set null" — artikel
+  // categoryId di blog_posts bereferensi onDelete: "set null" - artikel
   // dengan kategori ini TIDAK ikut terhapus, hanya kehilangan kategorinya.
   await db.delete(blogCategories).where(eq(blogCategories.id, id));
   await writeAudit(auth.userId, "delete", "blog_categories", id, before, null);

@@ -28,7 +28,7 @@ export default async function BlogListingPage({ searchParams }: BlogPageProps) {
         Cerita dari Kelas Kami
       </h1>
       <p className="mt-3 max-w-2xl text-muted">
-        Ditulis oleh siswa, ditinjau sebelum tayang — kabar kegiatan, tutorial, dan opini dari Kelas
+        Ditulis oleh siswa, ditinjau sebelum tayang - kabar kegiatan, tutorial, dan opini dari Kelas
         XII RPL 3.
       </p>
 

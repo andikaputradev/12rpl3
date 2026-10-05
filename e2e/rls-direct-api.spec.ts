@@ -23,11 +23,11 @@ async function signIn(
 /**
  * Verifikasi langsung terhadap RLS Postgres, bukan lewat UI aplikasi: siswa
  * login lewat endpoint Auth Supabase asli, lalu mencoba PATCH gallery_items
- * langsung ke REST API — harus ditolak (RLS `items_update_staff_only`
+ * langsung ke REST API - harus ditolak (RLS `items_update_staff_only`
  * sengaja tidak memberi siswa hak UPDATE atas barisnya sendiri, lihat
  * drizzle/0005_direktori_galeri_rls.sql).
  */
-test.describe("RLS gallery_items — percobaan manipulasi langsung", () => {
+test.describe("RLS gallery_items - percobaan manipulasi langsung", () => {
   test.skip(
     !SUPABASE_URL || !SUPABASE_ANON_KEY || !SISWA_EMAIL || !SISWA_PASSWORD,
     "Butuh NEXT_PUBLIC_SUPABASE_URL/ANON_KEY dan E2E_SISWA_EMAIL/PASSWORD pada environment Supabase nyata.",
@@ -55,7 +55,7 @@ test.describe("RLS gallery_items — percobaan manipulasi langsung", () => {
     const ownItems = await ownItemsResponse.json();
     test.skip(
       !Array.isArray(ownItems) || ownItems.length === 0,
-      "Akun uji siswa belum memiliki kiriman gallery_items — jalankan alur unggah terlebih dulu.",
+      "Akun uji siswa belum memiliki kiriman gallery_items - jalankan alur unggah terlebih dulu.",
     );
 
     const targetId = ownItems[0].id;
@@ -91,12 +91,12 @@ test.describe("RLS gallery_items — percobaan manipulasi langsung", () => {
 
 /**
  * Pengujian negatif WAJIB Bagian 12 prompt Fase 3, level RLS langsung
- * (bukan lewat UI aplikasi — lihat e2e/akademik-rbac.spec.ts untuk versi UI).
+ * (bukan lewat UI aplikasi - lihat e2e/akademik-rbac.spec.ts untuk versi UI).
  * Bagian 9 brief: "Pengurus SENGAJA tidak disertakan di exists-clause
- * manapun pada dua tabel ini" — dibuktikan di sini lewat REST API Supabase
+ * manapun pada dua tabel ini" - dibuktikan di sini lewat REST API Supabase
  * langsung, bukan diasumsikan benar dari membaca SQL migration saja.
  */
-test.describe("RLS grades/attendance — pengurus dikecualikan total", () => {
+test.describe("RLS grades/attendance - pengurus dikecualikan total", () => {
   test.skip(
     !SUPABASE_URL || !SUPABASE_ANON_KEY || !PENGURUS_EMAIL || !PENGURUS_PASSWORD,
     "Butuh NEXT_PUBLIC_SUPABASE_URL/ANON_KEY dan E2E_PENGURUS_EMAIL/PASSWORD pada environment Supabase nyata.",
@@ -117,7 +117,7 @@ test.describe("RLS grades/attendance — pengurus dikecualikan total", () => {
     const rows = await response.json();
     // Bukan 403 (RLS default-deny mengembalikan 200 dengan array kosong,
     // bukan error, karena PostgREST hanya menyaring baris yang policy-nya
-    // mengizinkan SELECT — tidak ada satu policy pun yang menyebut pengurus).
+    // mengizinkan SELECT - tidak ada satu policy pun yang menyebut pengurus).
     expect(Array.isArray(rows) ? rows.length : -1).toBe(0);
   });
 
@@ -139,7 +139,7 @@ test.describe("RLS grades/attendance — pengurus dikecualikan total", () => {
   });
 });
 
-test.describe("RLS grades/attendance — siswa tidak bisa membaca data siswa lain", () => {
+test.describe("RLS grades/attendance - siswa tidak bisa membaca data siswa lain", () => {
   test.skip(
     !SUPABASE_URL || !SUPABASE_ANON_KEY || !SISWA_EMAIL || !SISWA_PASSWORD,
     "Butuh NEXT_PUBLIC_SUPABASE_URL/ANON_KEY dan E2E_SISWA_EMAIL/PASSWORD pada environment Supabase nyata.",
@@ -159,7 +159,7 @@ test.describe("RLS grades/attendance — siswa tidak bisa membaca data siswa lai
     );
     expect(response.ok()).toBe(true);
     const rows: { student_id: string }[] = await response.json();
-    // Bukan sekadar "tidak kosong" — memverifikasi SETIAP baris yang
+    // Bukan sekadar "tidak kosong" - memverifikasi SETIAP baris yang
     // kembali benar-benar milik siswa yang login, tidak ada satu pun
     // baris siswa lain yang bocor.
     for (const row of rows) {
@@ -191,24 +191,24 @@ test.describe("RLS grades/attendance — siswa tidak bisa membaca data siswa lai
         entered_by: user.id,
       },
     });
-    // grades_mutate_staff_only tidak menyertakan siswa sama sekali — insert
+    // grades_mutate_staff_only tidak menyertakan siswa sama sekali - insert
     // ditolak (403), bukan berhasil dengan nilai rekaan sendiri.
     expect(insertResponse.status()).toBeGreaterThanOrEqual(400);
   });
 });
 
 /**
- * Fase 4 — pengujian negatif WAJIB Bagian 12: "Siswa tidak dapat memaksa
+ * Fase 4 - pengujian negatif WAJIB Bagian 12: "Siswa tidak dapat memaksa
  * status published lewat manipulasi permintaan langsung, diverifikasi
  * eksplisit". submitPostForReview() di server sudah menentukan status dari
  * role, tapi test ini membuktikan RLS SENDIRI juga menolak percobaan bypass
  * total (Server Action dilewati sepenuhnya, PATCH langsung ke PostgREST):
  * posts_update_own_draft_or_staff tidak punya WITH CHECK eksplisit, artinya
- * Postgres memakai ekspresi USING yang sama untuk memvalidasi baris BARU —
+ * Postgres memakai ekspresi USING yang sama untuk memvalidasi baris BARU -
  * status='published' pada baris baru gagal syarat status IN
  * ('draft','pending_review'), sehingga UPDATE ditolak di level database.
  */
-test.describe("RLS blog_posts — siswa tidak bisa memaksa status published", () => {
+test.describe("RLS blog_posts - siswa tidak bisa memaksa status published", () => {
   test.skip(
     !SUPABASE_URL || !SUPABASE_ANON_KEY || !SISWA_EMAIL || !SISWA_PASSWORD,
     "Butuh NEXT_PUBLIC_SUPABASE_URL/ANON_KEY dan E2E_SISWA_EMAIL/PASSWORD, plus minimal satu draf/pending_review milik akun tsb.",
@@ -231,7 +231,7 @@ test.describe("RLS blog_posts — siswa tidak bisa memaksa status published", ()
     if (!ownPost) {
       test.skip(
         true,
-        "Akun uji siswa belum punya post draft/pending_review — buat satu dulu lewat /blog/tulis.",
+        "Akun uji siswa belum punya post draft/pending_review - buat satu dulu lewat /blog/tulis.",
       );
       return;
     }
@@ -251,7 +251,7 @@ test.describe("RLS blog_posts — siswa tidak bisa memaksa status published", ()
 
     const updatedRows = patchResponse.ok() ? await patchResponse.json() : [];
     // PostgREST bisa mengembalikan 200 dengan array KOSONG (bukan error)
-    // saat RLS menolak baris — memverifikasi array kosong sama pentingnya
+    // saat RLS menolak baris - memverifikasi array kosong sama pentingnya
     // dengan memeriksa status code.
     expect(Array.isArray(updatedRows) ? updatedRows.length : 0).toBe(0);
 

@@ -40,7 +40,7 @@ export async function updateSession(
   });
 
   // getUser() memvalidasi JWT langsung ke Supabase Auth, bukan hanya
-  // membaca cookie — mencegah sesi yang sudah dicabut tetap diterima.
+  // membaca cookie - mencegah sesi yang sudah dicabut tetap diterima.
   const {
     data: { user },
   } = await supabase.auth.getUser();

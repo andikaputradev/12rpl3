@@ -14,7 +14,7 @@ import {
 } from "@/lib/db/schema";
 
 /**
- * Daftar tugas mentah (tanpa join status per-siswa) — untuk AssignmentManager
+ * Daftar tugas mentah (tanpa join status per-siswa) - untuk AssignmentManager
  * di dashboard admin. Berbeda dari getAssignments() di akademik.ts, yang
  * sengaja join ke kiriman MILIK PEMANGGIL (tidak relevan untuk staf, yang
  * bukan siswa dan tidak seharusnya "mengumpulkan" tugas).
@@ -42,7 +42,7 @@ export async function getGradeEntrySheet(
     db
       .select({ id: profiles.id, fullName: profiles.fullName, absenNumber: profiles.absenNumber })
       .from(profiles)
-      .where(eq(profiles.role, "siswa"))
+      .where(inArray(profiles.role, ["siswa", "pengurus"]))
       .orderBy(asc(profiles.absenNumber), asc(profiles.fullName)),
     db
       .select({ studentId: grades.studentId, score: grades.score })
@@ -74,7 +74,7 @@ export interface AttendanceEntryRow {
 }
 
 /**
- * existingStatus null berarti "belum direkam untuk tanggal ini" — UI (bukan
+ * existingStatus null berarti "belum direkam untuk tanggal ini" - UI (bukan
  * fungsi ini) yang memutuskan menampilkannya sebagai default "Hadir" pada
  * ToggleGroup, konsisten dengan Bagian 7 brief: "staf tinggal mengubah baris
  * yang tidak hadir". Data sesungguhnya di database tetap jujur (null),
@@ -87,7 +87,7 @@ export async function getAttendanceEntrySheet(date: string): Promise<AttendanceE
     db
       .select({ id: profiles.id, fullName: profiles.fullName, absenNumber: profiles.absenNumber })
       .from(profiles)
-      .where(eq(profiles.role, "siswa"))
+      .where(inArray(profiles.role, ["siswa", "pengurus"]))
       .orderBy(asc(profiles.absenNumber), asc(profiles.fullName)),
     db
       .select({ studentId: attendance.studentId, status: attendance.status })
@@ -117,7 +117,7 @@ export interface AuditLogEntryView {
 }
 
 /**
- * super_admin SAJA — brief Bagian 7 eksplisit mengecualikan wali_kelas dari
+ * super_admin SAJA - brief Bagian 7 eksplisit mengecualikan wali_kelas dari
  * halaman ini, berbeda dari pola staf dua-role di seluruh fase ini. Audit
  * log adalah mekanisme akuntabilitas yang mengawasi tindakan wali_kelas itu
  * sendiri (Bagian 7: "melindungi baik siswa maupun Wali Kelas dari
@@ -145,7 +145,7 @@ export async function getGradeAttendanceAuditLog(limit = 50): Promise<AuditLogEn
     db
       .select({ id: profiles.id, fullName: profiles.fullName })
       .from(profiles)
-      .where(eq(profiles.role, "siswa")),
+      .where(inArray(profiles.role, ["siswa", "pengurus"])),
   ]);
 
   const studentNameById = new Map(students.map((student) => [student.id, student.fullName]));

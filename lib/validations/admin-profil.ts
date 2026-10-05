@@ -64,7 +64,7 @@ export const academicEventSchema = z.object({
     }),
   ),
   description: z.string().trim().max(500).optional(),
-  // Fase 3 — field baru, aditif. Default "lainnya" konsisten dengan default
+  // Fase 3 - field baru, aditif. Default "lainnya" konsisten dengan default
   // kolom database untuk baris Fase 1 yang sudah ada sebelum migration ini.
   category: z.enum(eventCategoryValues).default("lainnya"),
   isFeaturedCountdown: z.boolean().default(false),

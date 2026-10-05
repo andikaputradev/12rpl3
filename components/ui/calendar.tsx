@@ -9,7 +9,7 @@ export type CalendarProps = DayPickerProps;
 
 /**
  * Wrapper styling generik di atas react-day-picker v10 (bukan grid kalender
- * manual, sesuai Asumsi Kunci #1 prompt Fase 3) — hanya token warna/spacing
+ * manual, sesuai Asumsi Kunci #1 prompt Fase 3) - hanya token warna/spacing
  * Fase 0. Logika indikator event, AnimatePresence transisi bulan, dan locale
  * id ada di komponen fitur AcademicCalendar, bukan di sini, agar primitif
  * ini tetap reusable untuk kebutuhan kalender lain di luar Fase 3.

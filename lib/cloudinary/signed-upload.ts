@@ -100,8 +100,8 @@ export interface ServerSideUploadResult {
 
 /**
  * Upload staf (foto wali kelas, foto kelas, gambar highlight): volume rendah,
- * hanya role pengurus ke atas. Berkas mengalir lewat server kita — bukan pola
- * "client unggah langsung ke Cloudinary dengan signature" — agar magic bytes
+ * hanya role pengurus ke atas. Berkas mengalir lewat server kita - bukan pola
+ * "client unggah langsung ke Cloudinary dengan signature" - agar magic bytes
  * dapat diperiksa penuh sebelum diteruskan. Untuk upload publik bervolume
  * tinggi (galeri siswa, Fase 2), `createSignedUploadParams` di atas tetap
  * tersedia untuk pola direct-upload yang lebih hemat bandwidth server.
@@ -154,7 +154,7 @@ export interface DocumentUploadResult {
 
 /**
  * Upload kiriman Bank Tugas (Fase 3, Asumsi Kunci #6): siswa mana pun boleh
- * memanggil ini untuk berkasnya sendiri — bukan staf-saja seperti
+ * memanggil ini untuk berkasnya sendiri - bukan staf-saja seperti
  * uploadImageServerSide di atas. Otorisasi "siapa boleh menulis baris
  * assignment_submissions mana" tetap ditegakkan di lib/actions (identitas
  * dari sesi server) dan RLS, BUKAN oleh fungsi ini; fungsi ini hanya

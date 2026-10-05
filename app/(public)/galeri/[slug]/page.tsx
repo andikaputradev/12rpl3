@@ -19,7 +19,7 @@ export async function generateMetadata({ params }: AlbumPageProps): Promise<Meta
 
   return {
     title: `${album.title} | Galeri`,
-    description: album.description ?? `Album ${album.title} — ${siteConfig.className}.`,
+    description: album.description ?? `Album ${album.title} - ${siteConfig.className}.`,
     alternates: { canonical: `/galeri/${album.slug}` },
     openGraph: album.coverImageUrl
       ? {

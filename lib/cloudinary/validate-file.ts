@@ -11,7 +11,7 @@ interface MagicSignature<F extends string = AllowedImageFormat> {
   matches: (bytes: Uint8Array) => boolean;
 }
 
-// Tanda tangan biner diperiksa langsung dari isi berkas — bukan ekstensi nama
+// Tanda tangan biner diperiksa langsung dari isi berkas - bukan ekstensi nama
 // file maupun header `Content-Type` yang dikirim client, karena keduanya
 // dapat dipalsukan dengan trivial.
 const SIGNATURES: MagicSignature<AllowedImageFormat>[] = [
@@ -53,11 +53,11 @@ const SIGNATURES: MagicSignature<AllowedImageFormat>[] = [
   },
 ];
 
-// Fase 3 — Bank Tugas menerima dokumen (Asumsi Kunci #6: resource_type
+// Fase 3 - Bank Tugas menerima dokumen (Asumsi Kunci #6: resource_type
 // "auto", gambar maupun PDF). PDF ditambahkan sebagai signature terpisah,
 // TIDAK digabung ke SIGNATURES di atas, agar validateImageFile (dipakai
 // admin-profil.ts untuk foto wali kelas/kelas/highlight, dan
-// galeri-mutations.ts untuk galeri) tetap menolak PDF seperti semula —
+// galeri-mutations.ts untuk galeri) tetap menolak PDF seperti semula -
 // konteks itu memang harus tetap gambar-saja.
 export type AllowedDocumentFormat = AllowedImageFormat | "pdf";
 
@@ -118,7 +118,7 @@ function checkAgainstSignatures<F extends string>(
   };
 }
 
-// Tanda tangan biner diperiksa langsung dari isi berkas — bukan ekstensi nama
+// Tanda tangan biner diperiksa langsung dari isi berkas - bukan ekstensi nama
 // file maupun header `Content-Type` yang dikirim client, karena keduanya
 // dapat dipalsukan dengan trivial. Berlaku sama untuk kedua fungsi di bawah.
 export function validateImageFile(buffer: ArrayBuffer): FileValidationResult<AllowedImageFormat> {

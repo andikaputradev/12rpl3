@@ -3,7 +3,7 @@ import { UploadForm } from "@/components/galeri/upload-form";
 import { getActiveAlbumsForUpload } from "@/lib/actions/galeri";
 
 export const metadata: Metadata = {
-  title: "Unggah Foto — Galeri",
+  title: "Unggah Foto - Galeri",
   robots: { index: false, follow: false },
 };
 

@@ -18,13 +18,13 @@ async function loginAs(page: Page, email: string, password: string) {
 /**
  * Pengujian negatif wajib Bagian 12 prompt Fase 3: akun pengurus mencoba
  * mengakses /akademik/nilai dan /akademik/absensi harus ditolak. Butuh akun
- * uji BARU role pengurus (E2E_PENGURUS_EMAIL/PASSWORD) — belum ada di
+ * uji BARU role pengurus (E2E_PENGURUS_EMAIL/PASSWORD) - belum ada di
  * environment E2E sebelumnya (Fase 0-2 hanya punya pasangan siswa/staff).
  */
 test.describe("Pengurus ditolak dari nilai dan absensi", () => {
   test.skip(
     !PENGURUS_EMAIL || !PENGURUS_PASSWORD,
-    "Butuh E2E_PENGURUS_EMAIL/E2E_PENGURUS_PASSWORD — akun uji role pengurus pada environment Supabase nyata.",
+    "Butuh E2E_PENGURUS_EMAIL/E2E_PENGURUS_PASSWORD - akun uji role pengurus pada environment Supabase nyata.",
   );
 
   test("role pengurus mendapat 403 di /akademik/nilai", async ({ page }) => {
@@ -75,11 +75,11 @@ test.describe("Siswa dapat mengakses nilai dan absensi miliknya sendiri", () => 
 
   /**
    * "Siswa A tidak bisa melihat nilai siswa B lewat URL manapun" (Bagian 12)
-   * — di aplikasi ini TIDAK ADA url dengan parameter studentId sama sekali
+   * - di aplikasi ini TIDAK ADA url dengan parameter studentId sama sekali
    * (identitas selalu dari sesi server, lihat lib/actions/akademik.ts).
    * Test ini membuktikan properti itu secara langsung: menyisipkan parameter
    * query yang lazim dipakai untuk serangan IDOR sama sekali tidak
-   * berpengaruh pada apa yang dirender — server tidak pernah membacanya.
+   * berpengaruh pada apa yang dirender - server tidak pernah membacanya.
    */
   test("parameter query sisipan (percobaan IDOR) tidak berpengaruh pada halaman nilai", async ({
     page,

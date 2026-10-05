@@ -94,7 +94,7 @@ export default async function PrestasiPage() {
         ) : null}
       </section>
 
-      {/* Section tersembunyi TOTAL saat kosong — bukan judul dengan isi kosong (Bagian 5 brief). */}
+      {/* Section tersembunyi TOTAL saat kosong - bukan judul dengan isi kosong (Bagian 5 brief). */}
       {testimonials.length > 0 ? (
         <section className="container-portal pb-20">
           <h2 className="font-display text-2xl font-medium tracking-tight">Testimoni Alumni</h2>

@@ -11,7 +11,7 @@ describe("calculateSubjectAverage", () => {
   });
 
   it("tidak memperlakukan jenis penilaian kosong sebagai nol", () => {
-    // Rata-rata (80+90)/2, BUKAN (80+90+0+0)/4 — perbedaan ini krusial
+    // Rata-rata (80+90)/2, BUKAN (80+90+0+0)/4 - perbedaan ini krusial
     // karena kesalahan di sini membuat siswa terlihat gagal padahal
     // sebagian penilaian memang belum berlangsung.
     const withTwo = calculateSubjectAverage({ tugas: 80, uts: 90 });

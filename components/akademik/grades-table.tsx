@@ -50,7 +50,7 @@ export function GradesTable({ rows }: { rows: GradeRow[] }) {
                 {row.scores[type] ?? (
                   <span className="text-muted">
                     <span className="sr-only">Belum dinilai</span>
-                    <span aria-hidden="true">—</span>
+                    <span aria-hidden="true">-</span>
                   </span>
                 )}
               </TableCell>
@@ -59,7 +59,7 @@ export function GradesTable({ rows }: { rows: GradeRow[] }) {
               {row.average ?? (
                 <span className="font-normal text-muted">
                   <span className="sr-only">Belum ada nilai</span>
-                  <span aria-hidden="true">—</span>
+                  <span aria-hidden="true">-</span>
                 </span>
               )}
             </TableCell>

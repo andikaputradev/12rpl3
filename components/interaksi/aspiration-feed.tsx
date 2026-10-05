@@ -37,7 +37,7 @@ export function AspirationFeed({ aspirations }: AspirationFeedProps) {
                 </p>
                 <p className="shrink-0 font-mono text-[11px] text-muted">
                   {new Intl.DateTimeFormat("id-ID", { dateStyle: "medium" }).format(
-                    aspiration.createdAt,
+                    new Date(aspiration.createdAt),
                   )}
                 </p>
               </div>

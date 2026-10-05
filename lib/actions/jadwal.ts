@@ -102,7 +102,7 @@ export const getPiketSchedule = cache(
   ),
 );
 
-/** Rentang [awal bulan, awal bulan berikutnya) — dipakai populate indikator kalender. */
+/** Rentang [awal bulan, awal bulan berikutnya) - dipakai populate indikator kalender. */
 export async function getAcademicEvents(month: Date): Promise<AcademicEvent[]> {
   try {
     const start = new Date(month.getFullYear(), month.getMonth(), 1);
@@ -141,7 +141,7 @@ export const getUpcomingAcademicEvents = cache(
 
 /**
  * Data publik (subjects punya RLS select-public, nama siswa sudah publik
- * lewat Direktori Siswa Fase 2) — dipakai dropdown/multi-select di berbagai
+ * lewat Direktori Siswa Fase 2) - dipakai dropdown/multi-select di berbagai
  * halaman admin Fase 3 (ScheduleManager, BulkGradeEntryTable,
  * AssignmentManager, PiketManager) tanpa perlu query terpisah di tiap fitur.
  */

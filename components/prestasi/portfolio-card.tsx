@@ -42,7 +42,7 @@ export function PortfolioCard({ project }: { project: PortfolioProjectView }) {
             ? ` · dengan ${project.contributorNames.join(", ")}`
             : ""}
         </p>
-        {/* Hover DAN focus-within — benar-benar menyingkap aksi yang bisa
+        {/* Hover DAN focus-within - benar-benar menyingkap aksi yang bisa
             diambil (Bagian 5 brief), bukan dekorasi, sehingga pengguna
             keyboard yang tab ke tautan juga melihatnya, bukan hanya mouse. */}
         <div className="mt-auto flex translate-y-1 flex-col gap-3 opacity-0 transition-all duration-300 group-focus-within:translate-y-0 group-focus-within:opacity-100 group-hover:translate-y-0 group-hover:opacity-100">

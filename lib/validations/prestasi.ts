@@ -17,7 +17,7 @@ export const achievementSchema = z.object({
     .or(z.literal("")),
   level: z.enum(achievementLevelValues),
   eventDate: z.string().optional().or(z.literal("")),
-  // Kosong berarti prestasi tingkat kelas, bukan individu — lihat komentar
+  // Kosong berarti prestasi tingkat kelas, bukan individu - lihat komentar
   // achievementParticipants di lib/db/schema.ts.
   participantIds: z.array(z.uuid()).max(40, "Maksimal 40 peserta."),
 });

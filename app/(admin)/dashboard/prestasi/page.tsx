@@ -7,7 +7,7 @@ import { db } from "@/lib/db";
 import { achievements } from "@/lib/db/schema";
 
 export const metadata: Metadata = {
-  title: "Prestasi — Dashboard",
+  title: "Prestasi - Dashboard",
   robots: { index: false, follow: false },
 };
 

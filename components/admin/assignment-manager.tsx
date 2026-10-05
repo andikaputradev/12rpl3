@@ -65,7 +65,7 @@ export function AssignmentManager({
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="none">— Umum (tanpa mata pelajaran) —</SelectItem>
+                <SelectItem value="none">- Umum (tanpa mata pelajaran) -</SelectItem>
                 {subjects.map((subject) => (
                   <SelectItem key={subject.id} value={subject.id}>
                     {subject.name}

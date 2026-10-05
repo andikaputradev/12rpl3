@@ -11,7 +11,7 @@ export const EVENT_CATEGORY_LABELS: Record<EventCategory, string> = {
 };
 
 // Nama CSS custom property (didefinisikan di app/globals.css), bukan hex
-// langsung — konsisten dengan seluruh design token Fase 0 (OKLCH via
+// langsung - konsisten dengan seluruh design token Fase 0 (OKLCH via
 // culori). Tiga kategori sengaja memakai ulang hue token semantik yang
 // sudah ada (destructive/success/accent) karena maknanya selaras secara
 // konseptual; empat sisanya memakai hue baru yang harmonis dengan palet.

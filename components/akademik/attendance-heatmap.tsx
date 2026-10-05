@@ -56,7 +56,7 @@ export function AttendanceHeatmap({ entries }: { entries: AttendanceLogEntry[] }
               const entry = byDate.get(key);
               const dateLabel = format(day, "EEEE, d MMMM yyyy", { locale: idLocale });
               const label = entry
-                ? `${dateLabel}: ${STATUS_LABELS[entry.status]}${entry.notes ? ` — ${entry.notes}` : ""}`
+                ? `${dateLabel}: ${STATUS_LABELS[entry.status]}${entry.notes ? ` - ${entry.notes}` : ""}`
                 : `${dateLabel}: tidak ada catatan`;
               return (
                 <div
@@ -99,7 +99,7 @@ export function AttendanceHeatmap({ entries }: { entries: AttendanceLogEntry[] }
                 {format(parseISO(entry.date), "EEEE, d MMMM yyyy", { locale: idLocale })}
               </TableCell>
               <TableCell>{STATUS_LABELS[entry.status]}</TableCell>
-              <TableCell className="text-muted">{entry.notes ?? "—"}</TableCell>
+              <TableCell className="text-muted">{entry.notes ?? "-"}</TableCell>
             </TableRow>
           ))}
         </TableBody>

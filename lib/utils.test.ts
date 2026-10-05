@@ -1,5 +1,12 @@
 import { describe, expect, it } from "vitest";
-import { cn, getProgressPercent, getTimeRemaining, sanitizeUserText, slugify } from "./utils";
+import {
+  cn,
+  formatIndonesianDate,
+  getProgressPercent,
+  getTimeRemaining,
+  sanitizeUserText,
+  slugify,
+} from "./utils";
 
 describe("getTimeRemaining", () => {
   it("menghitung selisih hari, jam, menit, detik dengan benar", () => {
@@ -75,5 +82,21 @@ describe("slugify", () => {
 
   it("menghapus karakter non-alfanumerik", () => {
     expect(slugify("Kelas XII RPL 3!!")).toBe("kelas-xii-rpl-3");
+  });
+});
+
+describe("formatIndonesianDate", () => {
+  it("memformat objek Date ke tanggal Indonesia", () => {
+    const d = new Date(2026, 9, 5); // 5 Oktober 2026
+    expect(formatIndonesianDate(d)).toContain("5 Oktober 2026");
+  });
+
+  it("menangani input string tanggal ISO", () => {
+    expect(formatIndonesianDate("2026-10-05")).toContain("5 Oktober 2026");
+  });
+
+  it("mengembalikan tanda hubung untuk input invalid", () => {
+    expect(formatIndonesianDate(null)).toBe("-");
+    expect(formatIndonesianDate("tanggal-salah")).toBe("-");
   });
 });

@@ -39,7 +39,7 @@ function insertAtCursor(
 /**
  * "Simpan Draf" adalah SATU-SATUNYA fungsi inti form ini (Bagian 6 brief:
  * "tidak boleh bergantung pada toolbar; toolbar murni kenyamanan tambahan")
- * — tombol toolbar hanya menyisipkan sintaks di posisi kursor, textarea dan
+ * - tombol toolbar hanya menyisipkan sintaks di posisi kursor, textarea dan
  * submit tetap berfungsi penuh sekalipun seluruh tombol toolbar tidak
  * pernah disentuh. Kirim-untuk-tinjau/terbitkan terjadi di halaman
  * Tulisan Saya setelah draf tersimpan (dua langkah eksplisit, bukan
@@ -90,7 +90,7 @@ export function MarkdownEditor({ categories }: { categories: { id: string; name:
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="none">— Tanpa kategori —</SelectItem>
+              <SelectItem value="none">- Tanpa kategori -</SelectItem>
               {categories.map((category) => (
                 <SelectItem key={category.id} value={category.id}>
                   {category.name}
@@ -108,7 +108,7 @@ export function MarkdownEditor({ categories }: { categories: { id: string; name:
 
       <div className="flex flex-col gap-1.5">
         <Label htmlFor={`${formId}-excerpt`}>
-          Ringkasan (opsional — dibuat otomatis bila kosong)
+          Ringkasan (opsional - dibuat otomatis bila kosong)
         </Label>
         <Input id={`${formId}-excerpt`} name="excerpt" maxLength={300} />
       </div>

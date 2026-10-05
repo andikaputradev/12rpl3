@@ -19,7 +19,7 @@ interface MyPost {
   createdAt: Date;
 }
 
-/** isStaff menentukan label tombol — keduanya memanggil submitPostForReview yang sama; status akhir ditentukan di server, bukan dari label yang ditampilkan (Bagian 6 brief). */
+/** isStaff menentukan label tombol - keduanya memanggil submitPostForReview yang sama; status akhir ditentukan di server, bukan dari label yang ditampilkan (Bagian 6 brief). */
 export function MyPostsList({ posts, isStaff }: { posts: MyPost[]; isStaff: boolean }) {
   const [items, setItems] = useState(posts);
   const [pendingId, setPendingId] = useState<string | null>(null);

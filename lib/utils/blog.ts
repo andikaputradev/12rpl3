@@ -1,7 +1,7 @@
 /**
  * Mengubah Markdown mentah menjadi teks polos ringkas untuk excerpt
  * otomatis saat penulis tidak mengisi ringkasan sendiri. Sengaja sederhana
- * (regex, bukan parser Markdown penuh) — hanya untuk potongan pratinjau,
+ * (regex, bukan parser Markdown penuh) - hanya untuk potongan pratinjau,
  * BUKAN jalur render (itu tugas MarkdownRenderer + rehype-sanitize).
  */
 export function deriveExcerpt(markdown: string, maxLength = 200): string {

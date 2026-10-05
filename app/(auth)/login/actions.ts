@@ -12,8 +12,22 @@ export interface LoginState {
 }
 
 export async function loginAction(_prevState: LoginState, formData: FormData): Promise<LoginState> {
+  const rawIdentifier = formData.get("email")?.toString()?.trim() ?? "";
+  let resolvedEmail = rawIdentifier;
+
+  if (rawIdentifier && !rawIdentifier.includes("@")) {
+    const lower = rawIdentifier.toLowerCase();
+    if (lower === "admin" || lower === "andikaputra") {
+      resolvedEmail = "andikaputra@12rpl.com";
+    } else {
+      resolvedEmail = `${lower}@12rpl.com`;
+    }
+  } else if (rawIdentifier.toLowerCase() === "admin@12rpl.com") {
+    resolvedEmail = "andikaputra@12rpl.com";
+  }
+
   const parsed = loginSchema.safeParse({
-    email: formData.get("email"),
+    email: resolvedEmail,
     password: formData.get("password"),
     redirectTo: formData.get("redirectTo") || undefined,
   });

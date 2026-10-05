@@ -20,7 +20,7 @@
   --radius: 0.625rem;
   --hero-overlay: oklch(98.20% 0.0041 91.45 / 0.85);
 
-  /* Fase 3 — dot indikator kategori event kalender akademik. 4 dari 7
+  /* Fase 3 - dot indikator kategori event kalender akademik. 4 dari 7
      kategori memakai ALIAS var() ke token -text yang sudah ada
      (destructive/success/accent) karena maknanya selaras secara konseptual
      dan sudah presisi-diverifikasi kontrasnya; "lainnya" alias ke --muted.
@@ -137,7 +137,7 @@
     @apply mx-auto w-full max-w-6xl px-5 sm:px-8;
   }
 
-  /* Fase 4 — gaya render Markdown kustom (bukan @tailwindcss/typography,
+  /* Fase 4 - gaya render Markdown kustom (bukan @tailwindcss/typography,
      tidak terpasang di proyek ini) memakai token desain Fase 0 sendiri agar
      konten artikel tetap terasa satu sistem dengan seluruh portal. */
   .prose-portal {
@@ -209,11 +209,128 @@
   *::after {
     /* biome-ignore lint/complexity/noImportantStyles: override aksesibilitas wajib menang atas seluruh durasi animasi komponen, sesuai WCAG 2.3.3. */
     animation-duration: 0.01ms !important;
-    /* biome-ignore lint/complexity/noImportantStyles: idem — override aksesibilitas reduced-motion. */
+    /* biome-ignore lint/complexity/noImportantStyles: idem - override aksesibilitas reduced-motion. */
     animation-iteration-count: 1 !important;
-    /* biome-ignore lint/complexity/noImportantStyles: idem — override aksesibilitas reduced-motion. */
+    /* biome-ignore lint/complexity/noImportantStyles: idem - override aksesibilitas reduced-motion. */
     transition-duration: 0.01ms !important;
-    /* biome-ignore lint/complexity/noImportantStyles: idem — override aksesibilitas reduced-motion. */
+    /* biome-ignore lint/complexity/noImportantStyles: idem - override aksesibilitas reduced-motion. */
     scroll-behavior: auto !important;
+  }
+}
+
+@media print {
+  /* Sembunyikan elemen website dan latar belakang halaman portal saat mencetak lembar dokumen */
+  body:has([data-radix-portal]) > *:not([data-radix-portal]),
+  main,
+  header,
+  footer,
+  nav,
+  aside,
+  .print-hidden,
+  [data-print-hide],
+  [data-slot="dialog-overlay"],
+  button,
+  input,
+  .toaster {
+    /* biome-ignore lint/complexity/noImportantStyles: media cetak membutuhkan override mutlak agar output kertas bersih */
+    display: none !important;
+  }
+
+  @page {
+    size: A4 portrait;
+    margin: 1.2cm 1.2cm 1.2cm 1.2cm;
+  }
+
+  @page landscape {
+    size: A4 landscape;
+    margin: 1.2cm 1.2cm 1.2cm 1.2cm;
+  }
+
+  .print-landscape {
+    page: landscape;
+  }
+
+  html,
+  body {
+    /* biome-ignore lint/complexity/noImportantStyles: reset warna dan latar belakang dokumen cetak */
+    background: #ffffff !important;
+    /* biome-ignore lint/complexity/noImportantStyles: reset warna dan latar belakang dokumen cetak */
+    background-color: #ffffff !important;
+    /* biome-ignore lint/complexity/noImportantStyles: teks harus hitam kontras tinggi */
+    color: #000000 !important;
+    /* biome-ignore lint/complexity/noImportantStyles: reset margin */
+    margin: 0 !important;
+    /* biome-ignore lint/complexity/noImportantStyles: reset padding */
+    padding: 0 !important;
+    font-size: 10pt;
+    line-height: 1.35;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  [data-slot="dialog-content"] {
+    /* biome-ignore lint/complexity/noImportantStyles: hilangkan gaya modal saat mencetak */
+    position: static !important;
+    /* biome-ignore lint/complexity/noImportantStyles: hilangkan transformasi modal */
+    top: auto !important;
+    /* biome-ignore lint/complexity/noImportantStyles: hilangkan transformasi modal */
+    left: auto !important;
+    /* biome-ignore lint/complexity/noImportantStyles: hilangkan transformasi modal */
+    transform: none !important;
+    /* biome-ignore lint/complexity/noImportantStyles: biarkan lebar 100% mengikuti kertas */
+    max-width: 100% !important;
+    /* biome-ignore lint/complexity/noImportantStyles: biarkan lebar 100% mengikuti kertas */
+    width: 100% !important;
+    /* biome-ignore lint/complexity/noImportantStyles: hilangkan border modal */
+    border: none !important;
+    /* biome-ignore lint/complexity/noImportantStyles: hilangkan bayangan modal */
+    box-shadow: none !important;
+    /* biome-ignore lint/complexity/noImportantStyles: transparansi container */
+    background: transparent !important;
+    /* biome-ignore lint/complexity/noImportantStyles: reset padding */
+    padding: 0 !important;
+    /* biome-ignore lint/complexity/noImportantStyles: reset margin */
+    margin: 0 !important;
+    /* biome-ignore lint/complexity/noImportantStyles: overflow dokumen */
+    overflow: visible !important;
+  }
+
+  .printable-sheet {
+    /* biome-ignore lint/complexity/noImportantStyles: lembar cetak mengisi area cetak */
+    display: block !important;
+    /* biome-ignore lint/complexity/noImportantStyles: lebar kertas penuh */
+    width: 100% !important;
+    /* biome-ignore lint/complexity/noImportantStyles: batas kertas */
+    max-width: 100% !important;
+    /* biome-ignore lint/complexity/noImportantStyles: reset margin */
+    margin: 0 !important;
+    /* biome-ignore lint/complexity/noImportantStyles: reset padding */
+    padding: 0 !important;
+    /* biome-ignore lint/complexity/noImportantStyles: hilangkan shadow */
+    box-shadow: none !important;
+    /* biome-ignore lint/complexity/noImportantStyles: hilangkan border luar */
+    border: none !important;
+    /* biome-ignore lint/complexity/noImportantStyles: latar belakang putih murni */
+    background: #ffffff !important;
+    /* biome-ignore lint/complexity/noImportantStyles: warna teks */
+    color: #000000 !important;
+  }
+
+  /* biome-ignore lint/style/noDescendingSpecificity: styling media cetak terisolasi untuk tabel dokumen */
+  table {
+    /* biome-ignore lint/complexity/noImportantStyles: border collapse tabel */
+    border-collapse: collapse !important;
+    /* biome-ignore lint/complexity/noImportantStyles: tabel cetak */
+    width: 100% !important;
+  }
+
+  tr,
+  .break-inside-avoid {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  thead {
+    display: table-header-group;
   }
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import { Loader2, Send } from "lucide-react";
+import { CheckCircle2, Loader2, Send } from "lucide-react";
 import { useActionState, useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import { TurnstileWidget } from "@/components/shared/turnstile-widget";
@@ -23,10 +23,14 @@ export function GuestbookForm({ context, nonce }: GuestbookFormProps) {
   const [state, formAction, isPending] = useActionState(submitWithContext, initialState);
   const formRef = useRef<HTMLFormElement>(null);
   const [turnstileToken, setTurnstileToken] = useState("");
+  const [successNotice, setSuccessNotice] = useState<string | null>(null);
 
   useEffect(() => {
     if (state.success) {
-      toast.success("Pesanmu terkirim. Akan tampil setelah ditinjau.");
+      const msg =
+        "Terima kasih! Pesanmu berhasil dikirim dan akan tampil di buku tamu setelah disetujui.";
+      setSuccessNotice(msg);
+      toast.success(msg);
       formRef.current?.reset();
       setTurnstileToken("");
     } else if (state.error) {
@@ -36,6 +40,13 @@ export function GuestbookForm({ context, nonce }: GuestbookFormProps) {
 
   return (
     <form ref={formRef} action={formAction} className="space-y-4">
+      {successNotice ? (
+        <div className="flex items-center gap-2.5 rounded-lg border border-emerald-500/30 bg-emerald-500/10 p-3.5 text-emerald-900 text-sm dark:text-emerald-200">
+          <CheckCircle2 className="size-5 shrink-0 text-emerald-600 dark:text-emerald-400" />
+          <span>{successNotice}</span>
+        </div>
+      ) : null}
+
       <div className="space-y-1.5">
         <Label htmlFor={`guestbook-name-${context}`}>Nama</Label>
         <Input

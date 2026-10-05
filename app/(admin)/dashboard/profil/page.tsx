@@ -9,7 +9,7 @@ import {
 } from "@/lib/actions/beranda";
 
 export const metadata: Metadata = {
-  title: "Profil Kelas — Dashboard",
+  title: "Profil Kelas - Dashboard",
   robots: { index: false, follow: false },
 };
 

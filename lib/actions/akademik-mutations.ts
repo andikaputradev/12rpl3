@@ -36,11 +36,11 @@ async function writeAudit(
 
 /**
  * Signature 3-parameter (assignmentId, prevState, formData) alih-alih 2
- * parameter literal brief (assignmentId, formData) — supaya kompatibel
+ * parameter literal brief (assignmentId, formData) - supaya kompatibel
  * dengan useActionState (butuh (prevState, formData) sebagai dua argumen
  * TERAKHIR). Komponen client mem-bind assignmentId lebih dulu:
  * `submitAssignment.bind(null, assignmentId)` sebelum diberikan ke
- * useActionState — pola resmi React untuk parameterized form action.
+ * useActionState - pola resmi React untuk parameterized form action.
  */
 export async function submitAssignment(
   assignmentId: string,
@@ -117,7 +117,7 @@ export async function submitAssignment(
         fileUrl: uploaded.url,
         notes,
         submittedAt: new Date(),
-        // Kiriman ulang membatalkan status tinjauan staf sebelumnya — berkas
+        // Kiriman ulang membatalkan status tinjauan staf sebelumnya - berkas
         // sudah berbeda, staf perlu meninjau ulang, bukan mewarisi status
         // "sudah ditinjau" dari berkas lama yang sudah tidak ada.
         reviewedByStaff: false,

@@ -18,7 +18,7 @@ import { calculateSubjectAverage, type SubjectScores } from "@/lib/utils/grades"
 
 /**
  * Lapis pertahanan kedua terhadap pengecualian pengurus dari nilai/absensi
- * (Bagian 9 brief) — lapis pertama adalah pemeriksaan role eksplisit di
+ * (Bagian 9 brief) - lapis pertama adalah pemeriksaan role eksplisit di
  * halaman (app/(protected)/akademik/{nilai,absensi}/page.tsx via forbidden()).
  * Fungsi di sini tetap menolak secara independen agar tidak bergantung pada
  * satu-satunya titik pemeriksaan di halaman.
@@ -168,7 +168,7 @@ export async function getAssignments(): Promise<AssignmentWithStatus[]> {
 
 /**
  * assignmentId datang dari client (menentukan tugas MANA), tapi studentId
- * tetap dari sesi server — kombinasi ini aman: pemanggil hanya bisa
+ * tetap dari sesi server - kombinasi ini aman: pemanggil hanya bisa
  * mengambil kirimannya SENDIRI untuk assignmentId apa pun, tidak pernah
  * kiriman siswa lain, karena studentId selalu dikunci ke auth.uid() sesi.
  */
@@ -196,7 +196,7 @@ export interface UpcomingAssignment {
   dueDate: Date;
 }
 
-/** Hanya tugas yang belum dikumpulkan siswa ini — strip pengingat tidak menampilkan tugas yang sudah selesai. */
+/** Hanya tugas yang belum dikumpulkan siswa ini - strip pengingat tidak menampilkan tugas yang sudah selesai. */
 export async function getUpcomingAssignments(daysAhead = 7): Promise<UpcomingAssignment[]> {
   const { userId } = await requireAuthenticatedUser();
   const now = new Date();

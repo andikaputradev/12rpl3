@@ -43,7 +43,7 @@ export interface StudentDetail {
 
 /**
  * Mengembalikan `null` baik saat slug tidak ada MAUPUN saat siswa bersangkutan
- * `isPublic = false` — kedua kasus sengaja tidak bisa dibedakan dari luar,
+ * `isPublic = false` - kedua kasus sengaja tidak bisa dibedakan dari luar,
  * mencegah kebocoran informasi keberadaan profil privat (pemanggil memicu
  * `notFound()` untuk keduanya secara identik).
  */

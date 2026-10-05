@@ -92,7 +92,7 @@ export interface AlbumWithItems extends GalleryAlbum {
 /**
  * Item approved untuk semua pengunjung, DITAMBAH item milik pengguna sendiri
  * yang masih pending_review (agar pengunggah melihat statusnya sendiri di
- * halaman album) — RLS menegakkan batas yang sama sebagai lapis kedua.
+ * halaman album) - RLS menegakkan batas yang sama sebagai lapis kedua.
  */
 export async function getAlbumBySlug(slug: string): Promise<AlbumWithItems | null> {
   const [album] = await db

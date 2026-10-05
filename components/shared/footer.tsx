@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { Separator } from "@/components/ui/separator";
 import { navModules, siteConfig } from "@/lib/config/site";
@@ -9,7 +10,23 @@ export function Footer() {
     <footer className="border-t border-border bg-surface">
       <div className="container-portal grid gap-10 py-14 md:grid-cols-3">
         <div className="space-y-3">
-          <p className="font-display text-base font-semibold">{siteConfig.siteName}</p>
+          <div className="flex items-center gap-3">
+            <Image
+              src="/img/logo.png"
+              alt="Logo Kelas"
+              width={36}
+              height={36}
+              className="size-9 rounded-md object-contain"
+            />
+            <Image
+              src="/img/sekolah.png"
+              alt="Logo Sekolah"
+              width={36}
+              height={36}
+              className="size-9 rounded-md object-contain"
+            />
+            <p className="font-display text-base font-semibold">{siteConfig.siteName}</p>
+          </div>
           <p className="max-w-xs text-sm text-muted">{siteConfig.tagline}</p>
           <p data-eyebrow>
             {siteConfig.schoolName} • {siteConfig.jurusan}

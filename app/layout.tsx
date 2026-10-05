@@ -32,11 +32,16 @@ const jetbrainsMono = JetBrains_Mono({
 export const metadata: Metadata = {
   metadataBase: new URL(siteConfig.appUrl),
   title: {
-    default: `${siteConfig.siteName} — ${siteConfig.className}`,
-    template: `%s — ${siteConfig.siteName}`,
+    default: `${siteConfig.siteName} - ${siteConfig.className}`,
+    template: `%s - ${siteConfig.siteName}`,
   },
   description: siteConfig.tagline,
   applicationName: siteConfig.siteName,
+  icons: {
+    icon: [{ url: "/img/logo.png" }, { url: "/favicon.ico" }],
+    shortcut: "/img/logo.png",
+    apple: "/img/logo.png",
+  },
   keywords: [siteConfig.className, siteConfig.schoolName, siteConfig.jurusan, "portal kelas"],
   alternates: { canonical: "/" },
   openGraph: {
@@ -44,13 +49,22 @@ export const metadata: Metadata = {
     locale: "id_ID",
     url: siteConfig.appUrl,
     siteName: siteConfig.siteName,
-    title: `${siteConfig.siteName} — ${siteConfig.className}`,
+    title: `${siteConfig.siteName} - ${siteConfig.className}`,
     description: siteConfig.tagline,
+    images: [
+      {
+        url: "/img/og-image.jpg",
+        width: 1200,
+        height: 630,
+        alt: `${siteConfig.className} - ${siteConfig.schoolName}`,
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
-    title: `${siteConfig.siteName} — ${siteConfig.className}`,
+    title: `${siteConfig.siteName} - ${siteConfig.className}`,
     description: siteConfig.tagline,
+    images: ["/img/og-image.jpg"],
   },
   robots: { index: true, follow: true },
 };

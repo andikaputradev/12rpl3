@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-// Nomor DANA adalah nomor ponsel Indonesia — pola identik dengan
+// Nomor DANA adalah nomor ponsel Indonesia - pola identik dengan
 // waliKelasContactSchema.publicContact di admin-profil.ts demi konsistensi
 // format validasi nomor di seluruh aplikasi.
 const DANA_NUMBER_PATTERN = /^(\+62|62|0)8[1-9][0-9]{6,10}$/;

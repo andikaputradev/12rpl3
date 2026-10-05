@@ -22,12 +22,12 @@ export interface AchievementWithParticipants {
   certificateUrl: string | null;
   participantNames: string[];
   hiddenParticipantCount: number;
-  /** true jika baris achievement_participants kosong — prestasi tingkat kelas, bukan individu. */
+  /** true jika baris achievement_participants kosong - prestasi tingkat kelas, bukan individu. */
   isClassLevel: boolean;
 }
 
 /**
- * Nama siswa dengan isPublic=false DISARING DI SINI, di server — tidak
+ * Nama siswa dengan isPublic=false DISARING DI SINI, di server - tidak
  * pernah dikirim ke client sama sekali (Asumsi Kunci #6 brief), bukan hanya
  * disembunyikan di UI. Prestasinya sendiri tetap tercatat dan tampil.
  */

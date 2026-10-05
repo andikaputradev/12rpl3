@@ -15,7 +15,7 @@ export default async function PengumumanPage() {
       <p data-eyebrow>Akademik</p>
       <h1 className="mt-2 font-display text-3xl font-medium tracking-tight">Pengumuman</h1>
       <p className="mt-3 text-muted">
-        Informasi internal kelas — pengumuman disematkan tampil di atas.
+        Informasi internal kelas - pengumuman disematkan tampil di atas.
       </p>
 
       <div className="mt-8 flex flex-col gap-4">

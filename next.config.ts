@@ -71,7 +71,33 @@ const nextConfig: NextConfig = {
     ];
   },
   async redirects() {
-    return [];
+    return [
+      {
+        source: "/laporan",
+        destination: "/dashboard/laporan",
+        permanent: false,
+      },
+      {
+        source: "/cetak",
+        destination: "/dashboard/laporan",
+        permanent: false,
+      },
+      {
+        source: "/cetak-laporan",
+        destination: "/dashboard/laporan",
+        permanent: false,
+      },
+      {
+        source: "/admin",
+        destination: "/dashboard",
+        permanent: false,
+      },
+      {
+        source: "/admin/:path*",
+        destination: "/dashboard/:path*",
+        permanent: false,
+      },
+    ];
   },
 };
 

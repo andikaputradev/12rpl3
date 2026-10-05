@@ -56,7 +56,7 @@ test.describe("Alur tulis artikel siswa sampai disetujui dan tampil publik", () 
     page,
   }) => {
     // Kontrol negatif UI: tombol siswa SELALU berlabel "Kirim untuk
-    // Ditinjau", tidak pernah "Publikasikan" — label ditentukan dari role
+    // Ditinjau", tidak pernah "Publikasikan" - label ditentukan dari role
     // sesi yang dibaca page.tsx di server, bukan dapat dipilih dari client.
     await loginAs(page, SISWA_EMAIL as string, SISWA_PASSWORD as string);
     await page.goto("/blog/tulisan-saya");

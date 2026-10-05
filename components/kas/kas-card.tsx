@@ -80,7 +80,7 @@ export function KasCard({ settings }: { settings: KasSettings | null }) {
       ) : null}
 
       <p className="text-[11px] text-muted sm:col-span-2">
-        Pembayaran dilakukan manual di luar sistem ini — portal hanya menampilkan QRIS dan nomor
+        Pembayaran dilakukan manual di luar sistem ini - portal hanya menampilkan QRIS dan nomor
         tujuan, tanpa memproses atau mencatat transaksi.
       </p>
     </div>

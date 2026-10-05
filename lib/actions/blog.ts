@@ -52,7 +52,7 @@ export async function getBlogCategories() {
     .orderBy(asc(blogCategories.name));
 }
 
-/** Dipakai sitemap.ts — HANYA slug published, konsisten dengan Bagian 9 brief ("draft/pending_review/rejected tidak pernah masuk sitemap"). */
+/** Dipakai sitemap.ts - HANYA slug published, konsisten dengan Bagian 9 brief ("draft/pending_review/rejected tidak pernah masuk sitemap"). */
 export async function getPublishedPostSlugs(): Promise<string[]> {
   const rows = await db
     .select({ slug: blogPosts.slug })
@@ -63,7 +63,7 @@ export async function getPublishedPostSlugs(): Promise<string[]> {
 
 /**
  * Filter kategori/tag lewat query param URL yang dapat dibagikan (Bagian 6
- * brief) — pemanggil (page.tsx) yang membaca searchParams dan meneruskan ke
+ * brief) - pemanggil (page.tsx) yang membaca searchParams dan meneruskan ke
  * sini, bukan state client. Paginasi cursor-based pola identik Fase 2
  * (getAlbums di lib/actions/galeri.ts): limit+1 untuk deteksi hasMore,
  * cursor (publishedAt, id) ganda untuk tie-break stabil.
@@ -120,7 +120,7 @@ export async function getPublishedPosts(
     .orderBy(desc(blogPosts.publishedAt), desc(blogPosts.id))
     .limit(POST_PAGE_SIZE + 1);
 
-  // Tag disaring di JS (jsonb array, volume kecil untuk satu blog kelas) —
+  // Tag disaring di JS (jsonb array, volume kecil untuk satu blog kelas) -
   // menghindari kebutuhan indeks GIN yang tidak sepadan untuk skala ini.
   const filtered = tag ? rows.filter((row) => row.tags.includes(tag)) : rows;
 
@@ -157,7 +157,7 @@ export interface BlogPostFull {
 
 /**
  * published untuk siapa pun; draft/pending_review/rejected HANYA untuk
- * penulisnya sendiri atau staf — dicek manual di sini karena koneksi `db`
+ * penulisnya sendiri atau staf - dicek manual di sini karena koneksi `db`
  * memakai kredensial langsung yang MELEWATI RLS (lihat lib/db/index.ts).
  * RLS di migration tetap lapis kedua untuk akses REST API langsung.
  */
@@ -227,7 +227,7 @@ export interface CommentView extends BlogComment {
   authorName: string;
 }
 
-/** Hanya isHidden = false — komentar disembunyikan staf tidak pernah dikirim ke publik. */
+/** Hanya isHidden = false - komentar disembunyikan staf tidak pernah dikirim ke publik. */
 export async function getComments(postId: string): Promise<CommentView[]> {
   return db
     .select({

@@ -5,6 +5,8 @@ import { AssignmentReminderStrip } from "@/components/jadwal/assignment-reminder
 import { PiketCard } from "@/components/jadwal/piket-card";
 import { UpcomingEventsList } from "@/components/jadwal/upcoming-events-list";
 import { WeeklyScheduleTable } from "@/components/jadwal/weekly-schedule-table";
+import { ScheduleReportModal } from "@/components/reports/schedule-report-modal";
+import { getWaliKelas } from "@/lib/actions/beranda";
 import {
   getAcademicEvents,
   getClassSchedule,
@@ -19,23 +21,37 @@ export const metadata: Metadata = {
 
 export default async function JadwalPage() {
   const currentMonth = new Date();
-  const [schedule, piketDays, monthEvents, upcomingEvents] = await Promise.all([
+  const [schedule, piketDays, monthEvents, upcomingEvents, waliKelas] = await Promise.all([
     getClassSchedule(),
     getPiketSchedule(),
     getAcademicEvents(currentMonth),
     getUpcomingAcademicEvents(6),
+    getWaliKelas(),
   ]);
 
   return (
     <div className="flex flex-col">
       <section className="container-portal py-16 sm:py-20">
-        <p data-eyebrow>Jadwal & Agenda</p>
-        <h1 className="mt-2 font-display text-3xl font-medium tracking-tight sm:text-4xl">
-          Rencana Belajar Kelas
-        </h1>
-        <p className="mt-3 max-w-2xl text-muted">
-          Jadwal pelajaran mingguan, giliran piket harian, dan kalender akademik satu tahun ajaran.
-        </p>
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <p data-eyebrow>Jadwal & Agenda</p>
+            <h1 className="mt-2 font-display text-3xl font-medium tracking-tight sm:text-4xl">
+              Rencana Belajar Kelas
+            </h1>
+            <p className="mt-3 max-w-2xl text-muted">
+              Jadwal pelajaran mingguan, giliran piket harian, dan kalender akademik satu tahun
+              ajaran.
+            </p>
+          </div>
+
+          <div>
+            <ScheduleReportModal
+              schedule={schedule}
+              piket={piketDays}
+              waliKelasName={waliKelas?.fullName}
+            />
+          </div>
+        </div>
 
         <Suspense fallback={null}>
           <div className="mt-8">

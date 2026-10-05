@@ -5,7 +5,7 @@ export type SubjectScores = Partial<Record<AssessmentType, number>>;
 /**
  * Rata-rata sederhana antar jenis penilaian yang tersedia, tanpa pembobotan
  * (Asumsi Kunci #5, prompt Fase 3). Jenis penilaian yang belum dinilai tidak
- * dihitung sebagai 0 — hanya nilai yang benar-benar ada yang masuk rata-rata.
+ * dihitung sebagai 0 - hanya nilai yang benar-benar ada yang masuk rata-rata.
  * Jika sekolah kelak memakai skema pembobotan resmi, ganti isi fungsi ini
  * saja; seluruh pemanggil (Server Action, komponen tabel) tidak perlu diubah.
  */

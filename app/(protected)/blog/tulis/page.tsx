@@ -17,7 +17,7 @@ export default async function TulisArtikelPage() {
       <p data-eyebrow>Blog Kelas</p>
       <h1 className="mt-2 font-display text-3xl font-medium tracking-tight">Tulis Artikel</h1>
       <p className="mt-3 text-muted">
-        Simpan sebagai draf terlebih dahulu — kirim untuk ditinjau atau terbitkan dari halaman
+        Simpan sebagai draf terlebih dahulu - kirim untuk ditinjau atau terbitkan dari halaman
         "Tulisan Saya".
       </p>
       <div className="mt-8">

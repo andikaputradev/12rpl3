@@ -50,7 +50,7 @@ USING (
 );
 --> statement-breakpoint
 
--- Pengunjung anonim (belum login) hanya melihat item approved — dipisah dari
+-- Pengunjung anonim (belum login) hanya melihat item approved - dipisah dari
 -- policy authenticated di atas karena kondisi "uploaded_by = auth.uid()"
 -- tidak relevan/valid untuk peran anon.
 CREATE POLICY "items_select_approved_anon"

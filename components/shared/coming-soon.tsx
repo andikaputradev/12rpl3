@@ -20,7 +20,7 @@ export function ComingSoon({
       <div className="flex size-14 items-center justify-center rounded-full border border-border bg-surface">
         <Icon className="size-6 text-accent-text" aria-hidden="true" />
       </div>
-      <Badge variant="outline">Segera Hadir — {phase}</Badge>
+      <Badge variant="outline">Segera Hadir - {phase}</Badge>
       <h1 className="font-display text-3xl font-medium tracking-tight sm:text-4xl">{title}</h1>
       <p className="max-w-md text-sm text-muted sm:text-base">{description}</p>
     </section>

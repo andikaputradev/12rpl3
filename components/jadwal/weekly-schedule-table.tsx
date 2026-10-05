@@ -40,7 +40,7 @@ function currentSlot() {
 }
 
 export function WeeklyScheduleTable({ entries }: { entries: ScheduleEntry[] }) {
-  // "Sekarang" dihitung di client, bukan dibekukan saat render server —
+  // "Sekarang" dihitung di client, bukan dibekukan saat render server -
   // halaman ini bisa berada di cache selama beberapa saat, jam berjalan
   // milik pengunjung yang membacanya, bukan milik waktu server merender.
   const [now, setNow] = useState<{ day: DayOfWeek | null; time: string } | null>(null);
@@ -94,7 +94,7 @@ export function WeeklyScheduleTable({ entries }: { entries: ScheduleEntry[] }) {
                   {entry ? (
                     <div className="flex flex-col gap-0.5">
                       <span className={cn("font-medium", active && "text-accent-text")}>
-                        {entry.subjectName ?? <span className="font-normal text-muted">—</span>}
+                        {entry.subjectName ?? <span className="font-normal text-muted">-</span>}
                         {active && <span className="sr-only"> (sedang berlangsung sekarang)</span>}
                       </span>
                       {(entry.teacherName || entry.room) && (
@@ -107,7 +107,7 @@ export function WeeklyScheduleTable({ entries }: { entries: ScheduleEntry[] }) {
                       </span>
                     </div>
                   ) : (
-                    <span className="text-muted">—</span>
+                    <span className="text-muted">-</span>
                   )}
                 </TableCell>
               );

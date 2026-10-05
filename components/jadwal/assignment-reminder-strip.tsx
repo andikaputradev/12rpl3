@@ -13,7 +13,7 @@ function formatDueIn(dueDate: Date): string {
 }
 
 /**
- * Server Component async — mengecek sesi lewat kegagalan
+ * Server Component async - mengecek sesi lewat kegagalan
  * getUpcomingAssignments (yang menuntut requireAuthenticatedUser di
  * dalamnya) dan menyembunyikan diri bersih via try/catch, BUKAN memicu error
  * boundary halaman /jadwal yang publik. Ini persis perilaku "dilewati tanpa

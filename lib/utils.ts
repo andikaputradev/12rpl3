@@ -60,3 +60,18 @@ export function getProgressPercent(start: Date, end: Date, now: Date = new Date(
   const elapsed = now.getTime() - start.getTime();
   return Math.min(Math.max((elapsed / total) * 100, 0), 100);
 }
+
+export function formatIndonesianDate(
+  dateInput: Date | string | number | null | undefined,
+  includeDayName = false,
+): string {
+  if (!dateInput) return "-";
+  const d = new Date(dateInput);
+  if (Number.isNaN(d.getTime())) return "-";
+  return new Intl.DateTimeFormat("id-ID", {
+    weekday: includeDayName ? "long" : undefined,
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  }).format(d);
+}

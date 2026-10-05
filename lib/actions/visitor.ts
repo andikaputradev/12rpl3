@@ -11,7 +11,7 @@ export async function incrementVisitorOnce(): Promise<void> {
   const cookieStore = await cookies();
 
   // Pengecekan ulang di sisi server (bukan hanya mengandalkan client tidak
-  // memanggil dua kali) — cookie httpOnly tidak bisa dibaca/dimanipulasi JS.
+  // memanggil dua kali) - cookie httpOnly tidak bisa dibaca/dimanipulasi JS.
   if (cookieStore.get(VISITOR_COOKIE)) return;
 
   const ip = getClientIp(await headers());

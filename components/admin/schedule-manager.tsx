@@ -189,7 +189,7 @@ export function ScheduleManager({
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="none">— Kosong —</SelectItem>
+                    <SelectItem value="none">- Kosong -</SelectItem>
                     {subjects.map((subject) => (
                       <SelectItem key={subject.id} value={subject.id}>
                         {subject.name}

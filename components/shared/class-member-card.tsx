@@ -8,7 +8,7 @@ import { cloudinaryOptimized, getInitials } from "@/lib/utils";
 
 /**
  * whileInView dipasang PER KARTU (bukan satu container stagger untuk
- * seluruh grid) — setiap kartu memicu animasinya sendiri persis saat kartu
+ * seluruh grid) - setiap kartu memicu animasinya sendiri persis saat kartu
  * itu memasuki viewport, mengikuti kecepatan scroll pengguna secara alami.
  * Untuk grid puluhan siswa, satu stagger container tunggal akan menghitung
  * delay dari satu titik pemicu di awal, membuat kartu jauh di bawah "meledak"

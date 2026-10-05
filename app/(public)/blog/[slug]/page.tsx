@@ -101,7 +101,7 @@ export default async function BlogDetailPage({ params }: BlogDetailPageProps) {
       <div className="container-portal max-w-3xl py-16">
         {!isPublished ? (
           <div className="mb-8 flex items-center gap-2 rounded-md border border-accent/30 bg-accent/8 px-4 py-3 text-sm">
-            <span>Pratinjau — status:</span>
+            <span>Pratinjau - status:</span>
             <StatusBadge status={post.status} />
           </div>
         ) : null}

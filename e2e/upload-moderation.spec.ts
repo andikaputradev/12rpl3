@@ -73,7 +73,7 @@ test.describe("Alur Unggah Siswa → Moderasi Staf", () => {
     await expect(dialog).toBeVisible();
 
     // Tombol submit tetap nonaktif secara efektif untuk alasan < 10 karakter
-    // (validasi Zod di server menolaknya) — uji mengisi alasan valid.
+    // (validasi Zod di server menolaknya) - uji mengisi alasan valid.
     await dialog.getByLabel("Alasan Penolakan").fill("Foto tidak sesuai tema album kegiatan.");
     await dialog.getByRole("button", { name: "Tolak Kiriman" }).click();
 

@@ -5,7 +5,7 @@ import { getPendingModeration } from "@/lib/actions/admin-galeri";
 import { getAllAlbumsForAdmin } from "@/lib/actions/galeri";
 
 export const metadata: Metadata = {
-  title: "Moderasi Konten — Dashboard",
+  title: "Moderasi Konten - Dashboard",
   robots: { index: false, follow: false },
 };
 

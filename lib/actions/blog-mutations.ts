@@ -41,7 +41,7 @@ async function generateUniqueSlug(title: string): Promise<string> {
   const base = slugify(title) || "artikel";
   let candidate = base;
   let suffix = 2;
-  // Volume artikel satu blog kelas kecil — loop sekuensial aman, tidak
+  // Volume artikel satu blog kelas kecil - loop sekuensial aman, tidak
   // butuh strategi collision lebih rumit (mis. suffix acak) untuk skala ini.
   for (;;) {
     const [existing] = await db
@@ -61,7 +61,7 @@ export interface CreateDraftResult extends ActionState {
 }
 
 /**
- * contentMarkdown TIDAK dilewatkan sanitizeUserText — disimpan mentah apa
+ * contentMarkdown TIDAK dilewatkan sanitizeUserText - disimpan mentah apa
  * adanya. Sanitasi terjadi seluruhnya di RENDER time lewat MarkdownRenderer
  * (rehype-sanitize), bukan di STORAGE time: men-sanitasi saat simpan akan
  * merusak sintaks Markdown murni penulis dan berisiko drift tiap kali
@@ -143,7 +143,7 @@ export interface SubmitForReviewResult extends ActionState {
 /**
  * Fungsi paling kritis keamanannya di Fase 4 (Bagian 4 & 10 brief): status
  * akhir (`pending_review` vs `published`) ditentukan SELURUHNYA dari role
- * profil sesi server di sini — TIDAK ADA parameter status yang diterima
+ * profil sesi server di sini - TIDAK ADA parameter status yang diterima
  * dari client sama sekali, sehingga tidak ada nilai apa pun yang bisa
  * dimanipulasi untuk memaksa hasil `published`.
  */
@@ -234,7 +234,7 @@ export async function addComment(
 }
 
 /**
- * Hard-delete, HANYA untuk penulis komentar itu sendiri — staf TIDAK
+ * Hard-delete, HANYA untuk penulis komentar itu sendiri - staf TIDAK
  * memakai fungsi ini (bahkan ditolak eksplisit di sini), staf memakai
  * hideComment() di admin-blog-mutations.ts (soft-delete lewat isHidden),
  * sesuai pemisahan wewenang Bagian 10 brief: "penghapusan permanen hanya

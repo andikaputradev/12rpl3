@@ -1,6 +1,7 @@
 "use client";
 
-import { useActionState, useEffect, useId, useRef } from "react";
+import { CheckCircle2, Loader2, Save } from "lucide-react";
+import { useActionState, useEffect, useId, useRef, useState } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -17,25 +18,43 @@ export function KasSettingsForm({ settings }: { settings: KasSettings | null }) 
   const formId = useId();
   const formRef = useRef<HTMLFormElement>(null);
   const lastTimestamp = useRef<number | undefined>(undefined);
+  const [saveNotice, setSaveNotice] = useState<string | null>(null);
 
   useEffect(() => {
     if (state.success && state.timestamp !== lastTimestamp.current) {
       lastTimestamp.current = state.timestamp;
-      toast.success("Pengaturan kas digital tersimpan.");
+      const now = new Date();
+      const timeStr = new Intl.DateTimeFormat("id-ID", {
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+      }).format(now);
+      const msg = `Pengaturan kas digital berhasil disimpan pada ${timeStr} WIB.`;
+      setSaveNotice(msg);
+      toast.success(msg);
     }
-    if (state.error) toast.error(state.error);
+    if (state.error) {
+      toast.error(state.error);
+    }
   }, [state]);
 
   return (
-    <Card>
+    <Card className="shadow-xs">
       <CardHeader>
         <CardTitle>Pengaturan Kas Digital</CardTitle>
         <CardDescription>
-          Murni tampilan QRIS dan nomor DANA agar siswa scan/transfer manual — tidak ada payment
+          Murni tampilan QRIS dan nomor DANA agar siswa scan/transfer manual - tidak ada payment
           gateway maupun pencatatan transaksi otomatis di sistem ini.
         </CardDescription>
       </CardHeader>
       <CardContent>
+        {saveNotice ? (
+          <div className="mb-6 flex items-center gap-3 rounded-lg border border-emerald-500/30 bg-emerald-500/10 p-3.5 text-emerald-900 text-sm dark:text-emerald-200">
+            <CheckCircle2 className="size-4 shrink-0 text-emerald-600 dark:text-emerald-400" />
+            <span className="font-medium">{saveNotice}</span>
+          </div>
+        ) : null}
+
         <form ref={formRef} action={formAction} className="grid gap-4 sm:grid-cols-2" noValidate>
           <div className="flex flex-col gap-1.5 sm:col-span-2">
             <Label htmlFor={`${formId}-qris`}>Gambar QRIS (JPEG/PNG/WebP)</Label>
@@ -44,6 +63,7 @@ export function KasSettingsForm({ settings }: { settings: KasSettings | null }) 
               name="qrisImage"
               type="file"
               accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp"
+              className="cursor-pointer file:cursor-pointer"
             />
             {settings?.qrisImageUrl ? (
               <p className="text-muted text-xs">
@@ -90,9 +110,19 @@ export function KasSettingsForm({ settings }: { settings: KasSettings | null }) 
               rows={3}
             />
           </div>
-          <div className="sm:col-span-2">
-            <Button type="submit" disabled={isPending}>
-              {isPending ? "Menyimpan..." : "Simpan Pengaturan"}
+          <div className="sm:col-span-2 pt-2">
+            <Button type="submit" disabled={isPending} className="gap-2">
+              {isPending ? (
+                <>
+                  <Loader2 className="size-4 animate-spin" />
+                  Menyimpan...
+                </>
+              ) : (
+                <>
+                  <Save className="size-4" />
+                  Simpan Pengaturan
+                </>
+              )}
             </Button>
           </div>
         </form>

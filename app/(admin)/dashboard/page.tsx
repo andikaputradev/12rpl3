@@ -1,4 +1,4 @@
-import { count, eq, gte, ne } from "drizzle-orm";
+import { count, eq, gte, inArray } from "drizzle-orm";
 import {
   Award,
   Bell,
@@ -69,8 +69,14 @@ export default async function DashboardOverviewPage() {
     classProfileRes,
     kasSettingsRes,
   ] = await Promise.all([
-    db.select({ count: count() }).from(profiles).where(eq(profiles.role, "siswa")),
-    db.select({ count: count() }).from(profiles).where(ne(profiles.role, "siswa")),
+    db
+      .select({ count: count() })
+      .from(profiles)
+      .where(inArray(profiles.role, ["siswa", "pengurus"])),
+    db
+      .select({ count: count() })
+      .from(profiles)
+      .where(inArray(profiles.role, ["super_admin", "wali_kelas"])),
     db
       .select({ count: count() })
       .from(galleryItems)

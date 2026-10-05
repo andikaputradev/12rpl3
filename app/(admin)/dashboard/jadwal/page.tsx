@@ -3,7 +3,8 @@ import { EventsManager } from "@/components/admin/events-manager";
 import { PiketManager } from "@/components/admin/piket-manager";
 import { ScheduleManager } from "@/components/admin/schedule-manager";
 import { SubjectManagerDialog } from "@/components/admin/subject-manager-dialog";
-import { getAllAcademicEvents } from "@/lib/actions/beranda";
+import { ScheduleReportModal } from "@/components/reports/schedule-report-modal";
+import { getAllAcademicEvents, getWaliKelas } from "@/lib/actions/beranda";
 import {
   getAllStudents,
   getClassSchedule,
@@ -12,19 +13,20 @@ import {
 } from "@/lib/actions/jadwal";
 
 export const metadata: Metadata = {
-  title: "Jadwal & Agenda — Dashboard",
+  title: "Jadwal & Agenda - Dashboard",
   robots: { index: false, follow: false },
 };
 
 export const dynamic = "force-dynamic";
 
 export default async function AdminJadwalPage() {
-  const [schedule, piketDays, subjects, students, events] = await Promise.all([
+  const [schedule, piketDays, subjects, students, events, waliKelas] = await Promise.all([
     getClassSchedule(),
     getPiketSchedule(),
     getSubjects(),
     getAllStudents(),
     getAllAcademicEvents(),
+    getWaliKelas(),
   ]);
 
   return (
@@ -39,7 +41,14 @@ export default async function AdminJadwalPage() {
             Perubahan langsung tampil di halaman Jadwal & Agenda publik setelah disimpan.
           </p>
         </div>
-        <SubjectManagerDialog subjects={subjects} />
+        <div className="flex items-center gap-2">
+          <ScheduleReportModal
+            schedule={schedule}
+            piket={piketDays}
+            waliKelasName={waliKelas?.fullName}
+          />
+          <SubjectManagerDialog subjects={subjects} />
+        </div>
       </header>
 
       <section className="flex flex-col gap-3">

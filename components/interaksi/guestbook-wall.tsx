@@ -44,7 +44,7 @@ export function GuestbookWall({ entries }: GuestbookWallProps) {
                   <p className="truncate font-medium text-sm">{entry.name}</p>
                   <p className="font-mono text-[11px] text-muted">
                     {new Intl.DateTimeFormat("id-ID", { dateStyle: "long" }).format(
-                      entry.createdAt,
+                      new Date(entry.createdAt),
                     )}
                   </p>
                 </div>

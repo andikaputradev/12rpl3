@@ -1,5 +1,5 @@
 import "server-only";
-import { and, eq, lt, or } from "drizzle-orm";
+import { and, eq, inArray, lt, or } from "drizzle-orm";
 import { alias } from "drizzle-orm/pg-core";
 import { requireAuthenticatedUser } from "@/lib/actions/guard";
 import { db } from "@/lib/db";
@@ -27,7 +27,7 @@ export async function getYearbookEntries(): Promise<YearbookEntry[]> {
       yearbookQuote: profiles.yearbookQuote,
     })
     .from(profiles)
-    .where(and(eq(profiles.role, "siswa"), eq(profiles.isPublic, true)))
+    .where(and(inArray(profiles.role, ["siswa", "pengurus"]), eq(profiles.isPublic, true)))
     .orderBy(profiles.absenNumber);
 
   return rows.map((row) => ({

@@ -14,7 +14,7 @@ type StaffRole = "super_admin" | "wali_kelas" | "pengurus";
 /**
  * Memverifikasi sesi aktif DAN role, langsung terhadap Supabase Auth
  * (`getUser()`, bukan `getSession()`), sebelum Server Action mutasi apa pun
- * dieksekusi. Melempar AuthorizationError bila gagal — pemanggil wajib fail
+ * dieksekusi. Melempar AuthorizationError bila gagal - pemanggil wajib fail
  * closed, bukan melanjutkan dengan asumsi default.
  */
 export async function requireStaffRole(
@@ -44,7 +44,7 @@ export async function requireStaffRole(
 
 /**
  * Versi requireStaffRole untuk fungsi yang boleh dipanggil siapa pun yang
- * login (peran apa saja) — dipakai seluruh Server Action "milik sendiri" di
+ * login (peran apa saja) - dipakai seluruh Server Action "milik sendiri" di
  * lib/actions/akademik.ts. Mengembalikan profile lengkap (termasuk role)
  * agar pemanggil dapat menegakkan pengecualian role spesifik (mis. pengurus
  * pada nilai/absensi) tanpa query tambahan.
