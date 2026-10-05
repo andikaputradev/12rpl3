@@ -95,7 +95,13 @@ export const profiles = pgTable(
     // tidak pernah terekspos di URL publik.
     slug: text("slug").unique(),
     citaCita: text("cita_cita"),
-    socialLinks: jsonb("social_links").$type<{ instagram?: string; tiktok?: string }>(),
+    socialLinks: jsonb("social_links").$type<{
+      instagram?: string;
+      tiktok?: string;
+      github?: string;
+      linkedin?: string;
+      website?: string;
+    }>(),
     avatarUrl: text("avatar_url"),
     bio: text("bio"),
     isPublic: boolean("is_public").notNull().default(true),

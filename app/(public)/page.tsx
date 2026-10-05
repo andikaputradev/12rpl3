@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { QuickJumpBar } from "@/components/beranda/quick-jump-bar";
 import { TodayScheduleWidget } from "@/components/beranda/today-schedule-widget";
+import { UserProfileBanner } from "@/components/beranda/user-profile-banner";
 import { BlogPostCard } from "@/components/blog/blog-post-card";
 import { AlbumCard } from "@/components/galeri/album-card";
 import { GuestbookWall } from "@/components/interaksi/guestbook-wall";
@@ -146,6 +147,13 @@ export default async function BerandaPage() {
       {/* Quick Jump Anchor Bar */}
       <QuickJumpBar />
 
+      {/* Profil Pengguna Aktif (Jika Login) */}
+      {auth ? (
+        <div className="pt-6">
+          <UserProfileBanner profile={auth.profile} />
+        </div>
+      ) : null}
+
       <div className="flex flex-col gap-24 py-16">
         {/* 2. Section Jadwal & Agenda Hari Ini */}
         <section id="jadwal-hari-ini" className="container-portal scroll-mt-28">
@@ -278,7 +286,11 @@ export default async function BerandaPage() {
           {/* Grid Anggota Siswa */}
           <div className="mt-8 grid grid-cols-2 gap-x-4 gap-y-7 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
             {students.map((student) => (
-              <ClassMemberCard key={student.id} student={student} />
+              <ClassMemberCard
+                key={student.id}
+                student={student}
+                isCurrentUser={auth?.userId === student.id}
+              />
             ))}
           </div>
         </section>

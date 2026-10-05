@@ -1,3 +1,4 @@
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import type { Metadata, Viewport } from "next";
 import { Archivo, JetBrains_Mono, Space_Grotesk } from "next/font/google";
 import { headers } from "next/headers";
@@ -98,6 +99,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
             }}
           />
         </ThemeProvider>
+        <SpeedInsights />
       </body>
     </html>
   );

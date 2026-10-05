@@ -14,17 +14,34 @@ export interface StudentListItem {
 
 export const getStudentList = cache(async (): Promise<StudentListItem[]> => {
   try {
-    return await db
+    const rows = await db
       .select({
         id: profiles.id,
         slug: profiles.slug,
         fullName: profiles.fullName,
         absenNumber: profiles.absenNumber,
         avatarUrl: profiles.avatarUrl,
+        yearbookPhotoUrl: profiles.yearbookPhotoUrl,
       })
       .from(profiles)
       .where(and(inArray(profiles.role, ["siswa", "pengurus"]), eq(profiles.isPublic, true)))
       .orderBy(asc(profiles.absenNumber));
+
+    return rows.map((row) => {
+      const isPlaceholder = !row.avatarUrl || row.avatarUrl.includes("pngtree");
+      const effectiveAvatar =
+        isPlaceholder && row.yearbookPhotoUrl
+          ? row.yearbookPhotoUrl
+          : row.avatarUrl || row.yearbookPhotoUrl;
+
+      return {
+        id: row.id,
+        slug: row.slug,
+        fullName: row.fullName,
+        absenNumber: row.absenNumber,
+        avatarUrl: effectiveAvatar,
+      };
+    });
   } catch (error) {
     console.error("[direktori] student list error:", error);
     return [];
@@ -38,7 +55,13 @@ export interface StudentDetail {
   avatarUrl: string | null;
   bio: string | null;
   citaCita: string | null;
-  socialLinks: { instagram?: string; tiktok?: string } | null;
+  socialLinks: {
+    instagram?: string;
+    tiktok?: string;
+    github?: string;
+    linkedin?: string;
+    website?: string;
+  } | null;
 }
 
 /**
@@ -55,6 +78,7 @@ export const getStudentBySlug = cache(async (slug: string): Promise<StudentDetai
         fullName: profiles.fullName,
         absenNumber: profiles.absenNumber,
         avatarUrl: profiles.avatarUrl,
+        yearbookPhotoUrl: profiles.yearbookPhotoUrl,
         bio: profiles.bio,
         citaCita: profiles.citaCita,
         socialLinks: profiles.socialLinks,
@@ -67,8 +91,21 @@ export const getStudentBySlug = cache(async (slug: string): Promise<StudentDetai
 
     if (!row?.isPublic || (row.role !== "siswa" && row.role !== "pengurus")) return null;
 
-    const { isPublic: _isPublic, role: _role, ...detail } = row;
-    return detail;
+    const isPlaceholder = !row.avatarUrl || row.avatarUrl.includes("pngtree");
+    const effectiveAvatar =
+      isPlaceholder && row.yearbookPhotoUrl
+        ? row.yearbookPhotoUrl
+        : row.avatarUrl || row.yearbookPhotoUrl;
+
+    return {
+      id: row.id,
+      fullName: row.fullName,
+      absenNumber: row.absenNumber,
+      avatarUrl: effectiveAvatar,
+      bio: row.bio,
+      citaCita: row.citaCita,
+      socialLinks: row.socialLinks as StudentDetail["socialLinks"],
+    };
   } catch (error) {
     console.error(`[direktori] error for slug ${slug}:`, error);
     return null;

@@ -60,7 +60,7 @@ export default async function StudentDetailPage({ params }: StudentDetailPagePro
     <div className="container-portal max-w-2xl py-20">
       <div className="flex flex-col items-center gap-5 text-center">
         <Avatar className="size-28">
-          {student.avatarUrl ? (
+          {student.avatarUrl && !student.avatarUrl.includes("pngtree") ? (
             <AvatarImage
               src={cloudinaryOptimized(student.avatarUrl, "f_auto,q_auto,w_224,h_224,c_fill")}
               alt={`Foto ${student.fullName}`}

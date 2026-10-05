@@ -4,7 +4,7 @@ import { motion } from "motion/react";
 import Image from "next/image";
 import Link from "next/link";
 import type { StudentListItem } from "@/lib/actions/direktori";
-import { cloudinaryOptimized, getInitials } from "@/lib/utils";
+import { cloudinaryOptimized, cn, getInitials } from "@/lib/utils";
 
 /**
  * whileInView dipasang PER KARTU (bukan satu container stagger untuk
@@ -14,11 +14,24 @@ import { cloudinaryOptimized, getInitials } from "@/lib/utils";
  * delay dari satu titik pemicu di awal, membuat kartu jauh di bawah "meledak"
  * bersamaan begitu ikut ter-mount, bukan reveal yang terasa alami.
  */
-export function ClassMemberCard({ student }: { student: StudentListItem }) {
+export function ClassMemberCard({
+  student,
+  isCurrentUser = false,
+}: {
+  student: StudentListItem;
+  isCurrentUser?: boolean;
+}) {
+  const hasCustomAvatar = Boolean(student.avatarUrl) && !student.avatarUrl?.includes("pngtree");
+
   const content = (
-    <div className="flex flex-col items-center gap-2.5 text-center">
-      <div className="relative size-[150px] overflow-hidden rounded-full border border-border bg-surface">
-        {student.avatarUrl ? (
+    <div className="group relative flex flex-col items-center gap-2.5 text-center">
+      <div
+        className={cn(
+          "relative size-[150px] overflow-hidden rounded-full border border-border bg-surface transition-transform duration-200 group-hover:scale-105",
+          isCurrentUser && "ring-2 ring-accent ring-offset-2 ring-offset-background",
+        )}
+      >
+        {hasCustomAvatar && student.avatarUrl ? (
           <Image
             src={cloudinaryOptimized(student.avatarUrl, "f_auto,q_auto,w_150,h_150,c_fill")}
             alt={`Foto ${student.fullName}`}
@@ -28,16 +41,27 @@ export function ClassMemberCard({ student }: { student: StudentListItem }) {
             className="size-full object-cover"
           />
         ) : (
-          <div className="flex size-full items-center justify-center font-display text-2xl text-muted">
+          <div className="flex size-full items-center justify-center bg-surface font-display text-2xl font-medium text-muted">
             {getInitials(student.fullName)}
           </div>
         )}
       </div>
       <div>
-        <p className="text-sm font-medium">{student.fullName}</p>
-        {student.absenNumber ? (
-          <p className="font-mono text-muted text-xs">No. {student.absenNumber}</p>
-        ) : null}
+        <div className="flex items-center justify-center gap-1.5">
+          <p className="text-sm font-medium text-foreground group-hover:text-accent-text transition-colors">
+            {student.fullName}
+          </p>
+        </div>
+        <div className="mt-0.5 flex items-center justify-center gap-1.5">
+          {student.absenNumber ? (
+            <span className="font-mono text-muted text-xs">No. {student.absenNumber}</span>
+          ) : null}
+          {isCurrentUser ? (
+            <span className="inline-flex items-center rounded-full bg-accent/15 px-1.5 py-0.2 text-[10px] font-semibold text-accent-text">
+              Kamu
+            </span>
+          ) : null}
+        </div>
       </div>
     </div>
   );

@@ -4,10 +4,12 @@ import type { StudentListItem } from "@/lib/actions/direktori";
 import { cloudinaryOptimized, getInitials } from "@/lib/utils";
 
 export function StudentCard({ student }: { student: StudentListItem }) {
+  const hasCustomAvatar = Boolean(student.avatarUrl) && !student.avatarUrl?.includes("pngtree");
+
   const content = (
     <div className="flex flex-col items-center gap-3 rounded-lg border border-border bg-surface px-4 py-6 text-center transition-colors hover:border-accent/50">
       <Avatar className="size-16">
-        {student.avatarUrl ? (
+        {hasCustomAvatar && student.avatarUrl ? (
           <AvatarImage
             src={cloudinaryOptimized(student.avatarUrl, "f_auto,q_auto,w_128,h_128,c_fill")}
             alt={`Foto ${student.fullName}`}

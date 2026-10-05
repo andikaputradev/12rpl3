@@ -23,7 +23,7 @@ export const getClassProfile = cache(async (): Promise<ClassProfile | null> => {
 
 export const getOrganizationalStructure = cache(async (): Promise<Profile[]> => {
   try {
-    return await db
+    const rows = await db
       .select()
       .from(profiles)
       .where(
@@ -34,6 +34,14 @@ export const getOrganizationalStructure = cache(async (): Promise<Profile[]> => 
         ),
       )
       .orderBy(asc(profiles.displayOrder));
+
+    return rows.map((p) => {
+      const isPlaceholder = !p.avatarUrl || p.avatarUrl.includes("pngtree");
+      if (isPlaceholder && p.yearbookPhotoUrl) {
+        return { ...p, avatarUrl: p.yearbookPhotoUrl };
+      }
+      return p;
+    });
   } catch (error) {
     console.error("[beranda] organizational error:", error);
     return [];
@@ -43,7 +51,12 @@ export const getOrganizationalStructure = cache(async (): Promise<Profile[]> => 
 export const getWaliKelas = cache(async (): Promise<Profile | null> => {
   try {
     const [row] = await db.select().from(profiles).where(eq(profiles.role, "wali_kelas")).limit(1);
-    return row ?? null;
+    if (!row) return null;
+    const isPlaceholder = !row.avatarUrl || row.avatarUrl.includes("pngtree");
+    if (isPlaceholder && row.yearbookPhotoUrl) {
+      return { ...row, avatarUrl: row.yearbookPhotoUrl };
+    }
+    return row;
   } catch (error) {
     console.error("[beranda] wali kelas error:", error);
     return null;
