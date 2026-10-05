@@ -23,30 +23,48 @@ const initialState = { error: undefined, success: undefined, timestamp: undefine
 export function ProfilSayaForm({ profile }: ProfilSayaFormProps) {
   const [state, formAction, isPending] = useActionState(updateMyProfile, initialState);
 
+  const rawProfile = profile as Record<string, unknown>;
+  const rawFullName = String(profile?.fullName ?? rawProfile?.full_name ?? "");
+  const rawAvatarUrl = (profile?.avatarUrl ?? rawProfile?.avatar_url ?? null) as string | null;
+  const rawYearbookPhotoUrl = (profile?.yearbookPhotoUrl ??
+    rawProfile?.yearbook_photo_url ??
+    null) as string | null;
+  const rawBio = String(profile?.bio ?? rawProfile?.bio ?? "");
+  const rawCitaCita = String(profile?.citaCita ?? rawProfile?.cita_cita ?? "");
+  const rawPublicContact = String(profile?.publicContact ?? rawProfile?.public_contact ?? "");
+  const rawYearbookQuote = String(profile?.yearbookQuote ?? rawProfile?.yearbook_quote ?? "");
+  const rawSocialLinks = (profile?.socialLinks ?? rawProfile?.social_links ?? {}) as Record<
+    string,
+    string
+  >;
+  const displayAbsenNumber = (profile?.absenNumber ?? rawProfile?.absen_number ?? null) as
+    | number
+    | null;
+
   const avatarInputRef = useRef<HTMLInputElement>(null);
   const yearbookInputRef = useRef<HTMLInputElement>(null);
 
   // Avatar & Yearbook initial previews
   const initialCustomAvatar =
-    profile.avatarUrl && !profile.avatarUrl.includes("pngtree")
-      ? profile.avatarUrl
-      : profile.yearbookPhotoUrl && !profile.yearbookPhotoUrl.includes("pngtree")
-        ? profile.yearbookPhotoUrl
+    rawAvatarUrl && !rawAvatarUrl.includes("pngtree")
+      ? rawAvatarUrl
+      : rawYearbookPhotoUrl && !rawYearbookPhotoUrl.includes("pngtree")
+        ? rawYearbookPhotoUrl
         : null;
 
   const [avatarPreview, setAvatarPreview] = useState<string | null>(initialCustomAvatar);
   const [yearbookPreview, setYearbookPreview] = useState<string | null>(
-    profile.yearbookPhotoUrl ?? initialCustomAvatar,
+    rawYearbookPhotoUrl ?? initialCustomAvatar,
   );
 
   const [syncYearbook, setSyncYearbook] = useState<boolean>(
-    !profile.yearbookPhotoUrl || profile.yearbookPhotoUrl === profile.avatarUrl,
+    !rawYearbookPhotoUrl || rawYearbookPhotoUrl === rawAvatarUrl,
   );
 
   // Live fields for real-time card preview
-  const [fullName, setFullName] = useState<string>(profile.fullName);
-  const [bio, setBio] = useState<string>(profile.bio ?? "");
-  const [yearbookQuote, setYearbookQuote] = useState<string>(profile.yearbookQuote ?? "");
+  const [fullName, setFullName] = useState<string>(rawFullName);
+  const [bio, setBio] = useState<string>(rawBio);
+  const [yearbookQuote, setYearbookQuote] = useState<string>(rawYearbookQuote);
 
   const [lastSavedTime, setLastSavedTime] = useState<number | null>(null);
 
@@ -110,7 +128,7 @@ export function ProfilSayaForm({ profile }: ProfilSayaFormProps) {
           </div>
           <div className="flex items-center gap-2 sm:shrink-0">
             <Button asChild variant="outline" size="sm" className="h-8 gap-1 text-xs">
-              <Link href="/">
+              <Link href="/" prefetch={false}>
                 <span>Lihat di Beranda</span>
                 <ArrowRight className="size-3.5" aria-hidden="true" />
               </Link>
@@ -150,7 +168,7 @@ export function ProfilSayaForm({ profile }: ProfilSayaFormProps) {
                   />
                 ) : (
                   <div className="flex size-full items-center justify-center font-display text-2xl font-medium text-muted">
-                    {getInitials(fullName)}
+                    {getInitials(fullName) || "S"}
                   </div>
                 )}
               </div>
@@ -236,7 +254,7 @@ export function ProfilSayaForm({ profile }: ProfilSayaFormProps) {
                   />
                 ) : (
                   <div className="flex size-full items-center justify-center font-display text-2xl font-medium text-muted">
-                    {getInitials(fullName)}
+                    {getInitials(fullName) || "S"}
                   </div>
                 )}
               </div>
@@ -312,7 +330,7 @@ export function ProfilSayaForm({ profile }: ProfilSayaFormProps) {
             <Input
               id="fullName"
               name="fullName"
-              defaultValue={profile.fullName}
+              defaultValue={rawFullName}
               maxLength={100}
               required
               onChange={(e) => setFullName(e.target.value)}
@@ -330,7 +348,7 @@ export function ProfilSayaForm({ profile }: ProfilSayaFormProps) {
                 id="citaCita"
                 name="citaCita"
                 maxLength={150}
-                defaultValue={profile.citaCita ?? ""}
+                defaultValue={rawCitaCita}
                 placeholder="Misal: Full-Stack Engineer, AI Specialist"
               />
               <p className="text-xs text-muted">Akan ditampilkan pada kutipan kartu profil.</p>
@@ -342,7 +360,7 @@ export function ProfilSayaForm({ profile }: ProfilSayaFormProps) {
                 id="publicContact"
                 name="publicContact"
                 maxLength={100}
-                defaultValue={profile.publicContact ?? ""}
+                defaultValue={rawPublicContact}
                 placeholder="Email atau No. WhatsApp..."
               />
               <p className="text-xs text-muted">
@@ -361,7 +379,7 @@ export function ProfilSayaForm({ profile }: ProfilSayaFormProps) {
               name="bio"
               maxLength={500}
               rows={3}
-              defaultValue={profile.bio ?? ""}
+              defaultValue={rawBio}
               onChange={(e) => setBio(e.target.value)}
               placeholder="Ceritakan sedikit tentang dirimu, minat programming, atau hobi..."
             />
@@ -388,7 +406,7 @@ export function ProfilSayaForm({ profile }: ProfilSayaFormProps) {
                 id="instagram"
                 name="instagram"
                 maxLength={100}
-                defaultValue={profile.socialLinks?.instagram ?? ""}
+                defaultValue={rawSocialLinks?.instagram ?? ""}
                 placeholder="@username atau link profil"
               />
             </div>
@@ -399,7 +417,7 @@ export function ProfilSayaForm({ profile }: ProfilSayaFormProps) {
                 id="tiktok"
                 name="tiktok"
                 maxLength={100}
-                defaultValue={profile.socialLinks?.tiktok ?? ""}
+                defaultValue={rawSocialLinks?.tiktok ?? ""}
                 placeholder="@username atau link profil"
               />
             </div>
@@ -410,7 +428,7 @@ export function ProfilSayaForm({ profile }: ProfilSayaFormProps) {
                 id="github"
                 name="github"
                 maxLength={100}
-                defaultValue={profile.socialLinks?.github ?? ""}
+                defaultValue={rawSocialLinks?.github ?? ""}
                 placeholder="username atau link github"
               />
             </div>
@@ -421,7 +439,7 @@ export function ProfilSayaForm({ profile }: ProfilSayaFormProps) {
                 id="linkedin"
                 name="linkedin"
                 maxLength={100}
-                defaultValue={profile.socialLinks?.linkedin ?? ""}
+                defaultValue={rawSocialLinks?.linkedin ?? ""}
                 placeholder="username atau link linkedin"
               />
             </div>
@@ -432,7 +450,7 @@ export function ProfilSayaForm({ profile }: ProfilSayaFormProps) {
                 id="website"
                 name="website"
                 maxLength={150}
-                defaultValue={profile.socialLinks?.website ?? ""}
+                defaultValue={rawSocialLinks?.website ?? ""}
                 placeholder="https://portofolio-kamu.com"
               />
             </div>
@@ -461,7 +479,7 @@ export function ProfilSayaForm({ profile }: ProfilSayaFormProps) {
             name="yearbookQuote"
             maxLength={280}
             rows={3}
-            defaultValue={profile.yearbookQuote ?? ""}
+            defaultValue={rawYearbookQuote}
             onChange={(e) => setYearbookQuote(e.target.value)}
             placeholder="Tuliskan kata mutiara, pesan kesan kocak, atau kenangan paling berkesan selama sekolah..."
           />
@@ -497,7 +515,7 @@ export function ProfilSayaForm({ profile }: ProfilSayaFormProps) {
                 />
               ) : (
                 <div className="flex size-full items-center justify-center font-display text-2xl font-medium text-muted">
-                  {getInitials(fullName)}
+                  {getInitials(fullName) || "S"}
                 </div>
               )}
             </div>
@@ -505,8 +523,8 @@ export function ProfilSayaForm({ profile }: ProfilSayaFormProps) {
             <div>
               <p className="text-sm font-medium text-foreground">{fullName || "Nama Siswa"}</p>
               <div className="mt-0.5 flex items-center justify-center gap-1.5">
-                {profile.absenNumber ? (
-                  <span className="font-mono text-muted text-xs">No. {profile.absenNumber}</span>
+                {displayAbsenNumber ? (
+                  <span className="font-mono text-muted text-xs">No. {displayAbsenNumber}</span>
                 ) : null}
                 <span className="inline-flex items-center rounded-full bg-accent/15 px-1.5 py-0.2 text-[10px] font-semibold text-accent-text">
                   Kamu

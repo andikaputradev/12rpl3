@@ -10,6 +10,7 @@ export function BlogPostCard({ post }: { post: BlogPostSummary }) {
   return (
     <Link
       href={`/blog/${post.slug}`}
+      prefetch={false}
       className="group flex flex-col overflow-hidden rounded-xl border border-border bg-surface transition-colors hover:border-accent/50"
     >
       <div className="relative aspect-[16/9] w-full overflow-hidden bg-background">

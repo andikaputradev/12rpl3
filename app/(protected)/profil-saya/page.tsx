@@ -19,6 +19,14 @@ const ROLE_LABELS: Record<string, string> = {
 
 export default async function ProfilSayaPage() {
   const { profile } = await requireAuthenticatedUser();
+  const rawProfile = profile as Record<string, unknown>;
+  const role = (profile.role ?? rawProfile?.role ?? "siswa") as string;
+  const absenNumber = (profile.absenNumber ?? rawProfile?.absen_number) as
+    | number
+    | null
+    | undefined;
+  const nis = (profile.nis ?? rawProfile?.nis) as string | null | undefined;
+  const slug = (profile.slug ?? rawProfile?.slug) as string | null | undefined;
 
   return (
     <div className="container-portal py-10 sm:py-14">
@@ -27,6 +35,7 @@ export default async function ProfilSayaPage() {
         <nav className="mb-6 flex items-center gap-2 text-xs text-muted" aria-label="Breadcrumb">
           <Link
             href="/"
+            prefetch={false}
             className="flex items-center gap-1 transition-colors hover:text-foreground"
           >
             <Home className="size-3.5" aria-hidden="true" />
@@ -42,16 +51,16 @@ export default async function ProfilSayaPage() {
             <div className="flex flex-wrap items-center gap-2">
               <span className="inline-flex items-center gap-1 rounded-full bg-accent/15 px-2.5 py-0.5 font-medium text-xs text-accent-text">
                 <User className="size-3" aria-hidden="true" />
-                {ROLE_LABELS[profile.role] ?? profile.role}
+                {ROLE_LABELS[role] ?? role}
               </span>
-              {profile.absenNumber ? (
+              {absenNumber ? (
                 <span className="rounded-md border border-border bg-surface px-2 py-0.5 font-mono text-xs text-muted">
-                  No. Absen {profile.absenNumber}
+                  No. Absen {absenNumber}
                 </span>
               ) : null}
-              {profile.nis ? (
+              {nis ? (
                 <span className="rounded-md border border-border bg-surface px-2 py-0.5 font-mono text-xs text-muted">
-                  NIS {profile.nis}
+                  NIS {nis}
                 </span>
               ) : null}
             </div>
@@ -66,16 +75,16 @@ export default async function ProfilSayaPage() {
           </div>
 
           <div className="flex flex-wrap items-center gap-2 sm:shrink-0">
-            {profile.slug ? (
+            {slug ? (
               <Button asChild variant="outline" size="sm" className="gap-1.5 text-xs">
-                <Link href={`/direktori/${profile.slug}`}>
+                <Link href={`/direktori/${slug}`} prefetch={false}>
                   <span>Halaman Profil</span>
                   <ExternalLink className="size-3.5" aria-hidden="true" />
                 </Link>
               </Button>
             ) : null}
             <Button asChild variant="ghost" size="sm" className="gap-1 text-xs">
-              <Link href="/">
+              <Link href="/" prefetch={false}>
                 <ArrowLeft className="size-3.5" aria-hidden="true" />
                 <span>Ke Beranda</span>
               </Link>

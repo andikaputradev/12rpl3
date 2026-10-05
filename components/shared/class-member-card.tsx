@@ -74,7 +74,7 @@ export function ClassMemberCard({
       transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
     >
       {student.slug ? (
-        <Link href={`/direktori/${student.slug}`} className="block cursor-pointer">
+        <Link href={`/direktori/${student.slug}`} prefetch={false} className="block cursor-pointer">
           {content}
         </Link>
       ) : (

@@ -58,6 +58,7 @@ export function Navbar({ isAuthenticated, userRole }: NavbarProps) {
       <div className="container-portal flex h-16 items-center justify-between">
         <Link
           href="/"
+          prefetch={false}
           className="flex items-center gap-2 font-display text-sm font-semibold tracking-tight"
         >
           <Image
@@ -74,6 +75,7 @@ export function Navbar({ isAuthenticated, userRole }: NavbarProps) {
         <nav className="hidden items-center gap-1 xl:gap-1.5 lg:flex" aria-label="Navigasi utama">
           <Link
             href="/profil"
+            prefetch={false}
             className={cn(
               "cursor-pointer rounded-md px-2.5 py-1.5 text-sm text-muted transition-colors hover:bg-surface hover:text-foreground",
               pathname === "/profil" && "bg-surface font-medium text-foreground",
@@ -83,6 +85,7 @@ export function Navbar({ isAuthenticated, userRole }: NavbarProps) {
           </Link>
           <Link
             href="/direktori"
+            prefetch={false}
             className={cn(
               "cursor-pointer rounded-md px-2.5 py-1.5 text-sm text-muted transition-colors hover:bg-surface hover:text-foreground",
               pathname.startsWith("/direktori") && "bg-surface font-medium text-foreground",
@@ -92,6 +95,7 @@ export function Navbar({ isAuthenticated, userRole }: NavbarProps) {
           </Link>
           <Link
             href="/jadwal"
+            prefetch={false}
             className={cn(
               "cursor-pointer rounded-md px-2.5 py-1.5 text-sm text-muted transition-colors hover:bg-surface hover:text-foreground",
               pathname.startsWith("/jadwal") && "bg-surface font-medium text-foreground",
@@ -101,6 +105,7 @@ export function Navbar({ isAuthenticated, userRole }: NavbarProps) {
           </Link>
           <Link
             href="/galeri"
+            prefetch={false}
             className={cn(
               "cursor-pointer rounded-md px-2.5 py-1.5 text-sm text-muted transition-colors hover:bg-surface hover:text-foreground",
               pathname.startsWith("/galeri") && "bg-surface font-medium text-foreground",
@@ -110,6 +115,7 @@ export function Navbar({ isAuthenticated, userRole }: NavbarProps) {
           </Link>
           <Link
             href="/prestasi"
+            prefetch={false}
             className={cn(
               "cursor-pointer rounded-md px-2.5 py-1.5 text-sm text-muted transition-colors hover:bg-surface hover:text-foreground",
               pathname.startsWith("/prestasi") && "bg-surface font-medium text-foreground",
@@ -119,6 +125,7 @@ export function Navbar({ isAuthenticated, userRole }: NavbarProps) {
           </Link>
           <Link
             href="/blog"
+            prefetch={false}
             className={cn(
               "cursor-pointer rounded-md px-2.5 py-1.5 text-sm text-muted transition-colors hover:bg-surface hover:text-foreground",
               pathname.startsWith("/blog") && "bg-surface font-medium text-foreground",
@@ -142,17 +149,17 @@ export function Navbar({ isAuthenticated, userRole }: NavbarProps) {
             </DropdownMenuTrigger>
             <DropdownMenuContent align="start" className="w-48">
               <DropdownMenuItem asChild>
-                <Link href="/interaksi/buku-tamu" className="cursor-pointer">
+                <Link href="/interaksi/buku-tamu" prefetch={false} className="cursor-pointer">
                   Buku Tamu
                 </Link>
               </DropdownMenuItem>
               <DropdownMenuItem asChild>
-                <Link href="/interaksi/aspirasi" className="cursor-pointer">
+                <Link href="/interaksi/aspirasi" prefetch={false} className="cursor-pointer">
                   Papan Aspirasi
                 </Link>
               </DropdownMenuItem>
               <DropdownMenuItem asChild>
-                <Link href="/interaksi/polling" className="cursor-pointer">
+                <Link href="/interaksi/polling" prefetch={false} className="cursor-pointer">
                   Polling Kelas
                 </Link>
               </DropdownMenuItem>
@@ -161,6 +168,7 @@ export function Navbar({ isAuthenticated, userRole }: NavbarProps) {
 
           <Link
             href="/kelulusan"
+            prefetch={false}
             className={cn(
               "cursor-pointer rounded-md px-2.5 py-1.5 text-sm text-muted transition-colors hover:bg-surface hover:text-foreground",
               pathname.startsWith("/kelulusan") && "bg-surface font-medium text-foreground",
@@ -210,7 +218,11 @@ export function Navbar({ isAuthenticated, userRole }: NavbarProps) {
                 {isStaff && (
                   <>
                     <DropdownMenuItem asChild>
-                      <Link href="/dashboard" className="flex items-center gap-2 cursor-pointer">
+                      <Link
+                        href="/dashboard"
+                        prefetch={false}
+                        className="flex items-center gap-2 cursor-pointer"
+                      >
                         <LayoutDashboard className="size-4" />
                         <span>Dashboard Admin</span>
                       </Link>
@@ -218,6 +230,7 @@ export function Navbar({ isAuthenticated, userRole }: NavbarProps) {
                     <DropdownMenuItem asChild>
                       <Link
                         href="/dashboard/laporan"
+                        prefetch={false}
                         className="flex items-center gap-2 cursor-pointer"
                       >
                         <Printer className="size-4" />
@@ -227,13 +240,21 @@ export function Navbar({ isAuthenticated, userRole }: NavbarProps) {
                   </>
                 )}
                 <DropdownMenuItem asChild>
-                  <Link href="/akademik/nilai" className="flex items-center gap-2 cursor-pointer">
+                  <Link
+                    href="/akademik/nilai"
+                    prefetch={false}
+                    className="flex items-center gap-2 cursor-pointer"
+                  >
                     <GraduationCap className="size-4" />
                     <span>Nilai & Akademik</span>
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>
-                  <Link href="/profil-saya" className="flex items-center gap-2 cursor-pointer">
+                  <Link
+                    href="/profil-saya"
+                    prefetch={false}
+                    className="flex items-center gap-2 cursor-pointer"
+                  >
                     <User className="size-4" />
                     <span>Profil Saya</span>
                   </Link>
@@ -254,7 +275,9 @@ export function Navbar({ isAuthenticated, userRole }: NavbarProps) {
             </DropdownMenu>
           ) : (
             <Button asChild size="sm" className="hidden sm:inline-flex">
-              <Link href="/login">Masuk</Link>
+              <Link href="/login" prefetch={false}>
+                Masuk
+              </Link>
             </Button>
           )}
 
@@ -273,6 +296,7 @@ export function Navbar({ isAuthenticated, userRole }: NavbarProps) {
                   <Link
                     key={item.href}
                     href={item.href}
+                    prefetch={false}
                     onClick={() => setOpen(false)}
                     className={cn(
                       "cursor-pointer rounded-md px-3 py-2.5 text-sm text-foreground transition-colors hover:bg-surface",
@@ -289,13 +313,17 @@ export function Navbar({ isAuthenticated, userRole }: NavbarProps) {
                       {isStaff && (
                         <>
                           <Button asChild variant="default" className="w-full justify-start">
-                            <Link href="/dashboard" onClick={() => setOpen(false)}>
+                            <Link href="/dashboard" prefetch={false} onClick={() => setOpen(false)}>
                               <LayoutDashboard className="size-4 mr-2" />
                               Dashboard Admin
                             </Link>
                           </Button>
                           <Button asChild variant="outline" className="w-full justify-start">
-                            <Link href="/dashboard/laporan" onClick={() => setOpen(false)}>
+                            <Link
+                              href="/dashboard/laporan"
+                              prefetch={false}
+                              onClick={() => setOpen(false)}
+                            >
                               <Printer className="size-4 mr-2" />
                               Cetak Laporan
                             </Link>
@@ -303,13 +331,17 @@ export function Navbar({ isAuthenticated, userRole }: NavbarProps) {
                         </>
                       )}
                       <Button asChild variant="outline" className="w-full justify-start">
-                        <Link href="/akademik/nilai" onClick={() => setOpen(false)}>
+                        <Link
+                          href="/akademik/nilai"
+                          prefetch={false}
+                          onClick={() => setOpen(false)}
+                        >
                           <GraduationCap className="size-4 mr-2" />
                           Area Siswa
                         </Link>
                       </Button>
                       <Button asChild variant="ghost" className="w-full justify-start">
-                        <Link href="/profil-saya" onClick={() => setOpen(false)}>
+                        <Link href="/profil-saya" prefetch={false} onClick={() => setOpen(false)}>
                           <User className="size-4 mr-2" />
                           Profil Saya
                         </Link>
@@ -327,7 +359,7 @@ export function Navbar({ isAuthenticated, userRole }: NavbarProps) {
                     </>
                   ) : (
                     <Button asChild className="w-full">
-                      <Link href="/login" onClick={() => setOpen(false)}>
+                      <Link href="/login" prefetch={false} onClick={() => setOpen(false)}>
                         Masuk ke Portal
                       </Link>
                     </Button>

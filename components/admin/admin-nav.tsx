@@ -72,6 +72,7 @@ export function AdminNav({ userRole = "super_admin", jabatan }: AdminNavProps) {
             <Link
               key={item.href}
               href={item.href}
+              prefetch={false}
               className={cn(
                 "cursor-pointer whitespace-nowrap rounded-md px-3 py-1.5 text-xs sm:text-sm font-medium transition-colors",
                 isActive

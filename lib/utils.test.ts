@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   cn,
   formatIndonesianDate,
+  getInitials,
   getProgressPercent,
   getTimeRemaining,
   sanitizeUserText,
@@ -98,5 +99,28 @@ describe("formatIndonesianDate", () => {
   it("mengembalikan tanda hubung untuk input invalid", () => {
     expect(formatIndonesianDate(null)).toBe("-");
     expect(formatIndonesianDate("tanggal-salah")).toBe("-");
+  });
+});
+
+describe("getInitials", () => {
+  it("mengambil 2 inisial huruf kapital dari nama lengkap", () => {
+    expect(getInitials("Wahyu Andika")).toBe("WA");
+    expect(getInitials("Budi Santoso Pratama")).toBe("BS");
+  });
+
+  it("menangani satu kata nama", () => {
+    expect(getInitials("Aditya")).toBe("A");
+  });
+
+  it("menangani string kosong, null, atau undefined dengan aman", () => {
+    expect(getInitials("")).toBe("");
+    expect(getInitials(null)).toBe("");
+    expect(getInitials(undefined)).toBe("");
+    // biome-ignore lint/suspicious/noExplicitAny: uji ketahanan runtime terhadap tipe non-string
+    expect(getInitials(123 as any)).toBe("");
+  });
+
+  it("menangani spasi berlebih di awal, tengah, atau akhir", () => {
+    expect(getInitials("  Zaeni   Miftah  ")).toBe("ZM");
   });
 });

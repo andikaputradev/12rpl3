@@ -29,7 +29,7 @@ export function StudentCard({ student }: { student: StudentListItem }) {
   if (!student.slug) return content;
 
   return (
-    <Link href={`/direktori/${student.slug}`} className="cursor-pointer">
+    <Link href={`/direktori/${student.slug}`} prefetch={false} className="cursor-pointer">
       {content}
     </Link>
   );

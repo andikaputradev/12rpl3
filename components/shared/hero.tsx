@@ -60,13 +60,13 @@ export function Hero({ classProfile, featuredEvent }: HeroProps) {
 
         <motion.div variants={item} className="flex flex-wrap items-center gap-3 pt-1">
           <Button asChild>
-            <Link href="/profil">
+            <Link href="/profil" prefetch={false}>
               Profil Kelas
               <ArrowRight className="size-4" />
             </Link>
           </Button>
           <Button asChild variant="outline">
-            <Link href="/galeri" className="inline-flex items-center gap-2">
+            <Link href="/galeri" prefetch={false} className="inline-flex items-center gap-2">
               <Images className="size-4" />
               Jelajahi Galeri
             </Link>

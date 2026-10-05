@@ -1,14 +1,6 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import type { Profile } from "@/lib/db/schema";
-import { cloudinaryOptimized, cn } from "@/lib/utils";
-
-function getInitials(name: string): string {
-  return name
-    .split(" ")
-    .slice(0, 2)
-    .map((part) => part[0]?.toUpperCase())
-    .join("");
-}
+import { cloudinaryOptimized, cn, getInitials } from "@/lib/utils";
 
 interface OrgStructureCardProps {
   profile: Profile | null;

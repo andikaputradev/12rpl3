@@ -40,6 +40,7 @@ export async function AssignmentReminderStrip() {
           <li key={assignment.id}>
             <Link
               href="/akademik/tugas"
+              prefetch={false}
               className="flex cursor-pointer items-center gap-2 rounded-md border border-border bg-surface px-3 py-2 text-sm transition-colors hover:border-accent"
             >
               <span className="font-medium">{assignment.title}</span>

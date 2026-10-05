@@ -3,30 +3,9 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { SocialLinks } from "@/components/direktori/social-links";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { getAllPublicStudentSlugs, getStudentBySlug } from "@/lib/actions/direktori";
+import { getStudentBySlug } from "@/lib/actions/direktori";
 import { siteConfig } from "@/lib/config/site";
-import { cloudinaryOptimized } from "@/lib/utils";
-
-export async function generateStaticParams() {
-  try {
-    const slugs = await getAllPublicStudentSlugs();
-    return slugs.map((slug) => ({ slug }));
-  } catch (error) {
-    console.error(
-      "[generateStaticParams] Gagal mengambil slug siswa saat build, lanjut tanpa pre-render statis:",
-      error,
-    );
-    return [];
-  }
-}
-
-function getInitials(name: string): string {
-  return name
-    .split(" ")
-    .slice(0, 2)
-    .map((part) => part[0]?.toUpperCase())
-    .join("");
-}
+import { cloudinaryOptimized, getInitials } from "@/lib/utils";
 
 interface StudentDetailPageProps {
   params: Promise<{ slug: string }>;

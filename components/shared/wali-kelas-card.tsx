@@ -4,20 +4,12 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import type { Profile } from "@/lib/db/schema";
-import { cloudinaryOptimized } from "@/lib/utils";
+import { cloudinaryOptimized, getInitials } from "@/lib/utils";
 
 function toWhatsAppLink(rawPhone: string): string {
   const digits = rawPhone.replace(/\D/g, "");
   const normalized = digits.startsWith("0") ? `62${digits.slice(1)}` : digits;
   return `https://wa.me/${normalized}`;
-}
-
-function getInitials(name: string): string {
-  return name
-    .split(" ")
-    .slice(0, 2)
-    .map((part) => part[0]?.toUpperCase())
-    .join("");
 }
 
 export function WaliKelasCard({ waliKelas }: { waliKelas: Profile }) {

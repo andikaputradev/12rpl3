@@ -242,7 +242,9 @@ export function TodayScheduleWidget({
             size="sm"
             className="mt-3 w-full border-accent/30 text-xs"
           >
-            <Link href="/jadwal">Buka Jadwal & Kalender Akademik</Link>
+            <Link href="/jadwal" prefetch={false}>
+              Buka Jadwal & Kalender Akademik
+            </Link>
           </Button>
         </div>
       </div>

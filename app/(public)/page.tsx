@@ -168,7 +168,7 @@ export default async function BerandaPage() {
               </p>
             </div>
             <Button asChild variant="outline" size="sm" className="w-fit gap-1 text-xs">
-              <Link href="/jadwal">
+              <Link href="/jadwal" prefetch={false}>
                 Buka Jadwal Lengkap
                 <ArrowRight className="size-3.5" />
               </Link>
@@ -197,7 +197,7 @@ export default async function BerandaPage() {
               </p>
             </div>
             <Button asChild variant="outline" size="sm" className="w-fit gap-1 text-xs">
-              <Link href="/profil">
+              <Link href="/profil" prefetch={false}>
                 Lihat Selengkapnya
                 <ArrowRight className="size-3.5" />
               </Link>
@@ -264,7 +264,7 @@ export default async function BerandaPage() {
               </p>
             </div>
             <Button asChild variant="outline" size="sm" className="w-fit gap-1 text-xs">
-              <Link href="/direktori">
+              <Link href="/direktori" prefetch={false}>
                 Cari Siswa di Direktori
                 <ArrowRight className="size-3.5" />
               </Link>
@@ -308,7 +308,7 @@ export default async function BerandaPage() {
               </p>
             </div>
             <Button asChild variant="outline" size="sm" className="w-fit gap-1 text-xs">
-              <Link href="/prestasi">
+              <Link href="/prestasi" prefetch={false}>
                 Lihat Semua Prestasi & Proyek
                 <ArrowRight className="size-3.5" />
               </Link>
@@ -367,7 +367,7 @@ export default async function BerandaPage() {
               </p>
             </div>
             <Button asChild variant="outline" size="sm" className="w-fit gap-1 text-xs">
-              <Link href="/galeri">
+              <Link href="/galeri" prefetch={false}>
                 Buka Galeri Foto
                 <ArrowRight className="size-3.5" />
               </Link>
@@ -412,7 +412,7 @@ export default async function BerandaPage() {
               </p>
             </div>
             <Button asChild variant="outline" size="sm" className="w-fit gap-1 text-xs">
-              <Link href="/blog">
+              <Link href="/blog" prefetch={false}>
                 Baca Semua Artikel
                 <ArrowRight className="size-3.5" />
               </Link>
@@ -448,13 +448,13 @@ export default async function BerandaPage() {
             </div>
             <div className="flex items-center gap-2">
               <Button asChild variant="outline" size="sm" className="w-fit gap-1 text-xs">
-                <Link href="/interaksi/buku-tamu">
+                <Link href="/interaksi/buku-tamu" prefetch={false}>
                   Isi Buku Tamu
                   <ArrowRight className="size-3.5" />
                 </Link>
               </Button>
               <Button asChild variant="outline" size="sm" className="w-fit gap-1 text-xs">
-                <Link href="/interaksi/polling">
+                <Link href="/interaksi/polling" prefetch={false}>
                   Polling Lengkap
                   <ArrowRight className="size-3.5" />
                 </Link>

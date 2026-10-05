@@ -16,11 +16,13 @@ export function slugify(input: string): string {
     .replace(/-+/g, "-");
 }
 
-export function getInitials(fullName: string): string {
+export function getInitials(fullName?: string | null): string {
+  if (!fullName || typeof fullName !== "string") return "";
   return fullName
-    .split(" ")
+    .trim()
+    .split(/\s+/)
     .slice(0, 2)
-    .map((part) => part[0]?.toUpperCase())
+    .map((part) => part[0]?.toUpperCase() ?? "")
     .join("");
 }
 

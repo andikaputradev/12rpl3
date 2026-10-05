@@ -47,7 +47,7 @@ export function HighlightCard({
       transition={{ delay: index * 0.07 }}
     >
       {highlight.linkHref ? (
-        <Link href={highlight.linkHref} className="cursor-pointer">
+        <Link href={highlight.linkHref} prefetch={false} className="cursor-pointer">
           {content}
         </Link>
       ) : (

@@ -14,7 +14,9 @@ export default function AdminForbidden() {
         Akun Anda tidak memiliki peran yang berwenang untuk membuka halaman dashboard ini.
       </p>
       <Button asChild>
-        <Link href="/">Kembali ke Beranda</Link>
+        <Link href="/" prefetch={false}>
+          Kembali ke Beranda
+        </Link>
       </Button>
     </div>
   );

@@ -40,6 +40,7 @@ export function Footer() {
               <li key={item.href}>
                 <Link
                   href={item.href}
+                  prefetch={false}
                   className="cursor-pointer transition-colors hover:text-foreground"
                 >
                   {item.label}
@@ -57,6 +58,7 @@ export function Footer() {
           </p>
           <Link
             href="/login"
+            prefetch={false}
             className="inline-block cursor-pointer text-sm text-accent-text underline-offset-4 hover:underline"
           >
             Masuk sebagai pengurus / wali kelas
@@ -73,6 +75,7 @@ export function Footer() {
         <div className="flex items-center gap-4">
           <Link
             href="/kebijakan-privasi"
+            prefetch={false}
             className="hover:text-foreground underline-offset-4 hover:underline"
           >
             Kebijakan Privasi

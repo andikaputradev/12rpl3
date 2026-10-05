@@ -14,7 +14,9 @@ export default function ProtectedForbidden() {
         Peran akun Anda tidak memiliki akses ke halaman ini.
       </p>
       <Button asChild>
-        <Link href="/">Kembali ke Beranda</Link>
+        <Link href="/" prefetch={false}>
+          Kembali ke Beranda
+        </Link>
       </Button>
     </div>
   );

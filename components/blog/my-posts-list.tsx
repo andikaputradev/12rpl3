@@ -55,7 +55,11 @@ export function MyPostsList({ posts, isStaff }: { posts: MyPost[]; isStaff: bool
     return (
       <p className="rounded-md border border-border border-dashed py-12 text-center text-muted text-sm">
         Belum ada tulisan. Mulai menulis di{" "}
-        <Link href="/blog/tulis" className="text-accent-text underline underline-offset-2">
+        <Link
+          href="/blog/tulis"
+          prefetch={false}
+          className="text-accent-text underline underline-offset-2"
+        >
           halaman tulis artikel
         </Link>
         .
@@ -87,7 +91,9 @@ export function MyPostsList({ posts, isStaff }: { posts: MyPost[]; isStaff: bool
             <div className="flex shrink-0 items-center gap-2">
               {post.status === "published" ? (
                 <Button type="button" variant="outline" size="sm" asChild>
-                  <Link href={`/blog/${post.slug}`}>Lihat</Link>
+                  <Link href={`/blog/${post.slug}`} prefetch={false}>
+                    Lihat
+                  </Link>
                 </Button>
               ) : null}
               {canSubmit ? (

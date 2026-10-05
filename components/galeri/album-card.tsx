@@ -23,7 +23,7 @@ export function AlbumCard({ album, index }: { album: AlbumWithCount; index: numb
       viewport={{ once: true, margin: "-40px" }}
       transition={{ delay: (index % 8) * 0.06 }}
     >
-      <Link href={`/galeri/${album.slug}`} className="group block cursor-pointer">
+      <Link href={`/galeri/${album.slug}`} prefetch={false} className="group block cursor-pointer">
         <div className="relative aspect-[4/3] w-full overflow-hidden rounded-lg border border-border bg-surface">
           {album.coverImageUrl ? (
             <Image

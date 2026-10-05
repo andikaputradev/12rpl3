@@ -12,11 +12,20 @@ interface UserProfileBannerProps {
 export function UserProfileBanner({ profile }: UserProfileBannerProps) {
   if (!profile) return null;
 
-  const hasCustomAvatar = Boolean(profile.avatarUrl) && !profile.avatarUrl?.includes("pngtree");
+  const raw = profile as Record<string, unknown>;
+  const fullName = String(profile.fullName ?? raw?.full_name ?? "Siswa");
+  const avatarUrl = (profile.avatarUrl ?? raw?.avatar_url ?? null) as string | null;
+  const yearbookPhotoUrl = (profile.yearbookPhotoUrl ?? raw?.yearbook_photo_url ?? null) as
+    | string
+    | null;
+  const absenNumber = (profile.absenNumber ?? raw?.absen_number ?? null) as number | null;
+  const slug = (profile.slug ?? raw?.slug ?? null) as string | null;
+
+  const hasCustomAvatar = Boolean(avatarUrl) && !avatarUrl?.includes("pngtree");
   const effectiveAvatar = hasCustomAvatar
-    ? profile.avatarUrl
-    : profile.yearbookPhotoUrl && !profile.yearbookPhotoUrl.includes("pngtree")
-      ? profile.yearbookPhotoUrl
+    ? avatarUrl
+    : yearbookPhotoUrl && !yearbookPhotoUrl.includes("pngtree")
+      ? yearbookPhotoUrl
       : null;
 
   return (
@@ -28,14 +37,14 @@ export function UserProfileBanner({ profile }: UserProfileBannerProps) {
               {effectiveAvatar ? (
                 <Image
                   src={cloudinaryOptimized(effectiveAvatar, "f_auto,q_auto,w_128,h_128,c_fill")}
-                  alt={`Foto ${profile.fullName}`}
+                  alt={`Foto ${fullName}`}
                   fill
                   sizes="64px"
                   className="object-cover"
                 />
               ) : (
                 <div className="flex size-full items-center justify-center font-display text-xl font-medium text-muted">
-                  {getInitials(profile.fullName)}
+                  {getInitials(fullName) || "S"}
                 </div>
               )}
             </div>
@@ -46,15 +55,15 @@ export function UserProfileBanner({ profile }: UserProfileBannerProps) {
                   <UserCheck className="size-3" aria-hidden="true" />
                   Profil Kamu Sedang Aktif
                 </span>
-                {profile.absenNumber ? (
+                {absenNumber ? (
                   <span className="rounded-md border border-border px-1.5 py-0.2 font-mono text-[11px] text-muted">
-                    Absen No. {profile.absenNumber}
+                    Absen No. {absenNumber}
                   </span>
                 ) : null}
               </div>
 
               <h3 className="mt-1 truncate font-display text-xl font-medium tracking-tight text-foreground sm:text-2xl">
-                Halo, {profile.fullName}
+                Halo, {fullName}
               </h3>
               <p className="mt-0.5 text-xs text-muted">
                 Foto dan profilmu sudah aktif & tampil pada daftar siswa di Beranda ini.
@@ -63,9 +72,9 @@ export function UserProfileBanner({ profile }: UserProfileBannerProps) {
           </div>
 
           <div className="flex flex-wrap items-center gap-2.5 sm:shrink-0">
-            {profile.slug ? (
+            {slug ? (
               <Button asChild variant="outline" size="sm" className="gap-1.5 text-xs">
-                <Link href={`/direktori/${profile.slug}`}>
+                <Link href={`/direktori/${slug}`} prefetch={false}>
                   <span>Halaman Profil</span>
                   <ExternalLink className="size-3.5" aria-hidden="true" />
                 </Link>
@@ -73,7 +82,7 @@ export function UserProfileBanner({ profile }: UserProfileBannerProps) {
             ) : null}
 
             <Button asChild size="sm" className="gap-1.5 text-xs">
-              <Link href="/profil-saya">
+              <Link href="/profil-saya" prefetch={false}>
                 <span>Kelola Profil Saya</span>
                 <ArrowRight className="size-3.5" aria-hidden="true" />
               </Link>
