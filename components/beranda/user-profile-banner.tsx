@@ -71,9 +71,14 @@ export function UserProfileBanner({ profile }: UserProfileBannerProps) {
             </div>
           </div>
 
-          <div className="flex flex-wrap items-center gap-2.5 sm:shrink-0">
+          <div className="flex flex-wrap items-center gap-2.5 sm:shrink-0 w-full sm:w-auto">
             {slug ? (
-              <Button asChild variant="outline" size="sm" className="gap-1.5 text-xs">
+              <Button
+                asChild
+                variant="outline"
+                size="sm"
+                className="gap-1.5 text-xs flex-1 sm:flex-initial"
+              >
                 <Link href={`/direktori/${slug}`} prefetch={false}>
                   <span>Halaman Profil</span>
                   <ExternalLink className="size-3.5" aria-hidden="true" />
@@ -81,7 +86,7 @@ export function UserProfileBanner({ profile }: UserProfileBannerProps) {
               </Button>
             ) : null}
 
-            <Button asChild size="sm" className="gap-1.5 text-xs">
+            <Button asChild size="sm" className="gap-1.5 text-xs flex-1 sm:flex-initial">
               <Link href="/profil-saya" prefetch={false}>
                 <span>Kelola Profil Saya</span>
                 <ArrowRight className="size-3.5" aria-hidden="true" />

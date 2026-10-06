@@ -27,7 +27,7 @@ export function ClassMemberCard({
     <div className="group relative flex flex-col items-center gap-2.5 text-center">
       <div
         className={cn(
-          "relative size-[150px] overflow-hidden rounded-full border border-border bg-surface transition-transform duration-200 group-hover:scale-105",
+          "relative size-28 sm:size-32 md:size-36 lg:size-[140px] xl:size-[150px] overflow-hidden rounded-full border border-border bg-surface transition-transform duration-200 group-hover:scale-105",
           isCurrentUser && "ring-2 ring-accent ring-offset-2 ring-offset-background",
         )}
       >

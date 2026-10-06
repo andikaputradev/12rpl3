@@ -35,12 +35,12 @@ export function CountdownStatusBar({ event }: CountdownStatusBarProps) {
 
   return (
     <div
-      className="inline-flex w-fit max-w-full items-center gap-3 rounded-full border border-border bg-surface/90 py-2 pr-4 pl-3 backdrop-blur-sm"
+      className="inline-flex w-fit max-w-full min-w-0 items-center gap-2 sm:gap-3 rounded-full border border-border bg-surface/90 py-1.5 sm:py-2 pr-3 sm:pr-4 pl-2.5 sm:pl-3 backdrop-blur-sm"
       role="status"
       aria-live="off"
     >
       <span className="flex size-2 shrink-0 rounded-full bg-success" aria-hidden="true" />
-      <span className="font-mono text-xs uppercase tracking-[0.1em] text-muted">
+      <span className="shrink-0 font-mono text-[11px] sm:text-xs uppercase tracking-[0.1em] text-muted">
         T-minus{" "}
         <span className="font-medium text-foreground">{mounted ? remaining.days : "…"}</span> hari
         {showHours ? (
@@ -51,9 +51,11 @@ export function CountdownStatusBar({ event }: CountdownStatusBarProps) {
         ) : null}{" "}
         menuju
       </span>
-      <span className="truncate text-sm font-medium text-accent-text">{event.title}</span>
+      <span className="min-w-0 truncate text-xs sm:text-sm font-medium text-accent-text">
+        {event.title}
+      </span>
       <span
-        className="font-mono text-sm text-accent-text motion-safe:animate-blink"
+        className="shrink-0 font-mono text-sm text-accent-text motion-safe:animate-blink"
         aria-hidden="true"
       >
         _

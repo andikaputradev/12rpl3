@@ -30,7 +30,7 @@ export function Hero({ classProfile, featuredEvent }: HeroProps) {
   const headline = classProfile?.motto ?? siteConfig.tagline;
 
   return (
-    <section className="relative isolate flex min-h-[88vh] items-center overflow-hidden">
+    <section className="relative isolate flex min-h-[75dvh] sm:min-h-[85dvh] items-center overflow-hidden">
       <Image
         src={siteConfig.heroBackgroundUrl}
         alt=""
@@ -45,7 +45,7 @@ export function Hero({ classProfile, featuredEvent }: HeroProps) {
         variants={container}
         initial="hidden"
         animate="show"
-        className="container-portal relative z-10 flex flex-col items-start gap-6 py-24"
+        className="container-portal relative z-10 flex flex-col items-start gap-5 sm:gap-6 py-14 sm:py-20 md:py-24"
       >
         <motion.div variants={item}>
           <span data-eyebrow>{eyebrow}</span>
@@ -53,7 +53,7 @@ export function Hero({ classProfile, featuredEvent }: HeroProps) {
 
         <motion.h1
           variants={item}
-          className="max-w-2xl text-balance font-display text-4xl font-medium leading-[1.05] tracking-tight sm:text-6xl"
+          className="max-w-2xl text-balance font-display text-3xl font-medium leading-[1.08] tracking-tight sm:text-5xl md:text-6xl"
         >
           {headline}
         </motion.h1>

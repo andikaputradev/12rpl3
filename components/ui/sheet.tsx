@@ -37,18 +37,22 @@ function SheetContent({ className, children, side = "right", ...props }: SheetCo
       <SheetPrimitive.Content
         data-slot="sheet-content"
         className={cn(
-          "fixed z-50 flex flex-col gap-4 border-border bg-surface shadow-lg transition ease-in-out data-[state=closed]:animate-out data-[state=open]:animate-in data-[state=closed]:duration-300 data-[state=open]:duration-300",
+          "fixed z-50 flex flex-col overflow-hidden border-border bg-surface shadow-2xl transition ease-in-out data-[state=closed]:animate-out data-[state=open]:animate-in data-[state=closed]:duration-300 data-[state=open]:duration-300",
           side === "right" &&
-            "inset-y-0 right-0 h-full w-3/4 border-l data-[state=closed]:slide-out-to-right data-[state=open]:slide-in-from-right sm:max-w-sm",
+            "inset-y-0 right-0 h-full max-h-dvh w-[88vw] max-w-sm sm:max-w-md border-l data-[state=closed]:slide-out-to-right data-[state=open]:slide-in-from-right",
           side === "left" &&
-            "inset-y-0 left-0 h-full w-3/4 border-r data-[state=closed]:slide-out-to-left data-[state=open]:slide-in-from-left sm:max-w-sm",
+            "inset-y-0 left-0 h-full max-h-dvh w-[88vw] max-w-sm sm:max-w-md border-r data-[state=closed]:slide-out-to-left data-[state=open]:slide-in-from-left",
+          side === "top" &&
+            "inset-x-0 top-0 max-h-[85dvh] border-b data-[state=closed]:slide-out-to-top data-[state=open]:slide-in-from-top",
+          side === "bottom" &&
+            "inset-x-0 bottom-0 max-h-[85dvh] border-t data-[state=closed]:slide-out-to-bottom data-[state=open]:slide-in-from-bottom",
           className,
         )}
         {...props}
       >
         {children}
-        <SheetPrimitive.Close className="absolute top-4 right-4 flex size-11 cursor-pointer items-center justify-center rounded-md outline-none transition-opacity hover:opacity-70 focus-visible:ring-2 focus-visible:ring-ring">
-          <X className="size-5" />
+        <SheetPrimitive.Close className="absolute top-3.5 right-3.5 z-30 flex size-10 cursor-pointer items-center justify-center rounded-lg border border-border/70 bg-surface/85 text-muted transition-colors hover:bg-surface hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring">
+          <X className="size-4.5" />
           <span className="sr-only">Tutup</span>
         </SheetPrimitive.Close>
       </SheetPrimitive.Content>
@@ -60,7 +64,20 @@ function SheetHeader({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
       data-slot="sheet-header"
-      className={cn("flex flex-col gap-1.5 p-6", className)}
+      className={cn("flex flex-col gap-1 p-5 border-b border-border/60 shrink-0", className)}
+      {...props}
+    />
+  );
+}
+
+function SheetFooter({ className, ...props }: React.ComponentProps<"div">) {
+  return (
+    <div
+      data-slot="sheet-footer"
+      className={cn(
+        "mt-auto flex flex-col gap-2 p-5 border-t border-border/60 shrink-0",
+        className,
+      )}
       {...props}
     />
   );
@@ -70,7 +87,7 @@ function SheetTitle({ className, ...props }: React.ComponentProps<typeof SheetPr
   return (
     <SheetPrimitive.Title
       data-slot="sheet-title"
-      className={cn("font-display text-lg font-medium text-foreground", className)}
+      className={cn("font-display text-lg font-semibold tracking-tight text-foreground", className)}
       {...props}
     />
   );
@@ -83,10 +100,19 @@ function SheetDescription({
   return (
     <SheetPrimitive.Description
       data-slot="sheet-description"
-      className={cn("text-sm text-muted", className)}
+      className={cn("text-xs text-muted leading-relaxed", className)}
       {...props}
     />
   );
 }
 
-export { Sheet, SheetClose, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger };
+export {
+  Sheet,
+  SheetClose,
+  SheetContent,
+  SheetDescription,
+  SheetFooter,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+};
