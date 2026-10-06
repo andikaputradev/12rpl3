@@ -1,6 +1,6 @@
 import "server-only";
 import { and, asc, desc, eq, gte, isNull, lte } from "drizzle-orm";
-import { AuthorizationError, requireAuthenticatedUser } from "@/lib/actions/guard";
+import { requireAuthenticatedUser } from "@/lib/actions/guard";
 import { db } from "@/lib/db";
 import {
   type Announcement,
@@ -23,10 +23,8 @@ import { calculateSubjectAverage, type SubjectScores } from "@/lib/utils/grades"
  * Fungsi di sini tetap menolak secara independen agar tidak bergantung pada
  * satu-satunya titik pemeriksaan di halaman.
  */
-function assertRoleCanViewGradesAttendance(role: string) {
-  if (role === "pengurus") {
-    throw new AuthorizationError("Data nilai dan absensi tidak tersedia untuk peran pengurus.");
-  }
+function assertRoleCanViewGradesAttendance(_role: string) {
+  // Pengurus kelas adalah siswa aktif XII RPL 3 yang berhak melihat nilai dan absensi pribadinya.
 }
 
 export interface GradeRow {

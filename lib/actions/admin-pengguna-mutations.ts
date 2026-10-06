@@ -233,3 +233,47 @@ export async function deleteUser(userId: string): Promise<ActionState> {
   revalidatePath("/direktori");
   return { success: true };
 }
+
+export async function resetUserPasswordToDefault(userId: string): Promise<ActionState> {
+  let auth: Awaited<ReturnType<typeof requireStaffRole>>;
+  try {
+    auth = await requireStaffRole(["super_admin"]);
+  } catch {
+    return { error: "Hanya Super Admin yang berwenang mereset kata sandi pengguna." };
+  }
+
+  const [existing] = await db.select().from(profiles).where(eq(profiles.id, userId)).limit(1);
+  if (!existing) {
+    return { error: "Pengguna tidak ditemukan." };
+  }
+
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  if (!supabaseUrl || !serviceRoleKey) {
+    return { error: "Konfigurasi otentikasi server tidak lengkap." };
+  }
+
+  const { createClient } = await import("@supabase/supabase-js");
+  const adminClient = createClient(supabaseUrl, serviceRoleKey);
+  const DEFAULT_PASSWORD = "Password123#";
+
+  const { error: resetError } = await adminClient.auth.admin.updateUserById(userId, {
+    password: DEFAULT_PASSWORD,
+  });
+
+  if (resetError) {
+    return { error: resetError.message || "Gagal mereset kata sandi ke default." };
+  }
+
+  await db.insert(auditLog).values({
+    actorId: auth.userId,
+    action: "RESET_PASSWORD_DEFAULT",
+    tableName: "profiles",
+    recordId: userId,
+    before: null,
+    after: { resetToDefault: true },
+  });
+
+  revalidatePath("/dashboard/pengguna");
+  return { success: true };
+}

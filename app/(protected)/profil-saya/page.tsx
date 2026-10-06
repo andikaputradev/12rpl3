@@ -1,6 +1,7 @@
 import { ArrowLeft, ExternalLink, Home, User } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
+import { ChangePasswordCard } from "@/components/profil-saya/change-password-card";
 import { ProfilSayaForm } from "@/components/profil-saya/profil-saya-form";
 import { Button } from "@/components/ui/button";
 import { requireAuthenticatedUser } from "@/lib/actions/guard";
@@ -95,6 +96,11 @@ export default async function ProfilSayaPage() {
         {/* Formulir Pengaturan Profil */}
         <div className="mt-8">
           <ProfilSayaForm profile={profile} />
+        </div>
+
+        {/* Pengaturan Kata Sandi */}
+        <div id="password" className="mt-12 border-t border-border/80 pt-10">
+          <ChangePasswordCard />
         </div>
       </div>
     </div>

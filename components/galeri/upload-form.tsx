@@ -101,7 +101,7 @@ export function UploadForm({ albums }: UploadFormProps) {
                 Pilih Berkas
               </label>
             </Button>
-            <span className="text-xs text-muted">JPEG/PNG/WebP, maks. 5MB</span>
+            <span className="text-xs text-muted">JPEG/PNG/WebP, maks. 10MB</span>
           </div>
           <input
             id={`${formId}-image`}

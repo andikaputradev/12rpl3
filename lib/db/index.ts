@@ -32,10 +32,8 @@ function initDb(): PostgresJsDatabase<typeof schema> {
 
   const instance = drizzle(client, { schema });
 
-  if (process.env.NODE_ENV !== "production") {
-    globalForDb.postgresClient = client;
-    globalForDb.drizzleClient = instance;
-  }
+  globalForDb.postgresClient = client;
+  globalForDb.drizzleClient = instance;
 
   return instance;
 }

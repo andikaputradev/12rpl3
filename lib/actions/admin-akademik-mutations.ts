@@ -6,6 +6,7 @@ import { requireStaffRole } from "@/lib/actions/guard";
 import { db } from "@/lib/db";
 import {
   announcements,
+  assignmentSubmissions,
   assignments,
   attendance,
   auditLog,
@@ -325,5 +326,59 @@ export async function deleteSubject(id: string): Promise<ActionState> {
   await writeAudit(auth.userId, "delete", "subjects", id, existing, null);
   revalidatePath("/dashboard/nilai");
   revalidatePath("/dashboard/jadwal");
+  return { success: true };
+}
+
+export async function deleteAssignment(id: string): Promise<ActionState> {
+  let auth: Awaited<ReturnType<typeof requireStaffRole>>;
+  try {
+    auth = await requireStaffRole(["super_admin", "wali_kelas", "pengurus"]);
+  } catch {
+    return { error: "Anda tidak berwenang menghapus tugas." };
+  }
+
+  const [existing] = await db.select().from(assignments).where(eq(assignments.id, id)).limit(1);
+  if (!existing) {
+    return { error: "Tugas tidak ditemukan." };
+  }
+
+  await db.delete(assignments).where(eq(assignments.id, id));
+  await writeAudit(auth.userId, "delete", "assignments", id, existing, null);
+  revalidatePath("/akademik/tugas");
+  revalidatePath("/dashboard/tugas");
+  return { success: true };
+}
+
+export async function toggleSubmissionReviewed(
+  submissionId: string,
+  reviewed: boolean,
+): Promise<ActionState> {
+  let auth: Awaited<ReturnType<typeof requireStaffRole>>;
+  try {
+    auth = await requireStaffRole(["super_admin", "wali_kelas", "pengurus"]);
+  } catch {
+    return { error: "Anda tidak berwenang meninjau tugas." };
+  }
+
+  const [existing] = await db
+    .select()
+    .from(assignmentSubmissions)
+    .where(eq(assignmentSubmissions.id, submissionId))
+    .limit(1);
+  if (!existing) {
+    return { error: "Kiriman tugas tidak ditemukan." };
+  }
+
+  await db
+    .update(assignmentSubmissions)
+    .set({ reviewedByStaff: reviewed })
+    .where(eq(assignmentSubmissions.id, submissionId));
+
+  await writeAudit(auth.userId, "review", "assignment_submissions", submissionId, existing, {
+    ...existing,
+    reviewedByStaff: reviewed,
+  });
+
+  revalidatePath("/dashboard/tugas");
   return { success: true };
 }

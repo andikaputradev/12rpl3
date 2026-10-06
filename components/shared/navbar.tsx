@@ -3,6 +3,7 @@
 import {
   ChevronDown,
   GraduationCap,
+  KeyRound,
   LayoutDashboard,
   LogOut,
   Menu,
@@ -75,7 +76,6 @@ export function Navbar({ isAuthenticated, userRole }: NavbarProps) {
         <nav className="hidden items-center gap-1 xl:gap-1.5 lg:flex" aria-label="Navigasi utama">
           <Link
             href="/profil"
-            prefetch={false}
             className={cn(
               "cursor-pointer rounded-md px-2.5 py-1.5 text-sm text-muted transition-colors hover:bg-surface hover:text-foreground",
               pathname === "/profil" && "bg-surface font-medium text-foreground",
@@ -85,7 +85,6 @@ export function Navbar({ isAuthenticated, userRole }: NavbarProps) {
           </Link>
           <Link
             href="/direktori"
-            prefetch={false}
             className={cn(
               "cursor-pointer rounded-md px-2.5 py-1.5 text-sm text-muted transition-colors hover:bg-surface hover:text-foreground",
               pathname.startsWith("/direktori") && "bg-surface font-medium text-foreground",
@@ -95,7 +94,6 @@ export function Navbar({ isAuthenticated, userRole }: NavbarProps) {
           </Link>
           <Link
             href="/jadwal"
-            prefetch={false}
             className={cn(
               "cursor-pointer rounded-md px-2.5 py-1.5 text-sm text-muted transition-colors hover:bg-surface hover:text-foreground",
               pathname.startsWith("/jadwal") && "bg-surface font-medium text-foreground",
@@ -105,7 +103,6 @@ export function Navbar({ isAuthenticated, userRole }: NavbarProps) {
           </Link>
           <Link
             href="/galeri"
-            prefetch={false}
             className={cn(
               "cursor-pointer rounded-md px-2.5 py-1.5 text-sm text-muted transition-colors hover:bg-surface hover:text-foreground",
               pathname.startsWith("/galeri") && "bg-surface font-medium text-foreground",
@@ -115,7 +112,6 @@ export function Navbar({ isAuthenticated, userRole }: NavbarProps) {
           </Link>
           <Link
             href="/prestasi"
-            prefetch={false}
             className={cn(
               "cursor-pointer rounded-md px-2.5 py-1.5 text-sm text-muted transition-colors hover:bg-surface hover:text-foreground",
               pathname.startsWith("/prestasi") && "bg-surface font-medium text-foreground",
@@ -125,7 +121,6 @@ export function Navbar({ isAuthenticated, userRole }: NavbarProps) {
           </Link>
           <Link
             href="/blog"
-            prefetch={false}
             className={cn(
               "cursor-pointer rounded-md px-2.5 py-1.5 text-sm text-muted transition-colors hover:bg-surface hover:text-foreground",
               pathname.startsWith("/blog") && "bg-surface font-medium text-foreground",
@@ -259,6 +254,16 @@ export function Navbar({ isAuthenticated, userRole }: NavbarProps) {
                     <span>Profil Saya</span>
                   </Link>
                 </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link
+                    href="/ganti-password"
+                    prefetch={false}
+                    className="flex items-center gap-2 cursor-pointer"
+                  >
+                    <KeyRound className="size-4" />
+                    <span>Ganti Kata Sandi</span>
+                  </Link>
+                </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem asChild>
                   <form action={logoutAction} className="w-full">
@@ -344,6 +349,16 @@ export function Navbar({ isAuthenticated, userRole }: NavbarProps) {
                         <Link href="/profil-saya" prefetch={false} onClick={() => setOpen(false)}>
                           <User className="size-4 mr-2" />
                           Profil Saya
+                        </Link>
+                      </Button>
+                      <Button asChild variant="ghost" className="w-full justify-start">
+                        <Link
+                          href="/ganti-password"
+                          prefetch={false}
+                          onClick={() => setOpen(false)}
+                        >
+                          <KeyRound className="size-4 mr-2" />
+                          Ganti Kata Sandi
                         </Link>
                       </Button>
                       <form action={logoutAction} className="w-full">

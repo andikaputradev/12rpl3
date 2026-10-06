@@ -7,3 +7,15 @@ export const loginSchema = z.object({
 });
 
 export type LoginInput = z.infer<typeof loginSchema>;
+
+export const changePasswordSchema = z
+  .object({
+    newPassword: z.string().min(8, "Kata sandi baru minimal 8 karakter."),
+    confirmPassword: z.string().min(8, "Konfirmasi kata sandi minimal 8 karakter."),
+  })
+  .refine((data) => data.newPassword === data.confirmPassword, {
+    message: "Konfirmasi kata sandi tidak cocok.",
+    path: ["confirmPassword"],
+  });
+
+export type ChangePasswordInput = z.infer<typeof changePasswordSchema>;

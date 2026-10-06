@@ -6,11 +6,13 @@ import {
   type AssessmentType,
   type Assignment,
   type AttendanceStatus,
+  assignmentSubmissions,
   assignments,
   attendance,
   auditLog,
   grades,
   profiles,
+  subjects,
 } from "@/lib/db/schema";
 
 /**
@@ -22,6 +24,117 @@ import {
 export async function getAllAssignments(): Promise<Assignment[]> {
   await requireStaffRole(["super_admin", "wali_kelas", "pengurus"]);
   return db.select().from(assignments).orderBy(desc(assignments.dueDate));
+}
+
+export interface AssignmentSubmissionDetail {
+  id: string;
+  studentId: string;
+  studentName: string;
+  absenNumber: number | null;
+  fileUrl: string;
+  notes: string | null;
+  submittedAt: Date;
+  reviewedByStaff: boolean;
+}
+
+export interface StudentWithoutSubmission {
+  id: string;
+  fullName: string;
+  absenNumber: number | null;
+}
+
+export interface AssignmentWithSubmissions {
+  id: string;
+  title: string;
+  description: string | null;
+  subjectId: string | null;
+  subjectName: string | null;
+  dueDate: Date;
+  createdAt: Date;
+  totalSubmissions: number;
+  totalStudents: number;
+  submissions: AssignmentSubmissionDetail[];
+  pendingStudents: StudentWithoutSubmission[];
+}
+
+export async function getAllAssignmentsWithSubmissions(): Promise<AssignmentWithSubmissions[]> {
+  await requireStaffRole(["super_admin", "wali_kelas", "pengurus"]);
+
+  const [allAssignmentsList, allStudents, allSubmissions] = await Promise.all([
+    db
+      .select({
+        id: assignments.id,
+        title: assignments.title,
+        description: assignments.description,
+        subjectId: assignments.subjectId,
+        subjectName: subjects.name,
+        dueDate: assignments.dueDate,
+        createdAt: assignments.createdAt,
+      })
+      .from(assignments)
+      .leftJoin(subjects, eq(assignments.subjectId, subjects.id))
+      .orderBy(desc(assignments.dueDate)),
+    db
+      .select({
+        id: profiles.id,
+        fullName: profiles.fullName,
+        absenNumber: profiles.absenNumber,
+      })
+      .from(profiles)
+      .where(inArray(profiles.role, ["siswa", "pengurus"]))
+      .orderBy(asc(profiles.absenNumber), asc(profiles.fullName)),
+    db
+      .select({
+        id: assignmentSubmissions.id,
+        assignmentId: assignmentSubmissions.assignmentId,
+        studentId: assignmentSubmissions.studentId,
+        fileUrl: assignmentSubmissions.fileUrl,
+        notes: assignmentSubmissions.notes,
+        submittedAt: assignmentSubmissions.submittedAt,
+        reviewedByStaff: assignmentSubmissions.reviewedByStaff,
+        studentName: profiles.fullName,
+        absenNumber: profiles.absenNumber,
+      })
+      .from(assignmentSubmissions)
+      .innerJoin(profiles, eq(assignmentSubmissions.studentId, profiles.id))
+      .orderBy(asc(profiles.absenNumber), desc(assignmentSubmissions.submittedAt)),
+  ]);
+
+  const submissionsByAssignment = new Map<string, AssignmentSubmissionDetail[]>();
+  for (const sub of allSubmissions) {
+    const list = submissionsByAssignment.get(sub.assignmentId) ?? [];
+    list.push({
+      id: sub.id,
+      studentId: sub.studentId,
+      studentName: sub.studentName,
+      absenNumber: sub.absenNumber,
+      fileUrl: sub.fileUrl,
+      notes: sub.notes,
+      submittedAt: sub.submittedAt,
+      reviewedByStaff: sub.reviewedByStaff,
+    });
+    submissionsByAssignment.set(sub.assignmentId, list);
+  }
+
+  return allAssignmentsList.map((assignment) => {
+    const submissions = submissionsByAssignment.get(assignment.id) ?? [];
+    const submittedStudentIds = new Set(submissions.map((s) => s.studentId));
+    const pendingStudents = allStudents.filter((student) => !submittedStudentIds.has(student.id));
+
+    return {
+      id: assignment.id,
+      title: assignment.title,
+      description: assignment.description,
+      subjectId: assignment.subjectId,
+      subjectName: assignment.subjectName,
+      dueDate: assignment.dueDate,
+      createdAt: assignment.createdAt,
+      totalSubmissions: submissions.length,
+      totalStudents: allStudents.length,
+      submissions,
+      pendingStudents,
+    };
+  });
 }
 
 export interface GradeEntryRow {

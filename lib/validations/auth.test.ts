@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { loginSchema } from "./auth";
+import { changePasswordSchema, loginSchema } from "./auth";
 
 describe("loginSchema", () => {
   it("menerima kredensial valid", () => {
@@ -47,5 +47,31 @@ describe("loginSchema", () => {
       redirectTo: "/akademik/nilai",
     });
     expect(result.success).toBe(true);
+  });
+});
+
+describe("changePasswordSchema", () => {
+  it("menerima password baru dan konfirmasi yang cocok dan minimal 8 karakter", () => {
+    const result = changePasswordSchema.safeParse({
+      newPassword: "passwordbaru123",
+      confirmPassword: "passwordbaru123",
+    });
+    expect(result.success).toBe(true);
+  });
+
+  it("menolak password baru yang kurang dari 8 karakter", () => {
+    const result = changePasswordSchema.safeParse({
+      newPassword: "pendek",
+      confirmPassword: "pendek",
+    });
+    expect(result.success).toBe(false);
+  });
+
+  it("menolak konfirmasi password yang tidak cocok", () => {
+    const result = changePasswordSchema.safeParse({
+      newPassword: "passwordbaru123",
+      confirmPassword: "passwordberbeda123",
+    });
+    expect(result.success).toBe(false);
   });
 });

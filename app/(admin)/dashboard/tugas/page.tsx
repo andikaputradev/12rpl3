@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { AssignmentManager } from "@/components/admin/assignment-manager";
-import { getAllAssignments } from "@/lib/actions/admin-akademik";
+import { getAllAssignmentsWithSubmissions } from "@/lib/actions/admin-akademik";
 import { getSubjects } from "@/lib/actions/jadwal";
 
 export const metadata: Metadata = {
@@ -11,7 +11,10 @@ export const metadata: Metadata = {
 export const dynamic = "force-dynamic";
 
 export default async function AdminTugasPage() {
-  const [assignments, subjects] = await Promise.all([getAllAssignments(), getSubjects()]);
+  const [assignments, subjects] = await Promise.all([
+    getAllAssignmentsWithSubmissions(),
+    getSubjects(),
+  ]);
 
   return (
     <div className="container-portal flex flex-col gap-8 py-12">

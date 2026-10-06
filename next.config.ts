@@ -31,6 +31,22 @@ const nextConfig: NextConfig = {
   experimental: {
     viewTransition: true,
     authInterrupts: true,
+    serverActions: {
+      bodySizeLimit: "10mb",
+    },
+    optimizePackageImports: [
+      "lucide-react",
+      "date-fns",
+      "motion",
+      "rehype-sanitize",
+      "remark-gfm",
+      "@radix-ui/react-dialog",
+      "@radix-ui/react-dropdown-menu",
+      "@radix-ui/react-select",
+      "@radix-ui/react-tabs",
+      "@radix-ui/react-avatar",
+      "@radix-ui/react-popover",
+    ],
   },
   images: {
     remotePatterns: [
@@ -67,6 +83,15 @@ const nextConfig: NextConfig = {
       {
         source: "/:path*",
         headers: securityHeaders,
+      },
+      {
+        source: "/img/:path*",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "public, max-age=31536000, immutable",
+          },
+        ],
       },
     ];
   },

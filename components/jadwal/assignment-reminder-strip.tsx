@@ -1,5 +1,6 @@
 import { differenceInHours } from "date-fns";
 import { Clock } from "lucide-react";
+import { cookies } from "next/headers";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { getUpcomingAssignments } from "@/lib/actions/akademik";
@@ -13,13 +14,17 @@ function formatDueIn(dueDate: Date): string {
 }
 
 /**
- * Server Component async - mengecek sesi lewat kegagalan
- * getUpcomingAssignments (yang menuntut requireAuthenticatedUser di
- * dalamnya) dan menyembunyikan diri bersih via try/catch, BUKAN memicu error
- * boundary halaman /jadwal yang publik. Ini persis perilaku "dilewati tanpa
- * error" yang disyaratkan Bagian 5 brief.
+ * Server Component async - mengecek sesi lewat auth cookie terlebih dahulu
+ * agar tidak memicu pemanggilan auth eksternal yang lambat saat build/prerender.
  */
 export async function AssignmentReminderStrip() {
+  const cookieStore = await cookies();
+  const hasAuthCookie = cookieStore
+    .getAll()
+    .some((c) => c.name.includes("-auth-token") || c.name.startsWith("sb-"));
+
+  if (!hasAuthCookie) return null;
+
   let assignments: Awaited<ReturnType<typeof getUpcomingAssignments>>;
   try {
     assignments = await getUpcomingAssignments(7);

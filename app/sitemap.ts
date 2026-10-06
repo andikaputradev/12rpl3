@@ -25,32 +25,39 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     }),
   ]);
 
-  const staticRoutes: { path: string; priority: number; freq: "daily" | "weekly" | "monthly" }[] = [
-    { path: "", priority: 1, freq: "weekly" },
-    { path: "/profil", priority: 0.8, freq: "monthly" },
-    { path: "/direktori", priority: 0.7, freq: "monthly" },
-    { path: "/galeri", priority: 0.8, freq: "weekly" },
-    { path: "/jadwal", priority: 0.6, freq: "weekly" },
-    { path: "/prestasi", priority: 0.7, freq: "weekly" },
-    { path: "/blog", priority: 0.8, freq: "daily" },
-    { path: "/interaksi/buku-tamu", priority: 0.5, freq: "weekly" },
-    { path: "/interaksi/polling", priority: 0.5, freq: "weekly" },
+  const baseUrl = (siteConfig.appUrl || "http://localhost:3000").replace(/\/+$/, "");
+
+  const staticRoutes: {
+    path: string;
+    priority: number;
+    freq: "always" | "hourly" | "daily" | "weekly" | "monthly" | "yearly" | "never";
+  }[] = [
+    { path: "", priority: 1.0, freq: "daily" },
+    { path: "/profil", priority: 0.9, freq: "weekly" },
+    { path: "/direktori", priority: 0.8, freq: "weekly" },
+    { path: "/galeri", priority: 0.8, freq: "daily" },
+    { path: "/jadwal", priority: 0.8, freq: "daily" },
+    { path: "/prestasi", priority: 0.8, freq: "weekly" },
+    { path: "/blog", priority: 0.9, freq: "daily" },
+    { path: "/interaksi/buku-tamu", priority: 0.6, freq: "daily" },
+    { path: "/interaksi/polling", priority: 0.6, freq: "weekly" },
+    { path: "/kebijakan-privasi", priority: 0.3, freq: "monthly" },
   ];
 
   const albumRoutes = albumSlugs.map((slug) => ({
     path: `/galeri/${slug}`,
-    priority: 0.6,
+    priority: 0.7,
     freq: "weekly" as const,
   }));
 
   const postRoutes = postSlugs.map((slug) => ({
     path: `/blog/${slug}`,
-    priority: 0.6,
+    priority: 0.7,
     freq: "monthly" as const,
   }));
 
   return [...staticRoutes, ...albumRoutes, ...postRoutes].map((route) => ({
-    url: `${siteConfig.appUrl}${route.path}`,
+    url: `${baseUrl}${route.path}`,
     lastModified: new Date(),
     changeFrequency: route.freq,
     priority: route.priority,

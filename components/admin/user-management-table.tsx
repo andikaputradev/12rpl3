@@ -1,6 +1,6 @@
 "use client";
 
-import { Edit2, Filter, Plus, Search, Trash2 } from "lucide-react";
+import { Edit2, Filter, Plus, RotateCcw, Search, Trash2 } from "lucide-react";
 import { useState, useTransition } from "react";
 import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
@@ -34,6 +34,7 @@ import {
 import {
   createNewUser,
   deleteUser,
+  resetUserPasswordToDefault,
   updateUserAcademicInfo,
   updateUserRole,
 } from "@/lib/actions/admin-pengguna-mutations";
@@ -73,6 +74,7 @@ export function UserManagementTable({
   const [roleFilter, setRoleFilter] = useState<string>("all");
   const [editingUser, setEditingUser] = useState<Profile | null>(null);
   const [deletingUser, setDeletingUser] = useState<Profile | null>(null);
+  const [resettingUser, setResettingUser] = useState<Profile | null>(null);
   const [isAddOpen, setIsAddOpen] = useState(false);
   const [isPending, startTransition] = useTransition();
 
@@ -200,6 +202,23 @@ export function UserManagementTable({
     });
   }
 
+  function handleResetPassword() {
+    if (!resettingUser) return;
+
+    startTransition(async () => {
+      const res = await resetUserPasswordToDefault(resettingUser.id);
+      if (res.error) {
+        toast.error(res.error);
+        return;
+      }
+
+      toast.success(
+        `Kata sandi untuk ${resettingUser.fullName} berhasil direset ke "Password123#".`,
+      );
+      setResettingUser(null);
+    });
+  }
+
   return (
     <div className="flex flex-col gap-6">
       {/* Filter, Search, and Action Bar */}
@@ -314,6 +333,17 @@ export function UserManagementTable({
                             <Edit2 className="size-3.5" />
                             <span>Edit</span>
                           </Button>
+                          {currentUserRole === "super_admin" && (
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => setResettingUser(user)}
+                              className="h-8 px-2 text-xs text-amber-600 hover:bg-amber-500/10 dark:text-amber-400"
+                              title="Reset Kata Sandi ke Default (Password123#)"
+                            >
+                              <RotateCcw className="size-3.5" />
+                            </Button>
+                          )}
                           {currentUserRole === "super_admin" && user.id !== currentUserId && (
                             <Button
                               variant="ghost"
@@ -589,6 +619,36 @@ export function UserManagementTable({
             </Button>
             <Button variant="destructive" onClick={handleDeleteUser} disabled={isPending}>
               {isPending ? "Menghapus..." : "Hapus Pengguna"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Reset Password Confirmation Dialog */}
+      <Dialog
+        open={Boolean(resettingUser)}
+        onOpenChange={(open) => !open && setResettingUser(null)}
+      >
+        <DialogContent className="sm:max-w-sm">
+          <DialogHeader>
+            <DialogTitle>Reset Kata Sandi ke Default</DialogTitle>
+            <DialogDescription>
+              Apakah Anda yakin ingin mereset kata sandi untuk{" "}
+              <span className="font-semibold text-foreground">{resettingUser?.fullName}</span> ke
+              kata sandi bawaan (
+              <code className="rounded bg-muted px-1.5 py-0.5 font-mono text-xs text-foreground">
+                Password123#
+              </code>
+              )?
+            </DialogDescription>
+          </DialogHeader>
+
+          <DialogFooter className="mt-3 gap-2">
+            <Button variant="outline" onClick={() => setResettingUser(null)} disabled={isPending}>
+              Batal
+            </Button>
+            <Button onClick={handleResetPassword} disabled={isPending}>
+              {isPending ? "Mereset..." : "Reset Kata Sandi"}
             </Button>
           </DialogFooter>
         </DialogContent>
