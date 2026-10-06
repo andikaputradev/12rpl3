@@ -19,6 +19,8 @@ export const metadata: Metadata = {
   description: "Jadwal pelajaran mingguan, jadwal piket, dan kalender akademik Kelas XII RPL 3.",
 };
 
+export const dynamic = "force-dynamic";
+
 export default async function JadwalPage() {
   const currentMonth = new Date();
   const [schedule, piketDays, monthEvents, upcomingEvents, waliKelas] = await Promise.all([
